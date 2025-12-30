@@ -10147,7 +10147,98 @@ body.locked .page-wrapper {
 }
 
 .donate-now__payment-info-btn {
-  border: none;
+    border: none;
+}
+
+.donate-now__upi-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.donate-now__upi-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.donate-now__upi-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.donate-now__upi-modal__content {
+    position: relative;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    width: min(420px, 90%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.donate-now__upi-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.donate-now__upi-modal__close {
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: #333333;
+    cursor: pointer;
+}
+
+.donate-now__upi-modal__text {
+    margin-bottom: 20px;
+}
+
+.donate-now__upi-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.donate-now__upi-option {
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    background: #f8f8f8;
+    padding: 12px 10px;
+    font-weight: 600;
+    color: #333333;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.donate-now__upi-option:hover,
+.donate-now__upi-option:focus {
+    background: #f14b4b;
+    border-color: #f14b4b;
+    color: #ffffff;
+}
+
+.donate-now__upi-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.donate-now__upi-modal__cancel {
+    background: transparent;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
 }
 
 .donate-now__right {
