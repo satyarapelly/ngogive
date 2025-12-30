@@ -644,6 +644,28 @@
     <script src="assets/vendors/circleType/jquery.circleType.js"></script>
     <script src="assets/vendors/circleType/jquery.lettering.min.js"></script>
 
+    <div class="donate-now__upi-modal" id="upi-modal" aria-hidden="true">
+        <div class="donate-now__upi-modal__overlay" data-upi-modal-close></div>
+        <div class="donate-now__upi-modal__content" role="dialog" aria-modal="true"
+            aria-labelledby="upi-modal-title">
+            <div class="donate-now__upi-modal__header">
+                <h3 class="donate-now__title" id="upi-modal-title">Choose a UPI app</h3>
+                <button type="button" class="donate-now__upi-modal__close" aria-label="Close"
+                    data-upi-modal-close>&times;</button>
+            </div>
+            <p class="donate-now__upi-modal__text">Select your preferred UPI option to complete the
+                donation.</p>
+            <div class="donate-now__upi-options">
+                <button type="button" class="donate-now__upi-option" data-upi-app="phonepe">PhonePe</button>
+                <button type="button" class="donate-now__upi-option" data-upi-app="paytm">Paytm</button>
+                <button type="button" class="donate-now__upi-option" data-upi-app="google_pay">Google Pay</button>
+            </div>
+            <div class="donate-now__upi-modal__footer">
+                <button type="button" class="donate-now__upi-modal__cancel" data-upi-modal-close>Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         (function () {
@@ -654,27 +676,35 @@
             const lastNameInput = document.getElementById("donor-last-name");
             const emailInput = document.getElementById("donor-email");
             const phoneInput = document.getElementById("donor-phone");
+            const upiModal = document.getElementById("upi-modal");
+            const upiOptionButtons = document.querySelectorAll("[data-upi-app]");
+            const upiModalCloseButtons = document.querySelectorAll("[data-upi-modal-close]");
             const apiBaseUrl = "http://localhost:5000";
 
             if (!paymentForm || !donateButton || !amountInput) {
                 return;
             }
 
-            paymentForm.addEventListener("submit", async function (event) {
-                event.preventDefault();
+            let pendingPayment = null;
 
-                const amountValue = Number.parseFloat(amountInput.value);
-                if (!amountValue || amountValue <= 0) {
-                    alert("Please enter a valid donation amount.");
+            const closeUpiModal = () => {
+                if (upiModal) {
+                    upiModal.classList.remove("is-open");
+                    upiModal.setAttribute("aria-hidden", "true");
+                }
+            };
+
+            const openUpiModal = () => {
+                if (upiModal) {
+                    upiModal.classList.add("is-open");
+                    upiModal.setAttribute("aria-hidden", "false");
+                }
+            };
+
+            const startPayment = async (selectedUpiApp) => {
+                if (!pendingPayment) {
                     return;
                 }
-
-                const donorName = [firstNameInput?.value, lastNameInput?.value]
-                    .filter(Boolean)
-                    .join(" ")
-                    .trim();
-                const donorEmail = emailInput?.value || "";
-                const donorPhone = phoneInput?.value || "";
 
                 donateButton.disabled = true;
 
@@ -685,12 +715,12 @@
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            amount: Math.round(amountValue * 100),
+                            amount: Math.round(pendingPayment.amount * 100),
                             currency: "INR",
                             donor: {
-                                name: donorName,
-                                email: donorEmail,
-                                phone: donorPhone
+                                name: pendingPayment.donorName,
+                                email: pendingPayment.donorEmail,
+                                phone: pendingPayment.donorPhone
                             }
                         })
                     });
@@ -700,6 +730,13 @@
                     }
 
                     const orderData = await response.json();
+                    const upiInstrument = {
+                        method: "upi"
+                    };
+
+                    if (selectedUpiApp) {
+                        upiInstrument.apps = [selectedUpiApp];
+                    }
 
                     const options = {
                         key: orderData.keyId,
@@ -717,10 +754,24 @@
                         upi: {
                             flow: "intent"
                         },
+                        config: {
+                            display: {
+                                blocks: {
+                                    upi: {
+                                        name: "UPI Apps",
+                                        instruments: [upiInstrument]
+                                    }
+                                },
+                                sequence: ["block.upi"],
+                                preferences: {
+                                    show_default_blocks: false
+                                }
+                            }
+                        },
                         prefill: {
-                            name: donorName,
-                            email: donorEmail,
-                            contact: donorPhone
+                            name: pendingPayment.donorName,
+                            email: pendingPayment.donorEmail,
+                            contact: pendingPayment.donorPhone
                         },
                         handler: async function (paymentResponse) {
                             try {
@@ -743,6 +794,7 @@
                                 alert("Payment verification failed. Please contact support.");
                             } finally {
                                 donateButton.disabled = false;
+                                pendingPayment = null;
                             }
                         },
                         theme: {
@@ -754,12 +806,57 @@
                     razorpay.on("payment.failed", function () {
                         alert("Payment failed. Please try again.");
                         donateButton.disabled = false;
+                        pendingPayment = null;
                     });
                     razorpay.open();
                 } catch (error) {
                     alert("Unable to start payment. Please try again later.");
                     donateButton.disabled = false;
+                    pendingPayment = null;
                 }
+            };
+
+            paymentForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const amountValue = Number.parseFloat(amountInput.value);
+                if (!amountValue || amountValue <= 0) {
+                    alert("Please enter a valid donation amount.");
+                    return;
+                }
+
+                const donorName = [firstNameInput?.value, lastNameInput?.value]
+                    .filter(Boolean)
+                    .join(" ")
+                    .trim();
+                const donorEmail = emailInput?.value || "";
+                const donorPhone = phoneInput?.value || "";
+
+                pendingPayment = {
+                    amount: amountValue,
+                    donorName,
+                    donorEmail,
+                    donorPhone
+                };
+
+                donateButton.disabled = true;
+                openUpiModal();
+            });
+
+            upiOptionButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const selectedApp = button.getAttribute("data-upi-app");
+                    closeUpiModal();
+                    startPayment(selectedApp);
+                });
+            });
+
+            upiModalCloseButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    closeUpiModal();
+                    donateButton.disabled = false;
+                    pendingPayment = null;
+                });
             });
         })();
     </script>
