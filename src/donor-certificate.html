@@ -115,6 +115,50 @@
       background: #e6e6e6;
       margin: 16px 0;
     }
+
+    .verification-form {
+      border: 1px solid #e6e6e6;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .verification-form .section-title {
+      margin-top: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .form-grid label {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      color: #555;
+      gap: 6px;
+    }
+
+    .form-grid input {
+      border: 1px solid #d9d9d9;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .action-btn {
+      background: #d64545;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -132,21 +176,51 @@
       </div>
     </div>
 
+    <form class="verification-form" id="certificate-form">
+      <h2 class="section-title">Generate 80G Certificate</h2>
+      <p class="summary">Enter your payment and donor details to verify your donation and generate the certificate.</p>
+      <div class="form-grid">
+        <label>
+          <span>UPI ID</span>
+          <input type="text" id="upi-id" placeholder="arunkumar674@okaxis" required />
+        </label>
+        <label>
+          <span>Donation Amount (INR)</span>
+          <input type="number" id="donation-amount" placeholder="1000" min="1" step="1" required />
+        </label>
+        <label>
+          <span>Donor Name</span>
+          <input type="text" id="donor-name" placeholder="Full name" required />
+        </label>
+        <label>
+          <span>Donor Address</span>
+          <input type="text" id="donor-address" placeholder="Full address" required />
+        </label>
+        <label>
+          <span>Donor PAN</span>
+          <input type="text" id="donor-pan" placeholder="ABCDE1234F" required />
+        </label>
+      </div>
+      <p class="note">We verify payments from the last 7 days.</p>
+      <button type="submit" class="action-btn">Verify & Generate</button>
+      <p class="note" id="verification-status" aria-live="polite"></p>
+    </form>
+
     <!-- RECEIPT NUMBER -->
-    <div class="receipt-no">Receipt No: {{ReceiptNo}}</div>
+    <div class="receipt-no">Receipt No: <span id="receipt-no">—</span></div>
 
     <!-- GREETING + SUMMARY -->
-    <p class="greeting">Dear {{DonorName}}</p>
+    <p class="greeting">Dear <span id="certificate-donor-name">—</span></p>
     <p class="summary">
-      We have received your donation of ₹ {{DonationAmountFormatted}}. Thank you for your generosity.<br/>
+      We have received your donation of ₹ <span id="certificate-amount">—</span>. Thank you for your generosity.<br/>
       The details of the donation are mentioned below.
     </p>
 
     <!-- DONATION DETAILS -->
     <div class="section-title">Donation/Tax Benefit Details</div>
-    <div class="ref">(Reference No: {{ReferenceNo}})</div>
+    <div class="ref">(Reference No: <span id="reference-no">—</span>)</div>
 
-    <div class="amount">Amount: ₹ {{DonationAmountFormatted}}</div>
+    <div class="amount">Amount: ₹ <span id="certificate-amount-highlight">—</span></div>
 
     <div class="note">
       Donations through {{OrgName}}, a registered under section 80G of India's Income Tax Act, 1961 are tax-deductible.
@@ -170,10 +244,11 @@
       <div class="box">
         <h3>Donor Details</h3>
         <div class="kv">
-          <div><span class="k">Issued to:</span> <span class="v">{{DonorName}}</span></div>
-          <div><span class="k">Address:</span> <span class="v">{{DonorAddress}}</span></div>
-          <div><span class="k">PAN:</span> <span class="v">{{DonorPAN}}</span></div>
-          <div><span class="k">Date:</span> <span class="v">{{ReceiptDate}}</span></div>
+          <div><span class="k">Issued to:</span> <span class="v" id="certificate-donor-name-kv">—</span></div>
+          <div><span class="k">Address:</span> <span class="v" id="certificate-donor-address">—</span></div>
+          <div><span class="k">PAN:</span> <span class="v" id="certificate-donor-pan">—</span></div>
+          <div><span class="k">UPI ID:</span> <span class="v" id="certificate-donor-upi">—</span></div>
+          <div><span class="k">Date:</span> <span class="v" id="receipt-date">—</span></div>
         </div>
       </div>
     </div>
@@ -181,9 +256,11 @@
     <!-- OPTIONAL EXTRA FIELDS -->
     <div class="divider"></div>
     <div class="kv" style="font-size:12px;">
-      <div><span class="k">Amount (numeric):</span> <span class="v">{{DonationAmountNumeric}}</span></div>
-      <div><span class="k">Payment Mode:</span> <span class="v">{{PaymentMode}}</span></div>
-      <div><span class="k">Transaction ID:</span> <span class="v">{{TransactionId}}</span></div>
+      <div><span class="k">Amount (numeric):</span> <span class="v" id="certificate-amount-numeric">—</span></div>
+      <div><span class="k">Payment Mode:</span> <span class="v" id="payment-mode">—</span></div>
+      <div><span class="k">Transaction ID:</span> <span class="v" id="transaction-id">—</span></div>
+      <div><span class="k">Razorpay Payment ID:</span> <span class="v" id="razorpay-payment-id">—</span></div>
+      <div><span class="k">Payment Verification:</span> <span class="v" id="payment-verification">—</span></div>
     </div>
 
     <!-- FOOTER DISCLAIMERS -->
@@ -194,5 +271,72 @@
       <p class="powered">* This is powered by {{PoweredByText}}.</p>
     </div>
   </div>
+  <script>
+    (function () {
+      const form = document.getElementById("certificate-form");
+      const status = document.getElementById("verification-status");
+      const apiBaseUrl = "http://localhost:5000";
+
+      if (!form) {
+        return;
+      }
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = value || "—";
+        }
+      };
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "Verifying payment with Razorpay...";
+
+        const upiId = document.getElementById("upi-id").value.trim();
+        const amount = Number(document.getElementById("donation-amount").value);
+        const donorName = document.getElementById("donor-name").value.trim();
+        const donorAddress = document.getElementById("donor-address").value.trim();
+        const donorPan = document.getElementById("donor-pan").value.trim();
+
+        try {
+          const response = await fetch(`${apiBaseUrl}/verify-upi-payment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ upiId, amount })
+          });
+          const data = await response.json();
+
+          if (!response.ok || !data.verified) {
+            status.textContent = data.error || "Payment verification failed. Please check your details.";
+            return;
+          }
+
+          status.textContent = "Payment verified. Certificate generated below.";
+
+          const today = new Date();
+          setText("receipt-date", today.toLocaleDateString("en-IN"));
+          const transactionId = data.payment?.id || `TXN-${Date.now()}`;
+          setText("receipt-no", `NGO-${today.getFullYear()}-${transactionId.slice(-6)}`);
+          setText("reference-no", transactionId);
+          setText("certificate-donor-name", donorName);
+          setText("certificate-donor-name-kv", donorName);
+          setText("certificate-donor-address", donorAddress);
+          setText("certificate-donor-pan", donorPan);
+          setText("certificate-donor-upi", upiId);
+          setText("certificate-amount", amount.toLocaleString("en-IN"));
+          setText("certificate-amount-highlight", amount.toLocaleString("en-IN"));
+          setText("certificate-amount-numeric", amount);
+          setText("payment-mode", data.payment?.method || "upi");
+          setText("transaction-id", transactionId);
+          setText("razorpay-payment-id", transactionId);
+          setText("payment-verification", "Verified");
+        } catch (error) {
+          status.textContent = "Unable to verify payment right now. Please try again later.";
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

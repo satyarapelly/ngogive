@@ -76,6 +76,45 @@ app.post("/verify-payment", (req, res) => {
   return res.json({ verified: true });
 });
 
+app.post("/verify-upi-payment", async (req, res) => {
+  const { upiId, amount } = req.body || {};
+
+  if (!upiId || !amount) {
+    return res.status(400).json({ error: "Missing upiId or amount." });
+  }
+
+  try {
+    const expectedAmount = Math.round(Number(amount) * 100);
+    const to = Math.floor(Date.now() / 1000);
+    const from = to - 7 * 24 * 60 * 60;
+    const paymentsResponse = await razorpay.payments.all({ from, to, count: 100 });
+    const payments = paymentsResponse?.items || [];
+    const match = payments.find((payment) => {
+      const paymentUpiId = payment?.vpa || "";
+      return (
+        payment?.method === "upi" &&
+        payment?.status === "captured" &&
+        payment?.amount === expectedAmount &&
+        paymentUpiId.toLowerCase() === upiId.toLowerCase()
+      );
+    });
+
+    return res.json({
+      verified: Boolean(match),
+      payment: {
+        id: match?.id,
+        status: match?.status,
+        method: match?.method,
+        vpa: match?.vpa,
+        amount: match?.amount
+      }
+    });
+  } catch (error) {
+    console.error("Error verifying UPI payment", error);
+    return res.status(500).json({ error: "Unable to verify payment." });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Razorpay server listening on port ${PORT}`);
 });
