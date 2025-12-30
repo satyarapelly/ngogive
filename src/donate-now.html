@@ -727,7 +727,29 @@
                                 const verifyData = await verifyResponse.json();
 
                                 if (verifyResponse.ok && verifyData.verified) {
-                                    alert("Thank you! Your donation was successful.");
+                                    const upiId = window.prompt("Enter your UPI ID to verify the transaction for your 80G certificate:");
+
+                                    if (upiId) {
+                                        const upiVerifyResponse = await fetch(`${apiBaseUrl}/verify-upi-payment`, {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({
+                                                paymentId: paymentResponse.razorpay_payment_id,
+                                                upiId
+                                            })
+                                        });
+                                        const upiVerifyData = await upiVerifyResponse.json();
+
+                                        if (upiVerifyResponse.ok && upiVerifyData.verified) {
+                                            alert("Thank you! Your donation and UPI verification were successful.");
+                                        } else {
+                                            alert("UPI verification failed. Please contact support with your payment ID.");
+                                        }
+                                    } else {
+                                        alert("Thank you! Your donation was successful.");
+                                    }
                                 } else {
                                     alert("Payment verification failed. Please contact support.");
                                 }
