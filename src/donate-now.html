@@ -105,7 +105,7 @@
                                                 </div>
                                                 <div class="content">
                                                     <p>Helpline</p>
-                                                    <h5><a href="tel:9849995800">+ 91 9849995800</a></h5>
+                                                    <h5><a href="tel:9440727071">+ 91 9440727071</a></h5>
                                                 </div>
                                             </li>
                                             <li>
@@ -114,7 +114,7 @@
                                                 </div>
                                                 <div class="content">
                                                     <p>Send email</p>
-                                                    <h5><a href="mailto:give4society@outlook.com">give4society@outlook.com</a>
+                                                    <h5><a href="mailto:giveforsociety@gmail.com">giveforsociety@gmail.com</a>
                                                     </h5>
                                                 </div>
                                             </li>
@@ -289,7 +289,7 @@
                                         <option>₹</option>
                                         
                                     </select>
-                                    <input type="text" name="donation-money" value=".00">
+                                    <input type="text" name="donation-money" id="donation-amount" value=".00">
                                 </div>
                             </div>
                             <div class="donate-now__personal-info-box">
@@ -298,22 +298,22 @@
                                     <div class="row">
                                         <div class="col-xl-6">
                                             <div class="donate-now__personal-info-input">
-                                                <input type="text" placeholder="First name" name="name">
+                                                <input type="text" placeholder="First name" name="name" id="donor-first-name">
                                             </div>
                                         </div>
                                         <div class="col-xl-6">
                                             <div class="donate-now__personal-info-input">
-                                                <input type="text" placeholder="Last name" name="last-name">
+                                                <input type="text" placeholder="Last name" name="last-name" id="donor-last-name">
                                             </div>
                                         </div>
                                         <div class="col-xl-6">
                                             <div class="donate-now__personal-info-input">
-                                                <input type="email" placeholder="Email address" name="email">
+                                                <input type="email" placeholder="Email address" name="email" id="donor-email">
                                             </div>
                                         </div>
                                         <div class="col-xl-6">
                                             <div class="donate-now__personal-info-input">
-                                                <input type="text" placeholder="Phone" name="phone">
+                                                <input type="text" placeholder="Phone" name="phone" id="donor-phone">
                                             </div>
                                         </div>
                                         <div class="col-xl-6">
@@ -344,7 +344,7 @@
                             </div>
                             <div class="donate-now__payment-info">
                                 <h3 class="donate-now__title">Payment info</h3>
-                                <form class="donate-now__payment-info-form">
+                                <form class="donate-now__payment-info-form" id="donation-payment-form">
                                     <div class="row">
                                         <div class="col-xl-6">
                                             <div class="donate-now__payment-info-input">
@@ -383,7 +383,7 @@
                                         </div>
                                     </div>
                                     <div class="donate-now__payment-info-btn-box">
-                                        <button type="submit" class="thm-btn donate-now__payment-info-btn">Donate
+                                        <button type="submit" class="thm-btn donate-now__payment-info-btn" id="donate-now-button">Donate
                                             now</button>
                                     </div>
                                 </form>
@@ -514,7 +514,7 @@
                                             <i class="fa fa-envelope"></i>
                                         </div>
                                         <div class="text">
-                                            <p><a href="mailto:give4society@outlook.com ">give4society@outlook.com</a></p>
+                                            <p><a href="mailto:giveforsociety@gmail.com ">giveforsociety@gmail.com</a></p>
                                         </div>
                                     </li>
                                     <li>
@@ -522,7 +522,7 @@
                                             <i class="fas fa-phone-alt"></i>
                                         </div>
                                         <div class="text">
-                                            <p><a href="tel:9849995800">+ 91 9849995800</a></p>
+                                            <p><a href="tel:9440727071">+ 91 9440727071</a></p>
                                         </div>
                                     </li>
                                 </ul>
@@ -577,11 +577,11 @@
             <ul class="mobile-nav__contact list-unstyled">
                 <li>
                     <i class="fa fa-envelope"></i>
-                    <a href="mailto:give4society@outlook.com">give4society@outlook.com</a>
+                    <a href="mailto:giveforsociety@gmail.com">giveforsociety@gmail.com</a>
                 </li>
                 <li>
                     <i class="fa fa-phone-alt"></i>
-                    <a href="tel:9849995800">9849995800</a>
+                    <a href="tel:9440727071">9440727071</a>
                 </li>
             </ul><!-- /.mobile-nav__contact -->
             <div class="mobile-nav__top">
@@ -644,6 +644,122 @@
     <script src="assets/vendors/circleType/jquery.circleType.js"></script>
     <script src="assets/vendors/circleType/jquery.lettering.min.js"></script>
 
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        (function () {
+            const paymentForm = document.getElementById("donation-payment-form");
+            const donateButton = document.getElementById("donate-now-button");
+            const amountInput = document.getElementById("donation-amount");
+            const firstNameInput = document.getElementById("donor-first-name");
+            const lastNameInput = document.getElementById("donor-last-name");
+            const emailInput = document.getElementById("donor-email");
+            const phoneInput = document.getElementById("donor-phone");
+            const apiBaseUrl = "http://localhost:5000";
+
+            if (!paymentForm || !donateButton || !amountInput) {
+                return;
+            }
+
+            paymentForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const amountValue = Number.parseFloat(amountInput.value);
+                if (!amountValue || amountValue <= 0) {
+                    alert("Please enter a valid donation amount.");
+                    return;
+                }
+
+                const donorName = [firstNameInput?.value, lastNameInput?.value]
+                    .filter(Boolean)
+                    .join(" ")
+                    .trim();
+                const donorEmail = emailInput?.value || "";
+                const donorPhone = phoneInput?.value || "";
+
+                donateButton.disabled = true;
+
+                try {
+                    const response = await fetch(`${apiBaseUrl}/create-order`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            amount: Math.round(amountValue * 100),
+                            currency: "INR",
+                            donor: {
+                                name: donorName,
+                                email: donorEmail,
+                                phone: donorPhone
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Unable to create order.");
+                    }
+
+                    const orderData = await response.json();
+
+                    const options = {
+                        key: orderData.keyId,
+                        amount: orderData.amount,
+                        currency: orderData.currency,
+                        name: "Give NGO",
+                        description: "Donation",
+                        order_id: orderData.orderId,
+                        method: {
+                            upi: true,
+                            card: true,
+                            netbanking: false,
+                            wallet: false
+                        },
+                        prefill: {
+                            name: donorName,
+                            email: donorEmail,
+                            contact: donorPhone
+                        },
+                        handler: async function (paymentResponse) {
+                            try {
+                                const verifyResponse = await fetch(`${apiBaseUrl}/verify-payment`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(paymentResponse)
+                                });
+
+                                const verifyData = await verifyResponse.json();
+
+                                if (verifyResponse.ok && verifyData.verified) {
+                                    alert("Thank you! Your donation was successful.");
+                                } else {
+                                    alert("Payment verification failed. Please contact support.");
+                                }
+                            } catch (error) {
+                                alert("Payment verification failed. Please contact support.");
+                            } finally {
+                                donateButton.disabled = false;
+                            }
+                        },
+                        theme: {
+                            color: "#f14b4b"
+                        }
+                    };
+
+                    const razorpay = new Razorpay(options);
+                    razorpay.on("payment.failed", function () {
+                        alert("Payment failed. Please try again.");
+                        donateButton.disabled = false;
+                    });
+                    razorpay.open();
+                } catch (error) {
+                    alert("Unable to start payment. Please try again later.");
+                    donateButton.disabled = false;
+                }
+            });
+        })();
+    </script>
 
 
 
