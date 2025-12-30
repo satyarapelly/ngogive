@@ -1,32 +1,12 @@
 {
-  "organization": {
-    "name": "Give For Society",
-    "shortName": "GIVE",
-    "email": "giveforsociety@gmail.com",
-    "phone": "+91 94407 27071",
-    "website": "https://www.give4society.org",
-    "address": {
-      "registeredAddress": {
-        "line1": "Flat No. 307, A31 Block, Sanskruti Township",
-        "area": "Pocharam",
-        "city": "Hyderabad",
-        "state": "Telangana",
-        "country": "India",
-        "pincode": "500088"
-      }
-    },
-    "taxRegistration": {
-      "pan": "AADAG7386B",
-      "section80G": "AADAG7386BF20231",
-      "section12A": "AADAG7386BE20231",
-      "taxAct": "Income Tax Act, 1961"
-    },
-    "receiptDisclaimer": {
-      "isComputerGenerated": true,
-      "signatureRequired": false,
-      "taxDeductible": true,
-      "noGoodsOrServicesProvided": true,
-      "poweredBy": "give4society.org platform"
-    }
-  }
+  "orgName": "",
+  "orgRegisteredAddress": "",
+  "orgPan": "",
+  "org80gNumber": "",
+  "org12aNumber": "",
+  "orgAddressLine1": "",
+  "orgAddressLine2": "",
+  "orgCityStatePin": "",
+  "orgEmail": "",
+  "orgPhone": ""
 }

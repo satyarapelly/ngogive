@@ -321,22 +321,36 @@
 
       const loadOrgDetails = async () => {
         try {
-          const response = await fetch(`${apiBaseUrl}/org-details`);
-          const data = await response.json();
-          if (!response.ok) {
-            return;
+          let data = null;
+          try {
+            const fileResponse = await fetch("ngogive.json");
+            if (fileResponse.ok) {
+              data = await fileResponse.json();
+            }
+          } catch (error) {
+            console.warn("Unable to load ngogive.json. Falling back to /org-details.");
           }
-          setText("org-name", data.orgName);
-          setText("org-name-kv", data.orgName);
-          setText("org-registered-address", data.orgRegisteredAddress);
-          setText("org-pan", data.orgPan);
-          setText("org-80g", data.org80gNumber);
-          setText("org-12a", data.org12aNumber);
-          setText("org-address-line1", data.orgAddressLine1);
-          setText("org-address-line2", data.orgAddressLine2);
-          setText("org-city-state-pin", data.orgCityStatePin);
-          setText("org-email", data.orgEmail);
-          setText("org-phone", data.orgPhone);
+
+          if (!data) {
+            const response = await fetch(`${apiBaseUrl}/org-details`);
+            data = await response.json();
+            if (!response.ok) {
+              return;
+            }
+          }
+
+          const org = data.organization || data;
+          setText("org-name", org.orgName);
+          setText("org-name-kv", org.orgName);
+          setText("org-registered-address", org.orgRegisteredAddress);
+          setText("org-pan", org.orgPan);
+          setText("org-80g", org.org80gNumber);
+          setText("org-12a", org.org12aNumber);
+          setText("org-address-line1", org.orgAddressLine1);
+          setText("org-address-line2", org.orgAddressLine2);
+          setText("org-city-state-pin", org.orgCityStatePin);
+          setText("org-email", org.orgEmail);
+          setText("org-phone", org.orgPhone);
         } catch (error) {
           console.error("Unable to load organization details.", error);
         }
