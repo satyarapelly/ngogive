@@ -10216,11 +10216,21 @@ body.locked .page-wrapper {
     border: 1px solid #e1e1e1;
 }
 
+.donate-now__upi-options-section {
+    margin-bottom: 20px;
+}
+
+.donate-now__upi-options-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
 .donate-now__upi-options {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 12px;
-    margin-bottom: 20px;
 }
 
 .donate-now__upi-option {
