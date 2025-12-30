@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Donation Receipt - 80G</title>
+  <style>
+    /* Page setup for PDF rendering */
+    @page { size: A4; margin: 18mm; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #111; }
+    .page { width: 100%; }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+    }
+    .org-top {
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.4;
+      max-width: 330px;
+    }
+
+    .receipt-no {
+      text-align: center;
+      color: #d64545;
+      font-weight: 700;
+      margin: 6px 0 10px;
+      font-size: 16px;
+    }
+
+    .greeting {
+      text-align: center;
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .summary {
+      text-align: center;
+      font-size: 13px;
+      margin: 0 0 16px;
+      color: #333;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 16px 0 6px;
+    }
+    .ref {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 14px;
+    }
+
+    .amount {
+      text-align: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #d64545;
+      margin: 12px 0 10px;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 12px;
+      color: #444;
+      margin: 8px 0 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 8px;
+    }
+    .box h3 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .kv {
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .kv .k { color: #555; display: inline-block; min-width: 120px; }
+    .kv .v { font-weight: 600; }
+
+    .footer {
+      margin-top: 22px;
+      font-size: 10.5px;
+      color: #555;
+      line-height: 1.45;
+    }
+    .footer p { margin: 6px 0; }
+
+    .powered {
+      margin-top: 10px;
+      font-size: 10.5px;
+      color: #555;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e6e6e6;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <!-- HEADER -->
+    <div class="header">
+      <img class="logo" src="{{LogoUrl}}" alt="Organization Logo" />
+
+      <div class="org-top">
+        <div>{{OrgAddressLine1}}</div>
+        <div>{{OrgAddressLine2}}</div>
+        <div>{{OrgCityStatePin}}</div>
+        <div>{{OrgEmail}} | {{OrgPhone}}</div>
+      </div>
+    </div>
+
+    <!-- RECEIPT NUMBER -->
+    <div class="receipt-no">Receipt No: {{ReceiptNo}}</div>
+
+    <!-- GREETING + SUMMARY -->
+    <p class="greeting">Dear {{DonorName}}</p>
+    <p class="summary">
+      We have received your donation of ₹ {{DonationAmountFormatted}}. Thank you for your generosity.<br/>
+      The details of the donation are mentioned below.
+    </p>
+
+    <!-- DONATION DETAILS -->
+    <div class="section-title">Donation/Tax Benefit Details</div>
+    <div class="ref">(Reference No: {{ReferenceNo}})</div>
+
+    <div class="amount">Amount: ₹ {{DonationAmountFormatted}}</div>
+
+    <div class="note">
+      Donations through {{OrgName}}, a registered under section 80G of India's Income Tax Act, 1961 are tax-deductible.
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ORG + DONOR DETAILS -->
+    <div class="grid">
+      <div class="box">
+        <h3>Organization Details</h3>
+        <div class="kv">
+          <div><span class="k">Organization:</span> <span class="v">{{OrgName}}</span></div>
+          <div><span class="k">Registered Address:</span> <span class="v">{{OrgRegisteredAddress}}</span></div>
+          <div><span class="k">PAN:</span> <span class="v">{{OrgPAN}}</span></div>
+          <div><span class="k">80G:</span> <span class="v">{{Org80GNumber}}</span></div>
+          <div><span class="k">12A:</span> <span class="v">{{Org12ANumber}}</span></div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Donor Details</h3>
+        <div class="kv">
+          <div><span class="k">Issued to:</span> <span class="v">{{DonorName}}</span></div>
+          <div><span class="k">Address:</span> <span class="v">{{DonorAddress}}</span></div>
+          <div><span class="k">PAN:</span> <span class="v">{{DonorPAN}}</span></div>
+          <div><span class="k">Date:</span> <span class="v">{{ReceiptDate}}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTIONAL EXTRA FIELDS -->
+    <div class="divider"></div>
+    <div class="kv" style="font-size:12px;">
+      <div><span class="k">Amount (numeric):</span> <span class="v">{{DonationAmountNumeric}}</span></div>
+      <div><span class="k">Payment Mode:</span> <span class="v">{{PaymentMode}}</span></div>
+      <div><span class="k">Transaction ID:</span> <span class="v">{{TransactionId}}</span></div>
+    </div>
+
+    <!-- FOOTER DISCLAIMERS -->
+    <div class="footer">
+      <p>* This is computer generated receipt and does not require a signature.</p>
+      <p>* This e-receipt is invalid in case of non-realization of payment instrument, reversal of credit card charge and/or reversal of amount for any reason.</p>
+      <p>* No goods or services were provided to the donor by the organization in return for the contribution.</p>
+      <p class="powered">* This is powered by {{PoweredByText}}.</p>
+    </div>
+  </div>
+</body>
+</html>
