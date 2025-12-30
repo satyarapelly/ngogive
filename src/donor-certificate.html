@@ -169,10 +169,10 @@
       <img class="logo" src="{{LogoUrl}}" alt="Organization Logo" />
 
       <div class="org-top">
-        <div>{{OrgAddressLine1}}</div>
-        <div>{{OrgAddressLine2}}</div>
-        <div>{{OrgCityStatePin}}</div>
-        <div>{{OrgEmail}} | {{OrgPhone}}</div>
+        <div id="org-address-line1">—</div>
+        <div id="org-address-line2">—</div>
+        <div id="org-city-state-pin">—</div>
+        <div><span id="org-email">—</span> | <span id="org-phone">—</span></div>
       </div>
     </div>
 
@@ -180,10 +180,6 @@
       <h2 class="section-title">Generate 80G Certificate</h2>
       <p class="summary">Enter your payment and donor details to verify your donation and generate the certificate.</p>
       <div class="form-grid">
-        <label>
-          <span>Razorpay Payment ID</span>
-          <input type="text" id="payment-id" placeholder="pay_XXXXXXXXXXXXXX" required />
-        </label>
         <label>
           <span>UPI ID</span>
           <input type="text" id="upi-id" placeholder="arunkumar674@okaxis" required />
@@ -205,6 +201,7 @@
           <input type="text" id="donor-pan" placeholder="ABCDE1234F" required />
         </label>
       </div>
+      <p class="note">We verify payments from the last 7 days.</p>
       <button type="submit" class="action-btn">Verify & Generate</button>
       <p class="note" id="verification-status" aria-live="polite"></p>
     </form>
@@ -226,7 +223,7 @@
     <div class="amount">Amount: ₹ <span id="certificate-amount-highlight">—</span></div>
 
     <div class="note">
-      Donations through {{OrgName}}, a registered under section 80G of India's Income Tax Act, 1961 are tax-deductible.
+      Donations through <span id="org-name">—</span>, a registered under section 80G of India's Income Tax Act, 1961 are tax-deductible.
     </div>
 
     <div class="divider"></div>
@@ -236,11 +233,11 @@
       <div class="box">
         <h3>Organization Details</h3>
         <div class="kv">
-          <div><span class="k">Organization:</span> <span class="v">{{OrgName}}</span></div>
-          <div><span class="k">Registered Address:</span> <span class="v">{{OrgRegisteredAddress}}</span></div>
-          <div><span class="k">PAN:</span> <span class="v">{{OrgPAN}}</span></div>
-          <div><span class="k">80G:</span> <span class="v">{{Org80GNumber}}</span></div>
-          <div><span class="k">12A:</span> <span class="v">{{Org12ANumber}}</span></div>
+          <div><span class="k">Organization:</span> <span class="v" id="org-name-kv">—</span></div>
+          <div><span class="k">Registered Address:</span> <span class="v" id="org-registered-address">—</span></div>
+          <div><span class="k">PAN:</span> <span class="v" id="org-pan">—</span></div>
+          <div><span class="k">80G:</span> <span class="v" id="org-80g">—</span></div>
+          <div><span class="k">12A:</span> <span class="v" id="org-12a">—</span></div>
         </div>
       </div>
 
@@ -279,6 +276,12 @@
       const form = document.getElementById("certificate-form");
       const status = document.getElementById("verification-status");
       const apiBaseUrl = "http://localhost:5000";
+      const bindings = [
+        { inputId: "donor-name", targetIds: ["certificate-donor-name", "certificate-donor-name-kv"] },
+        { inputId: "donor-address", targetIds: ["certificate-donor-address"] },
+        { inputId: "donor-pan", targetIds: ["certificate-donor-pan"] },
+        { inputId: "upi-id", targetIds: ["certificate-donor-upi"] }
+      ];
 
       if (!form) {
         return;
@@ -291,11 +294,60 @@
         }
       };
 
+      const updateBinding = (binding) => {
+        const input = document.getElementById(binding.inputId);
+        const rawValue = input?.value?.trim() || "";
+        binding.targetIds.forEach((targetId) => setText(targetId, rawValue));
+      };
+
+      bindings.forEach((binding) => {
+        const input = document.getElementById(binding.inputId);
+        if (!input) {
+          return;
+        }
+        input.addEventListener("input", () => updateBinding(binding));
+      });
+
+      const amountInput = document.getElementById("donation-amount");
+      if (amountInput) {
+        amountInput.addEventListener("input", () => {
+          const rawValue = amountInput.value.trim();
+          const formattedValue = rawValue ? Number(rawValue).toLocaleString("en-IN") : "";
+          setText("certificate-amount", formattedValue);
+          setText("certificate-amount-highlight", formattedValue);
+          setText("certificate-amount-numeric", rawValue);
+        });
+      }
+
+      const loadOrgDetails = async () => {
+        try {
+          const response = await fetch(`${apiBaseUrl}/org-details`);
+          const data = await response.json();
+          if (!response.ok) {
+            return;
+          }
+          setText("org-name", data.orgName);
+          setText("org-name-kv", data.orgName);
+          setText("org-registered-address", data.orgRegisteredAddress);
+          setText("org-pan", data.orgPan);
+          setText("org-80g", data.org80gNumber);
+          setText("org-12a", data.org12aNumber);
+          setText("org-address-line1", data.orgAddressLine1);
+          setText("org-address-line2", data.orgAddressLine2);
+          setText("org-city-state-pin", data.orgCityStatePin);
+          setText("org-email", data.orgEmail);
+          setText("org-phone", data.orgPhone);
+        } catch (error) {
+          console.error("Unable to load organization details.", error);
+        }
+      };
+
+      loadOrgDetails();
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         status.textContent = "Verifying payment with Razorpay...";
 
-        const paymentId = document.getElementById("payment-id").value.trim();
         const upiId = document.getElementById("upi-id").value.trim();
         const amount = Number(document.getElementById("donation-amount").value);
         const donorName = document.getElementById("donor-name").value.trim();
@@ -308,7 +360,7 @@
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ paymentId, upiId, amount })
+            body: JSON.stringify({ upiId, amount })
           });
           const data = await response.json();
 
@@ -321,8 +373,9 @@
 
           const today = new Date();
           setText("receipt-date", today.toLocaleDateString("en-IN"));
-          setText("receipt-no", `NGO-${today.getFullYear()}-${paymentId.slice(-6)}`);
-          setText("reference-no", paymentId);
+          const transactionId = data.payment?.id || `TXN-${Date.now()}`;
+          setText("receipt-no", `NGO-${today.getFullYear()}-${transactionId.slice(-6)}`);
+          setText("reference-no", transactionId);
           setText("certificate-donor-name", donorName);
           setText("certificate-donor-name-kv", donorName);
           setText("certificate-donor-address", donorAddress);
@@ -332,8 +385,8 @@
           setText("certificate-amount-highlight", amount.toLocaleString("en-IN"));
           setText("certificate-amount-numeric", amount);
           setText("payment-mode", data.payment?.method || "upi");
-          setText("transaction-id", data.payment?.id || paymentId);
-          setText("razorpay-payment-id", data.payment?.id || paymentId);
+          setText("transaction-id", transactionId);
+          setText("razorpay-payment-id", transactionId);
           setText("payment-verification", "Verified");
         } catch (error) {
           status.textContent = "Unable to verify payment right now. Please try again later.";
