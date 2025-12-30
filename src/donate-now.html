@@ -402,30 +402,13 @@
                                 <div class="causes-one__content">
                                     <h3 class="causes-one__title"><a href="#">Let's ensure education for children to provide them a good life.</a>
                                     </h3>
-                                    <p class="causes-one__text"> </p>
-                                    <div class="causes-one__progress">
-                                        <div class="causes-one__progress-shape"
-                                            style="background-image: url(assets/images/shapes/causes-one-progress-shape-1.png);">
-                                        </div>
-                                        <div class="bar">
-                                            <div class="bar-inner count-bar" data-percent="36%">
-                                                <div class="count-text">36%</div>
-                                            </div>
-                                        </div>
-                                        <div class="causes-one__goals">
-                                            <p><span>Rs. 25,270</span> Raised</p>
-                                            <p><span>Rs. 30,000</span> Goal</p>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="donate-now__upi-options-section" id="upi-payment-options">
-                                <h4 class="donate-now__upi-options-title">Choose a UPI app</h4>
-                                <div class="donate-now__upi-options">
-                                    <button type="button" class="donate-now__upi-option" data-upi-app="phonepe">PhonePe</button>
-                                    <button type="button" class="donate-now__upi-option" data-upi-app="paytm">Paytm</button>
-                                    <button type="button" class="donate-now__upi-option" data-upi-app="google_pay">Google Pay</button>
-                                </div>
+                             <div class="donate-now__upi-modal" id="upi-modal" aria-hidden="true">
+                             
+                                    <div class="donate-now__upi-qr">
+                                        <img src="assets/images/QrCode.jpeg" alt="UPI QR code for donations">
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -622,25 +605,7 @@
     <script src="assets/vendors/circleType/jquery.circleType.js"></script>
     <script src="assets/vendors/circleType/jquery.lettering.min.js"></script>
 
-    <div class="donate-now__upi-modal" id="upi-modal" aria-hidden="true">
-        <div class="donate-now__upi-modal__overlay" data-upi-modal-close></div>
-        <div class="donate-now__upi-modal__content" role="dialog" aria-modal="true"
-            aria-labelledby="upi-modal-title">
-            <div class="donate-now__upi-modal__header">
-                <h3 class="donate-now__title" id="upi-modal-title">UPI payment options</h3>
-                <button type="button" class="donate-now__upi-modal__close" aria-label="Close"
-                    data-upi-modal-close>&times;</button>
-            </div>
-            <p class="donate-now__upi-modal__text">Select your preferred UPI option to complete the
-                donation.</p>
-            <div class="donate-now__upi-qr">
-                <img src="assets/images/QrCode.jpeg" alt="UPI QR code for donations">
-            </div>
-            <div class="donate-now__upi-modal__footer">
-                <button type="button" class="donate-now__upi-modal__cancel" data-upi-modal-close>Cancel</button>
-            </div>
-        </div>
-    </div>
+  
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
