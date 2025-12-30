@@ -10,6 +10,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+const ORG_NAME = process.env.ORG_NAME;
+const ORG_REGISTERED_ADDRESS = process.env.ORG_REGISTERED_ADDRESS;
+const ORG_PAN = process.env.ORG_PAN;
+const ORG_80G_NUMBER = process.env.ORG_80G_NUMBER;
+const ORG_12A_NUMBER = process.env.ORG_12A_NUMBER;
+const ORG_ADDRESS_LINE1 = process.env.ORG_ADDRESS_LINE1;
+const ORG_ADDRESS_LINE2 = process.env.ORG_ADDRESS_LINE2;
+const ORG_CITY_STATE_PIN = process.env.ORG_CITY_STATE_PIN;
+const ORG_EMAIL = process.env.ORG_EMAIL;
+const ORG_PHONE = process.env.ORG_PHONE;
 
 if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
   console.error("Missing Razorpay credentials. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.");
@@ -23,6 +33,21 @@ const razorpay = new Razorpay({
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/org-details", (req, res) => {
+  res.json({
+    orgName: ORG_NAME || "",
+    orgRegisteredAddress: ORG_REGISTERED_ADDRESS || "",
+    orgPan: ORG_PAN || "",
+    org80gNumber: ORG_80G_NUMBER || "",
+    org12aNumber: ORG_12A_NUMBER || "",
+    orgAddressLine1: ORG_ADDRESS_LINE1 || "",
+    orgAddressLine2: ORG_ADDRESS_LINE2 || "",
+    orgCityStatePin: ORG_CITY_STATE_PIN || "",
+    orgEmail: ORG_EMAIL || "",
+    orgPhone: ORG_PHONE || ""
+  });
+});
 
 app.post("/create-order", async (req, res) => {
   try {
