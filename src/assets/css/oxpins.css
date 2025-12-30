@@ -10203,6 +10203,19 @@ body.locked .page-wrapper {
     margin-bottom: 20px;
 }
 
+.donate-now__upi-qr {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.donate-now__upi-qr img {
+    max-width: 220px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #e1e1e1;
+}
+
 .donate-now__upi-options {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
