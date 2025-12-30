@@ -166,7 +166,7 @@
   <div class="page">
     <!-- HEADER -->
     <div class="header">
-      <img class="logo" src="{{LogoUrl}}" alt="Organization Logo" />
+      <img class="logo" src="assets/img/give-logo.jpg" alt="Organization Logo" />
 
       <div class="org-top">
         <div id="org-address-line1">—</div>
@@ -203,6 +203,7 @@
       </div>
       <p class="note">We verify payments from the last 7 days.</p>
       <button type="submit" class="action-btn">Verify & Generate</button>
+      <button type="button" class="action-btn" id="print-certificate">Print / Save PDF</button>
       <p class="note" id="verification-status" aria-live="polite"></p>
     </form>
 
@@ -406,6 +407,13 @@
           status.textContent = "Unable to verify payment right now. Please try again later.";
         }
       });
+
+      const printButton = document.getElementById("print-certificate");
+      if (printButton) {
+        printButton.addEventListener("click", () => {
+          window.print();
+        });
+      }
     })();
   </script>
 </body>
