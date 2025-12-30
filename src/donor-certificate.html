@@ -115,6 +115,60 @@
       background: #e6e6e6;
       margin: 16px 0;
     }
+
+    .verification-form {
+      border: 1px solid #e6e6e6;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .verification-form .section-title {
+      margin-top: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .form-grid label {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      color: #555;
+      gap: 6px;
+    }
+
+    .form-grid input {
+      border: 1px solid #d9d9d9;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .action-btn {
+      background: #d64545;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media print {
+      .print-only-hidden {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 
@@ -122,34 +176,64 @@
   <div class="page">
     <!-- HEADER -->
     <div class="header">
-      <img class="logo" src="{{LogoUrl}}" alt="Organization Logo" />
+      <img class="logo" src="assets/img/give-logo.jpg" alt="Organization Logo" />
 
       <div class="org-top">
-        <div>{{OrgAddressLine1}}</div>
-        <div>{{OrgAddressLine2}}</div>
-        <div>{{OrgCityStatePin}}</div>
-        <div>{{OrgEmail}} | {{OrgPhone}}</div>
+        <div id="org-address-line1">—</div>
+        <div id="org-address-line2">—</div>
+        <div id="org-city-state-pin">—</div>
+        <div><span id="org-email">—</span> | <span id="org-phone">—</span></div>
       </div>
     </div>
 
+    <form class="verification-form print-only-hidden" id="certificate-form">
+      <h2 class="section-title">Generate 80G Certificate</h2>
+      <p class="summary">Enter your payment and donor details to verify your donation and generate the certificate.</p>
+      <div class="form-grid">
+        <label>
+          <span>UPI ID</span>
+          <input type="text" id="upi-id" placeholder="arunkumar674@okaxis" required />
+        </label>
+        <label>
+          <span>Donation Amount (INR)</span>
+          <input type="number" id="donation-amount" placeholder="1000" min="1" step="1" required />
+        </label>
+        <label>
+          <span>Donor Name</span>
+          <input type="text" id="donor-name" placeholder="Full name" required />
+        </label>
+        <label>
+          <span>Donor Address</span>
+          <input type="text" id="donor-address" placeholder="Full address" required />
+        </label>
+        <label>
+          <span>Donor PAN</span>
+          <input type="text" id="donor-pan" placeholder="ABCDE1234F" required />
+        </label>
+      </div>
+      <p class="note">We verify payments from the last 7 days.</p>
+      <button type="submit" class="action-btn">Verify & Generate</button>
+      <p class="note" id="verification-status" aria-live="polite"></p>
+    </form>
+
     <!-- RECEIPT NUMBER -->
-    <div class="receipt-no">Receipt No: {{ReceiptNo}}</div>
+    <div class="receipt-no">Receipt No: <span id="receipt-no">—</span></div>
 
     <!-- GREETING + SUMMARY -->
-    <p class="greeting">Dear {{DonorName}}</p>
+    <p class="greeting">Dear <span id="certificate-donor-name">—</span></p>
     <p class="summary">
-      We have received your donation of ₹ {{DonationAmountFormatted}}. Thank you for your generosity.<br/>
+      We have received your donation of ₹ <span id="certificate-amount">—</span>. Thank you for your generosity.<br/>
       The details of the donation are mentioned below.
     </p>
 
     <!-- DONATION DETAILS -->
     <div class="section-title">Donation/Tax Benefit Details</div>
-    <div class="ref">(Reference No: {{ReferenceNo}})</div>
+    <div class="ref">(Reference No: <span id="reference-no">—</span>)</div>
 
-    <div class="amount">Amount: ₹ {{DonationAmountFormatted}}</div>
+    <div class="amount">Amount: ₹ <span id="certificate-amount-highlight">—</span></div>
 
     <div class="note">
-      Donations through {{OrgName}}, a registered under section 80G of India's Income Tax Act, 1961 are tax-deductible.
+      Donations through <span id="org-name">—</span>, a registered under section 80G of India's Income Tax Act, 1961 are tax-deductible.
     </div>
 
     <div class="divider"></div>
@@ -159,21 +243,22 @@
       <div class="box">
         <h3>Organization Details</h3>
         <div class="kv">
-          <div><span class="k">Organization:</span> <span class="v">{{OrgName}}</span></div>
-          <div><span class="k">Registered Address:</span> <span class="v">{{OrgRegisteredAddress}}</span></div>
-          <div><span class="k">PAN:</span> <span class="v">{{OrgPAN}}</span></div>
-          <div><span class="k">80G:</span> <span class="v">{{Org80GNumber}}</span></div>
-          <div><span class="k">12A:</span> <span class="v">{{Org12ANumber}}</span></div>
+          <div><span class="k">Organization:</span> <span class="v" id="org-name-kv">—</span></div>
+          <div><span class="k">Registered Address:</span> <span class="v" id="org-registered-address">—</span></div>
+          <div><span class="k">PAN:</span> <span class="v" id="org-pan">—</span></div>
+          <div><span class="k">80G:</span> <span class="v" id="org-80g">—</span></div>
+          <div><span class="k">12A:</span> <span class="v" id="org-12a">—</span></div>
         </div>
       </div>
 
       <div class="box">
         <h3>Donor Details</h3>
         <div class="kv">
-          <div><span class="k">Issued to:</span> <span class="v">{{DonorName}}</span></div>
-          <div><span class="k">Address:</span> <span class="v">{{DonorAddress}}</span></div>
-          <div><span class="k">PAN:</span> <span class="v">{{DonorPAN}}</span></div>
-          <div><span class="k">Date:</span> <span class="v">{{ReceiptDate}}</span></div>
+          <div><span class="k">Issued to:</span> <span class="v" id="certificate-donor-name-kv">—</span></div>
+          <div><span class="k">Address:</span> <span class="v" id="certificate-donor-address">—</span></div>
+          <div><span class="k">PAN:</span> <span class="v" id="certificate-donor-pan">—</span></div>
+          <div><span class="k">UPI ID:</span> <span class="v" id="certificate-donor-upi">—</span></div>
+          <div><span class="k">Date:</span> <span class="v" id="receipt-date">—</span></div>
         </div>
       </div>
     </div>
@@ -181,9 +266,11 @@
     <!-- OPTIONAL EXTRA FIELDS -->
     <div class="divider"></div>
     <div class="kv" style="font-size:12px;">
-      <div><span class="k">Amount (numeric):</span> <span class="v">{{DonationAmountNumeric}}</span></div>
-      <div><span class="k">Payment Mode:</span> <span class="v">{{PaymentMode}}</span></div>
-      <div><span class="k">Transaction ID:</span> <span class="v">{{TransactionId}}</span></div>
+      <div><span class="k">Amount (numeric):</span> <span class="v" id="certificate-amount-numeric">—</span></div>
+      <div><span class="k">Payment Mode:</span> <span class="v" id="payment-mode">—</span></div>
+      <div><span class="k">Transaction ID:</span> <span class="v" id="transaction-id">—</span></div>
+      <div><span class="k">Razorpay Payment ID:</span> <span class="v" id="razorpay-payment-id">—</span></div>
+      <div><span class="k">Payment Verification:</span> <span class="v" id="payment-verification">—</span></div>
     </div>
 
     <!-- FOOTER DISCLAIMERS -->
@@ -191,8 +278,161 @@
       <p>* This is computer generated receipt and does not require a signature.</p>
       <p>* This e-receipt is invalid in case of non-realization of payment instrument, reversal of credit card charge and/or reversal of amount for any reason.</p>
       <p>* No goods or services were provided to the donor by the organization in return for the contribution.</p>
-      <p class="powered">* This is powered by {{PoweredByText}}.</p>
+      <p class="powered">* This is powered by give4society.org.</p>
+    </div>
+
+    <div class="print-only-hidden" style="text-align:center; margin: 16px 0 8px;">
+      <button type="button" class="action-btn hidden" id="print-certificate">Print / Save PDF</button>
     </div>
   </div>
+  <script>
+    (function () {
+      const form = document.getElementById("certificate-form");
+      const status = document.getElementById("verification-status");
+      const apiBaseUrl = "http://localhost:5000";
+      const bindings = [
+        { inputId: "donor-name", targetIds: ["certificate-donor-name", "certificate-donor-name-kv"] },
+        { inputId: "donor-address", targetIds: ["certificate-donor-address"] },
+        { inputId: "donor-pan", targetIds: ["certificate-donor-pan"] },
+        { inputId: "upi-id", targetIds: ["certificate-donor-upi"] }
+      ];
+
+      if (!form) {
+        return;
+      }
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = value || "—";
+        }
+      };
+
+      const updateBinding = (binding) => {
+        const input = document.getElementById(binding.inputId);
+        const rawValue = input?.value?.trim() || "";
+        binding.targetIds.forEach((targetId) => setText(targetId, rawValue));
+      };
+
+      bindings.forEach((binding) => {
+        const input = document.getElementById(binding.inputId);
+        if (!input) {
+          return;
+        }
+        input.addEventListener("input", () => updateBinding(binding));
+      });
+
+      const amountInput = document.getElementById("donation-amount");
+      if (amountInput) {
+        amountInput.addEventListener("input", () => {
+          const rawValue = amountInput.value.trim();
+          const formattedValue = rawValue ? Number(rawValue).toLocaleString("en-IN") : "";
+          setText("certificate-amount", formattedValue);
+          setText("certificate-amount-highlight", formattedValue);
+          setText("certificate-amount-numeric", rawValue);
+        });
+      }
+
+      const loadOrgDetails = async () => {
+        try {
+          let data = null;
+          try {
+            const fileResponse = await fetch("ngogive.json");
+            if (fileResponse.ok) {
+              data = await fileResponse.json();
+            }
+          } catch (error) {
+            console.warn("Unable to load ngogive.json. Falling back to /org-details.");
+          }
+
+          if (!data) {
+            const response = await fetch(`${apiBaseUrl}/org-details`);
+            data = await response.json();
+            if (!response.ok) {
+              return;
+            }
+          }
+
+          const org = data.organization || data;
+          setText("org-name", org.orgName);
+          setText("org-name-kv", org.orgName);
+          setText("org-registered-address", org.orgRegisteredAddress);
+          setText("org-pan", org.orgPan);
+          setText("org-80g", org.org80gNumber);
+          setText("org-12a", org.org12aNumber);
+          setText("org-address-line1", org.orgAddressLine1);
+          setText("org-address-line2", org.orgAddressLine2);
+          setText("org-city-state-pin", org.orgCityStatePin);
+          setText("org-email", org.orgEmail);
+          setText("org-phone", org.orgPhone);
+        } catch (error) {
+          console.error("Unable to load organization details.", error);
+        }
+      };
+
+      loadOrgDetails();
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "Verifying payment with Razorpay...";
+
+        const upiId = document.getElementById("upi-id").value.trim();
+        const amount = Number(document.getElementById("donation-amount").value);
+        const donorName = document.getElementById("donor-name").value.trim();
+        const donorAddress = document.getElementById("donor-address").value.trim();
+        const donorPan = document.getElementById("donor-pan").value.trim();
+
+        try {
+          const response = await fetch(`${apiBaseUrl}/verify-upi-payment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ upiId, amount })
+          });
+          const data = await response.json();
+
+          if (!response.ok || !data.verified) {
+            status.textContent = data.error || "Payment verification failed. Please check your details.";
+            return;
+          }
+
+          status.textContent = "Payment verified. Certificate generated below.";
+
+          const today = new Date();
+          setText("receipt-date", today.toLocaleDateString("en-IN"));
+          const transactionId = data.payment?.id || `TXN-${Date.now()}`;
+          setText("receipt-no", `NGO-${today.getFullYear()}-${transactionId.slice(-6)}`);
+          setText("reference-no", transactionId);
+          setText("certificate-donor-name", donorName);
+          setText("certificate-donor-name-kv", donorName);
+          setText("certificate-donor-address", donorAddress);
+          setText("certificate-donor-pan", donorPan);
+          setText("certificate-donor-upi", upiId);
+          setText("certificate-amount", amount.toLocaleString("en-IN"));
+          setText("certificate-amount-highlight", amount.toLocaleString("en-IN"));
+          setText("certificate-amount-numeric", amount);
+          setText("payment-mode", data.payment?.method || "upi");
+          setText("transaction-id", transactionId);
+          setText("razorpay-payment-id", transactionId);
+          setText("payment-verification", "Verified");
+
+          form.classList.add("hidden");
+          if (printButton) {
+            printButton.classList.remove("hidden");
+          }
+        } catch (error) {
+          status.textContent = "Unable to verify payment right now. Please try again later.";
+        }
+      });
+
+      const printButton = document.getElementById("print-certificate");
+      if (printButton) {
+        printButton.addEventListener("click", () => {
+          window.print();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
