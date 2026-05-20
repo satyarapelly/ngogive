@@ -62,7 +62,7 @@ function InfoCard({ icon: Icon, title, items }) { return <div className="card"><
 
 function ProgramCard({ program, onOpen }){
   const subCategories = (program.subCategories || []).slice(0, 3)
-  return <div className="program-card"><div className="program-image-wrap"><img src={program.defaultImage} alt={program.title} /></div><div className="program-body"><p>{program.overview}</p><p className="subcat-title">Sub-categories of work</p><ul className="subcat-list">{subCategories.map(item => <li key={item.title}>{item.title}</li>)}</ul><div className="sdg-row">{program.sdgs.slice(0,4).map(s=><img key={s} src={getSdgImagePath(s)} alt={`SDG ${s}`} />)}</div><button className="text-link" onClick={()=>onOpen(program.slug)}>Know More <ArrowRight size={15}/></button></div></div>
+  return <div className="program-card"><div className="program-image-wrap"><img src={program.defaultImage} alt={program.title} /></div><div className="program-body"><h3>{program.title}</h3><p>{program.overview}</p><p className="subcat-title">Sub-categories of work</p><ul className="subcat-list">{subCategories.map(item => <li key={item.title}>{item.title}</li>)}</ul><div className="sdg-row">{program.sdgs.slice(0,4).map(s=><img key={s} src={getSdgImagePath(s)} alt={`SDG ${s}`} />)}</div><button className="text-link" onClick={()=>onOpen(program.slug)}>Know More <ArrowRight size={15}/></button></div></div>
 }
 
 function Work({ onOpenProgram }){ return <section id="work" className="gray-section"><div className="section-heading"><p className="eyebrow">OUR WORK</p><h2>Core areas designed for dignity, access, resilience, and opportunity.</h2></div><div className="program-grid">{programs.map(p=><ProgramCard key={p.slug} program={p} onOpen={onOpenProgram}/>)}</div></section> }
