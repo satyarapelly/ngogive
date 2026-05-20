@@ -25,10 +25,11 @@ export const impact = [
 
 
 
-const makeSubCategory = (programSlug, slug, title, description) => ({
+const makeSubCategory = (programSlug, slug, title, description, kpi) => ({
   title,
-  image: `/assets/images/programs/core-area/${programSlug}/${slug}.jpg`,
+  image: `/assets/images/programs/${programSlug}/${slug}.jpg`,
   description,
+  kpi,
 })
 
 export function getSdgImagePath(number) {
@@ -43,11 +44,11 @@ export const programs = [
     logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/core-area/empowering-rural-learning/logos/empowering-rural-learning-logo.jpg'],
     sdgs: [3,4,6,10,17],
     subCategories: [
-      makeSubCategory('empowering-rural-learning', 'classroom-infrastructure', 'Classroom Infrastructure', 'Upgrading school spaces with desks, repairs, and essentials for safe learning.'),
-      makeSubCategory('empowering-rural-learning', 'stem-labs', 'STEM & Science Labs', 'Hands-on science and STEM lab support to improve practical learning outcomes.'),
-      makeSubCategory('empowering-rural-learning', 'digital-learning', 'Digital Learning', 'Digital tools and computer access to build modern learning skills.'),
-      makeSubCategory('empowering-rural-learning', 'school-wash', 'School WASH', 'Clean water, toilets, and hygiene facilities to support attendance and dignity.'),
-      makeSubCategory('empowering-rural-learning', 'back-to-school', 'Back to School', 'Learning kits and support that help vulnerable children return to school.'),
+      makeSubCategory('empowering-rural-learning', 'classroom-infrastructure', 'Classroom Infrastructure', 'Upgrading school spaces with desks, repairs, and essentials for safe learning.', '20+ schools upgraded'),
+      makeSubCategory('empowering-rural-learning', 'stem-labs', 'STEM & Science Labs', 'Hands-on science and STEM lab support to improve practical learning outcomes.', 'Lab utilization improved'),
+      makeSubCategory('empowering-rural-learning', 'digital-learning', 'Digital Learning', 'Digital tools and computer access to build modern learning skills.', '2,000+ students supported'),
+      makeSubCategory('empowering-rural-learning', 'school-wash', 'School WASH', 'Clean water, toilets, and hygiene facilities to support attendance and dignity.', 'Safe WASH facilities added'),
+      makeSubCategory('empowering-rural-learning', 'back-to-school', 'Back to School', 'Learning kits and support that help vulnerable children return to school.', 'Return-to-school support delivered'),
     ],
     overview: 'Strengthening government schools through classrooms, benches, STEM labs, digital learning, libraries, safe drinking water, toilets, and Back to School support.',
     beneficiaries: ['Government school students in rural and tribal areas','Adolescent girls requiring school health and hygiene support','Teachers, school administrators, and local education systems'],
@@ -63,10 +64,10 @@ export const programs = [
     logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/sthree-swabhiman/logos/sthree-swabhiman-logo.jpg','/assets/images/programs/core-area/sthree-swabhiman/logos/MJPTBCWREIS_logo.jpg'],
     sdgs: [3,4,5,6,10],
     subCategories: [
-      makeSubCategory('sthree-swabhiman', 'awareness-sessions', 'Awareness Sessions', 'Menstrual health education for adolescent girls, wardens, and school communities.'),
-      makeSubCategory('sthree-swabhiman', 'starter-kit-distribution', 'Starter Kit Distribution', 'Distribution of sanitary starter kits to ensure safe and dignified menstrual care.'),
-      makeSubCategory('sthree-swabhiman', 'safe-disposal-infrastructure', 'Safe Disposal Infrastructure', 'Incinerator and disposal-system support for hygienic menstrual waste management.'),
-      makeSubCategory('sthree-swabhiman', 'peer-mentor-training', 'Peer Mentor Training', 'Training peer mentors to sustain awareness and support inside institutions.'),
+      makeSubCategory('sthree-swabhiman', 'awareness-sessions', 'Awareness Sessions', 'Menstrual health education for adolescent girls, wardens, and school communities.', '1,23,000 girls reached'),
+      makeSubCategory('sthree-swabhiman', 'starter-kit-distribution', 'Starter Kit Distribution', 'Distribution of sanitary starter kits to ensure safe and dignified menstrual care.', '88,000 kits distributed'),
+      makeSubCategory('sthree-swabhiman', 'safe-disposal-infrastructure', 'Safe Disposal Infrastructure', 'Incinerator and disposal-system support for hygienic menstrual waste management.', '550 incinerators proposed'),
+      makeSubCategory('sthree-swabhiman', 'peer-mentor-training', 'Peer Mentor Training', 'Training peer mentors to sustain awareness and support inside institutions.', '825+ mentors trained'),
     ],
     overview: 'Sthree Swabhiman promotes menstrual health, dignity, awareness, starter kits, safe disposal infrastructure, and institutional self-reliance for adolescent girls.',
     beneficiaries: ['Adolescent girls in residential schools and junior colleges','BC, SC, ST, and minority girls from underserved communities','Lady wardens, teachers, peer mentors, and school communities'],
@@ -164,4 +165,18 @@ export const programs = [
     beneficiaries: ['Local communities','Youth volunteers and donors','Schools and villages','Awareness campaign participants'], metrics: ['Blood donation camps','Public awareness drives','Swachh Bharat campaigns','Volunteer mobilization','Village social action'],
     kpis: ['Camps conducted','Donors participated','Volunteers mobilized','People reached','Community partnerships'], monitoring: ['Camp records','Volunteer hours','Photo documentation','Partner confirmations','Feedback tracking'], activities: ['Blood donation camps','Awareness campaigns','Cleanliness drives','Volunteer engagement','Village events','Civic awareness']
   }
-]
+].map((program) => ({
+  ...program,
+  problemStatement: program.problemStatement || `Communities served by ${program.shortTitle} continue to face access and quality gaps that limit equitable development outcomes.`,
+  objectives: program.objectives || [
+    `Expand reach and quality of ${program.shortTitle.toLowerCase()} interventions in underserved locations.`,
+    'Improve access, inclusion, and continuity of essential services.',
+    'Build local ownership through institutions, community actors, and partnerships.',
+  ],
+  gallery: (program.gallery || (program.subCategories?.map((item) => item.image).filter(Boolean).slice(0, 8) ?? [])).map((item, index) => (
+    typeof item === 'string'
+      ? { image: item, label: `${program.shortTitle} — Field Location ${index + 1}` }
+      : { ...item, label: item.label || `${program.shortTitle} — Field Location ${index + 1}` }
+  )),
+  downloads: program.downloads || [],
+}))
