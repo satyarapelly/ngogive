@@ -7,6 +7,18 @@ export const awards = [
   { title: 'Best Women Empowerment Award', organization: 'PURE', year: '2018' },
 ]
 
+export const awardGallery = [
+  '/assets/images/programs/sthree-swabhiman/slide12-award.jpg',
+  '/assets/images/programs/sthree-swabhiman/slide12-governor.jpg',
+  '/assets/images/programs/sthree-swabhiman/slide12-banner.jpg',
+]
+
+export const mouMoc = [
+  'MoU with Telangana state-level departments for community development and institutional outreach',
+  'MoC with district-level education authorities for school infrastructure and student support',
+  'MoU with district administration partners for health, awareness, and field implementation',
+]
+
 export const accreditations = [
   'Registered Society under Societies Registration Act, Reg. No. 1255/2017',
   'CSR-1 Registered: CSR00059346',
@@ -63,11 +75,6 @@ export const programs = [
         title: 'School Tournaments',
         image: '/assets/images/programs/empowering-rural-learning/school-tournaments.jpg',
         description: 'Inter-school tournaments that encourage participation and talent identification.',
-      },
-      {
-        title: 'Student Leadership & Fitness',
-        image: '/assets/images/programs/empowering-rural-learning/student-leadership-fitness.jpg',
-        description: 'Leadership-building activities through sports and teamwork to improve student confidence and wellbeing.',
       },
     ],
     overview: 'Strengthening government schools through classrooms, benches, STEM labs, digital learning, libraries, safe drinking water, toilets, and Back to School support.',
