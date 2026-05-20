@@ -27,7 +27,7 @@ export const impact = [
 
 const makeSubCategory = (programSlug, slug, title, description, kpi) => ({
   title,
-  image: `/assets/images/programs/core-area/${programSlug}/${slug}.jpg`,
+  image: `/assets/images/programs/${programSlug}/${slug}.jpg`,
   description,
   kpi,
 })
