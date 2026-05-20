@@ -41,12 +41,7 @@ export default function ProgramDetailPage() {
       <section className="content-section"><div><h2>Monitoring & Evaluation</h2><ul className="nice-list">{program.monitoring.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
 
       <section className="sdg-section"><div><h2>SDG Alignment</h2><div className="big-sdgs">{program.sdgs.map((sdg) => <img key={sdg} src={getSdgImagePath(sdg)} alt={`SDG ${sdg}`} loading="lazy" />)}</div></div></section>
-      <section className="gray-section"><div><h2>Gallery / Field Photos</h2><div className="gallery-grid">{program.gallery.map((item, i) => (
-        <figure className="gallery-tile with-caption" key={`${item.image}-${i}`}>
-          <img src={item.image} alt={`${program.shortTitle} field photo ${i + 1}`} loading="lazy" />
-          <figcaption>{item.label}</figcaption>
-        </figure>
-      ))}</div></div></section>
+      <section className="gray-section"><div><h2>Gallery / Field Photos</h2><div className="gallery-grid">{program.gallery.map((image, i) => <div className="gallery-tile" key={`${image}-${i}`}><img src={image} alt={`${program.shortTitle} field photo ${i + 1}`} loading="lazy" /></div>)}</div></div></section>
       <section className="content-section"><div><h2>Related Downloads / Proposal Documents</h2>{program.downloads.length ? <ul className="nice-list">{program.downloads.map((file) => <li key={file.url}><a href={file.url} target="_blank" rel="noreferrer">{file.title}</a></li>)}</ul> : <p>No downloads available for this program yet.</p>}</div></section>
       <section className="content-section"><div className="cta"><h2>Call to Action</h2><p>Support {program.shortTitle} by partnering with GIVE for scalable and measurable outcomes across underserved communities.</p><Link className="btn btn-primary" to="/">Partner With Us</Link></div></section>
     </main>

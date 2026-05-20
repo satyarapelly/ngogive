@@ -173,10 +173,6 @@ export const programs = [
     'Improve access, inclusion, and continuity of essential services.',
     'Build local ownership through institutions, community actors, and partnerships.',
   ],
-  gallery: (program.gallery || (program.subCategories?.map((item) => item.image).filter(Boolean).slice(0, 8) ?? [])).map((item, index) => (
-    typeof item === 'string'
-      ? { image: item, label: `${program.shortTitle} — Field Location ${index + 1}` }
-      : { ...item, label: item.label || `${program.shortTitle} — Field Location ${index + 1}` }
-  )),
+  gallery: program.gallery || (program.subCategories?.map((item) => item.image).filter(Boolean).slice(0, 8) ?? []),
   downloads: program.downloads || [],
 }))
