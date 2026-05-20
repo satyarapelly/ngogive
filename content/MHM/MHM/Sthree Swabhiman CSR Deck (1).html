@@ -1,0 +1,1427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sthree Swabhiman — CSR Partnership Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --type-display:   116px;
+    --type-title:     64px;
+    --type-subtitle:  44px;
+    --type-body:      30px;
+    --type-small:     24px;
+    --type-eyebrow:   22px;
+
+    --pad-top:    100px;
+    --pad-bottom: 90px;
+    --pad-x:      110px;
+    --gap-title:  44px;
+
+    --bg:          oklch(0.972 0.010 85);
+    --bg-warm:     oklch(0.945 0.018 70);
+    --bg-deep:     oklch(0.22 0.018 25);
+    --ink:         oklch(0.21 0.015 280);
+    --ink-2:       oklch(0.36 0.012 280);
+    --ink-3:       oklch(0.52 0.010 280);
+    --rule:        oklch(0.85 0.012 60);
+    --rule-2:      oklch(0.78 0.014 60);
+    --wine:        oklch(0.40 0.110 20);
+    --wine-soft:   oklch(0.62 0.085 22);
+    --gold:        oklch(0.68 0.090 75);
+    --cream:       oklch(0.98 0.012 85);
+
+    /* official SDG brand colors */
+    --sdg-3:  #4C9F38;
+    --sdg-4:  #C5192D;
+    --sdg-5:  #FF3A21;
+    --sdg-6:  #26BDE2;
+    --sdg-10: #DD1367;
+
+    --serif: 'Spectral', 'Source Serif 4', Georgia, serif;
+    --sans:  'IBM Plex Sans', system-ui, sans-serif;
+    --mono:  'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  html, body { margin:0; padding:0; background:#1a1614; }
+  body { font-family: var(--sans); color: var(--ink); }
+
+  deck-stage section {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .frame { position: absolute; inset: 0; padding: var(--pad-top) var(--pad-x) var(--pad-bottom); display: flex; flex-direction: column; }
+  .frame.dark { background: var(--bg-deep); color: var(--cream); }
+  .frame.warm { background: var(--bg-warm); }
+
+  .topbar {
+    position: absolute; top: 44px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 16px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .frame.dark .topbar { color: oklch(0.75 0.015 60); }
+  .topbar .mark { display: flex; align-items: center; gap: 14px; }
+  .topbar .mark .dot { width: 10px; height: 10px; border-radius: 999px; background: var(--wine); display: inline-block; }
+  .topbar .mark .name { letter-spacing: 0.22em; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow); letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--wine);
+    margin: 0 0 22px; display: flex; align-items: center; gap: 18px;
+  }
+  .eyebrow .rule { width: 56px; height: 1px; background: var(--wine); display: inline-block; }
+  .frame.dark .eyebrow { color: var(--gold); }
+  .frame.dark .eyebrow .rule { background: var(--gold); }
+
+  h1.slide-title {
+    font-family: var(--serif); font-weight: 500; font-size: var(--type-title);
+    line-height: 1.05; letter-spacing: -0.018em;
+    margin: 0 0 var(--gap-title); color: inherit;
+    max-width: 1500px; text-wrap: balance;
+  }
+  h1.slide-title em { font-style: italic; color: var(--wine); font-weight: 500; }
+  .frame.dark h1.slide-title em { color: var(--gold); }
+
+  p.lede { font-family: var(--serif); font-weight: 300; font-size: 36px; line-height: 1.35; color: var(--ink-2); max-width: 1400px; margin: 0; text-wrap: pretty; }
+  p.body  { font-size: var(--type-body); line-height: 1.45; color: var(--ink-2); margin: 0; text-wrap: pretty; }
+  p.small { font-size: var(--type-small); line-height: 1.5; color: var(--ink-3); margin: 0; }
+
+  .metric { display: flex; flex-direction: column; gap: 8px; }
+  .metric .num {
+    font-family: var(--serif); font-weight: 500; font-size: 96px;
+    line-height: 0.95; letter-spacing: -0.02em; color: var(--ink);
+  }
+  .frame.dark .metric .num { color: var(--cream); }
+  .metric .num .unit { font-size: 0.45em; font-weight: 400; color: var(--ink-3); margin-left: 8px; letter-spacing: 0; }
+  .frame.dark .metric .num .unit { color: oklch(0.70 0.015 60); }
+  .metric .lbl {
+    font-family: var(--mono); font-size: 16px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .frame.dark .metric .lbl { color: oklch(0.72 0.015 60); }
+
+  table.data { width: 100%; border-collapse: collapse; font-size: var(--type-small); }
+  table.data th, table.data td { text-align: left; padding: 20px 18px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.data th { font-family: var(--mono); font-weight: 500; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); padding-top: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--ink); }
+  table.data td { color: var(--ink-2); }
+  table.data td strong { color: var(--ink); font-weight: 600; }
+  table.data tr:last-child td { border-bottom: 0; }
+  table.data td.num, table.data th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data td.amt { font-family: var(--serif); font-weight: 500; font-size: 28px; color: var(--ink); }
+
+  .card { border: 1px solid var(--rule); padding: 28px 28px 26px; background: var(--cream); display: flex; flex-direction: column; gap: 14px; }
+  .frame.dark .card { background: oklch(0.27 0.020 25); border-color: oklch(0.40 0.020 25); color: var(--cream); }
+  .card .step { font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase; }
+  .frame.dark .card .step { color: var(--gold); }
+  .card h3 { font-family: var(--serif); font-weight: 500; font-size: 30px; line-height: 1.15; margin: 0; color: inherit; letter-spacing: -0.01em; }
+  .card p { font-size: 18px; line-height: 1.5; color: var(--ink-2); margin: 0; }
+  .frame.dark .card p { color: oklch(0.80 0.018 60); }
+  .card .when { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule); }
+  .frame.dark .card .when { color: oklch(0.70 0.018 60); border-top-color: oklch(0.40 0.020 25); }
+
+  .photo {
+    background-size: cover; background-position: center;
+    background-color: oklch(0.88 0.015 60);
+  }
+
+  .logo-lockup { display: inline-flex; align-items: center; gap: 14px; font-family: var(--serif); color: inherit; }
+  .logo-img { display:block; }
+
+  .hr-rule { height: 1px; background: var(--rule); width: 100%; border: 0; }
+  .frame.dark .hr-rule { background: oklch(0.40 0.020 25); }
+
+  .nice-shadow {
+    box-shadow:
+      0 1px 0 rgba(120,80,60,0.06),
+      0 8px 28px rgba(60,30,20,0.10),
+      0 24px 60px rgba(60,30,20,0.08);
+  }
+
+  /* SDG tile */
+  .sdg-tile {
+    aspect-ratio: 1/1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 18px;
+    color: #fff;
+    font-family: var(--sans);
+  }
+  .sdg-tile .sdg-head { font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; opacity: 0.95; }
+  .sdg-tile .sdg-num { font-family: var(--serif); font-size: 110px; line-height: 1; font-weight: 500; letter-spacing: -0.03em; align-self: end; }
+  .sdg-tile .sdg-label { font-family: var(--sans); font-size: 18px; font-weight: 600; line-height: 1.1; align-self: end; }
+  .sdg-tile .sdg-icon { width: 64px; height: 64px; align-self: end; justify-self: end; }
+  .sdg-tile .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .sdg-tile .bottom { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 12px; }
+</style>
+<script type="application/json" id="speaker-notes">
+["","","","","","","","","","","","","","","","",""]
+</script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+<!-- ============================== 01 — TITLE ============================== -->
+<section data-screen-label="01 Title">
+  <div class="frame" style="padding: 80px var(--pad-x) 80px;">
+    <!-- top bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="logo-lockup">
+        <img class="logo-img" src="assets/give-for-society-logo.jpg" alt="Give For Society" style="width:84px; height:84px; border-radius: 50%;" />
+        <span style="display:flex; flex-direction:column; gap:2px;">
+          <span style="font-family: var(--serif); font-size: 28px; font-weight: 500; letter-spacing:-0.01em;">Give For Society</span>
+          <span style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform:uppercase; color: var(--ink-3);">Reg. 1255/2017 · Hyderabad</span>
+        </span>
+      </div>
+      <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); text-align:right; line-height: 1.8;">
+        CSR Partnership Proposal<br/>
+        Academic Year 2026–27
+      </div>
+    </div>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1.18fr 1fr; gap: 80px; align-items:center; margin-top: 50px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 36px;"><span class="rule"></span>Menstrual Hygiene &amp; Dignity Initiative</div>
+        <div style="font-family: var(--serif); font-weight: 500; font-size: 168px; line-height: 0.92; letter-spacing: -0.028em; color: var(--ink);">
+          Sthree<br/>
+          <span style="color: var(--wine); font-style: italic; font-weight: 400;">Swabhiman</span>
+        </div>
+        <div style="margin-top: 48px; font-family: var(--serif); font-weight: 300; font-size: 34px; line-height: 1.3; color: var(--ink-2); max-width: 820px;">
+          Dignity, awareness, and safe infrastructure for <strong style="color: var(--ink); font-weight: 500;">1,23,000 adolescent girls</strong> across 275 government residential institutions in Telangana.
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap: 36px;">
+        <img src="assets/sthree-swabhiman-logo.png" alt="Sthree Swabhiman" style="width: 480px; height: 480px; object-fit: contain;" />
+        <div style="display:flex; align-items:center; gap: 28px; padding: 18px 28px; border: 1px solid var(--rule); background: var(--cream);">
+          <img src="assets/mjptbcwreis-logo.webp" alt="MJPTBCWREIS" style="height: 64px; width: auto;" />
+          <div style="text-align:left; line-height:1.25;">
+            <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform:uppercase; color: var(--ink-3);">In partnership with</div>
+            <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--ink);">MJPTBCWREIS</div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform:uppercase; color: var(--ink-3);">Government of Telangana</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute; bottom: 50px; left: var(--pad-x); right: var(--pad-x); display:flex; justify-content:space-between; align-items:center; font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); padding-top: 22px; border-top: 1px solid var(--rule);">
+      <span>★ Telangana Governor's Excellence Award 2025</span>
+      <span>01</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 02 — EXECUTIVE SUMMARY ============================== -->
+<section data-screen-label="02 Executive Summary">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>02 · Executive Summary</span>
+    </div>
+
+    <div class="eyebrow"><span class="rule"></span>Executive Summary</div>
+    <h1 class="slide-title">A government-partnered programme to end period <em>absenteeism, shame, and unsafe disposal</em> across 275 campuses.</h1>
+
+    <div style="display:grid; grid-template-columns: 1.25fr 1fr; gap: 90px; flex:1;">
+      <div style="display:flex; flex-direction:column; gap: 32px;">
+        <p class="body" style="font-size: 25px;">
+          Sthree Swabhiman is a structured Menstrual Hygiene Management initiative for adolescent girls in MJPTBCWREIS residential schools and junior colleges across Telangana — combining annual awareness, sanitary napkin starter kits, permanent incinerator infrastructure, and Training of Trainers.
+        </p>
+        <p class="body" style="font-size: 25px;">
+          The programme is endorsed by a Memorandum of Collaboration with the Secretary, MJPTBCWREIS, and a pilot launched in November 2025 in Warangal reached 1,200+ students.
+        </p>
+        <div style="margin-top: auto; display:flex; gap: 36px; padding-top: 28px; border-top: 1px solid var(--rule);">
+          <div class="metric"><div class="num">₹8.04<span class="unit">Cr</span></div><div class="lbl">Total Funding Ask</div></div>
+          <div class="metric"><div class="num">1 yr</div><div class="lbl">Programme Cycle</div></div>
+          <div class="metric"><div class="num">3 yr</div><div class="lbl">To Self-Reliance</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-rows: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--ink);">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 22px 0; border-bottom: 1px solid var(--rule);">
+          <span style="font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Implementing Agency</span>
+          <span style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Give For Society</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 22px 0; border-bottom: 1px solid var(--rule);">
+          <span style="font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Govt. Partner</span>
+          <span style="font-family: var(--serif); font-size: 26px; font-weight: 500;">MJPTBCWREIS</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 22px 0; border-bottom: 1px solid var(--rule);">
+          <span style="font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Institutions</span>
+          <span style="font-family: var(--serif); font-size: 26px; font-weight: 500;">275 girls-only campuses</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 22px 0; border-bottom: 1px solid var(--rule);">
+          <span style="font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Reach</span>
+          <span style="font-family: var(--serif); font-size: 26px; font-weight: 500;">~1,23,000 girls annually</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 03 — THE PROBLEM ============================== -->
+<section data-screen-label="03 The Problem">
+  <div class="frame dark" style="padding: 0;">
+    <div style="position:absolute; inset:0; display:grid; grid-template-columns: 1fr 1.1fr;">
+      <div class="photo" style="background-image: url('assets/photo-marathon-awareness.jpg');"></div>
+      <div style="padding: var(--pad-top) var(--pad-x) var(--pad-bottom); display:flex; flex-direction:column;">
+        <div class="topbar" style="left: auto; right: var(--pad-x); width: auto;">
+          <span>03 · The Problem</span>
+        </div>
+        <div class="eyebrow"><span class="rule"></span>The Problem</div>
+        <h1 class="slide-title" style="color: var(--cream); font-size: 84px;">For a girl in a rural residential school, her period costs her <em>five school days every month</em>.</h1>
+        <p class="lede" style="color: oklch(0.82 0.018 60); margin-top: 18px; font-size: 30px;">
+          Across MJPTBCWREIS campuses, menstruation collides with three failures at once: no awareness, no reliable products, and nowhere safe to dispose of waste. The result is silence, shame, and absence.
+        </p>
+        <div style="margin-top: auto; padding-top: 28px; border-top: 1px solid oklch(0.40 0.020 25); display:flex; justify-content: space-between; font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: oklch(0.65 0.015 60);">
+          <span>★ Telangana Governor's Excellence Award 2025</span>
+          <span>Sthree Swabhiman · 03</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 04 — REALITIES ============================== -->
+<section data-screen-label="04 Realities">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>04 · Why It Matters</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Four Realities of Period Poverty</div>
+    <h1 class="slide-title">The scale of the gap, in four numbers.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
+      <div style="padding: 50px 32px 36px; border-right: 1px solid var(--rule); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family: var(--serif); font-weight: 500; font-size: 200px; line-height: 0.9; letter-spacing: -0.04em; color: var(--wine);">4–5</div>
+        <div><div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px;">School days lost</div>
+        <p class="body" style="font-size: 22px;">Days each girl in a residential institution misses every month due to menstruation.</p></div>
+      </div>
+      <div style="padding: 50px 32px 36px; border-right: 1px solid var(--rule); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family: var(--serif); font-weight: 500; font-size: 200px; line-height: 0.9; letter-spacing: -0.04em; color: var(--wine);">50<span style="font-size: 0.5em;">%</span></div>
+        <div><div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px;">Unsafe alternatives</div>
+        <p class="body" style="font-size: 22px;">Of rural girls still use cloth, paper or ash in place of sanitary protection.</p></div>
+      </div>
+      <div style="padding: 50px 32px 36px; border-right: 1px solid var(--rule); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family: var(--serif); font-weight: 500; font-size: 200px; line-height: 0.9; letter-spacing: -0.04em; color: var(--wine);">0</div>
+        <div><div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px;">Safe disposal sites</div>
+        <p class="body" style="font-size: 22px;">Most MJPTBCWREIS campuses have no incinerator — waste is openly burned or buried.</p></div>
+      </div>
+      <div style="padding: 50px 32px 36px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family: var(--serif); font-weight: 500; font-size: 200px; line-height: 0.9; letter-spacing: -0.04em; color: var(--wine);">1<span style="font-size: 0.5em;">×</span></div>
+        <div><div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px;">Structured sessions</div>
+        <p class="body" style="font-size: 22px;">The number of menstrual hygiene sessions most girls receive in their entire schooling.</p></div>
+      </div>
+    </div>
+
+    <p class="small" style="margin-top: 24px; font-style: italic;">Source: Programme baseline survey, MJPTBCWREIS pilot, Warangal Dist., Nov 2025.</p>
+  </div>
+</section>
+
+<!-- ============================== 05 — OUR RESPONSE ============================== -->
+<section data-screen-label="05 Our Response">
+  <div class="frame warm">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>05 · Our Response</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Our Response</div>
+    <h1 class="slide-title">A four-part programme, delivered annually, designed to <em>graduate to institutional self-reliance</em> by Year 3.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: repeat(4, 1fr); gap: 28px;">
+      <div class="card">
+        <div class="step">Pillar 01 · Awareness</div>
+        <h3>Structured MHM sessions in every institution, every year.</h3>
+        <p>One-day workshops on menstrual cycle, hygiene, myth-busting, and emotional well-being — delivered in Telugu.</p>
+        <div class="when">275 sessions / yr</div>
+      </div>
+      <div class="card">
+        <div class="step">Pillar 02 · Access</div>
+        <h3>Starter kits placed in the hands of every newly-enrolled girl.</h3>
+        <p>12 sanitary napkin packs per girl, with a user guide and demonstration on safe disposal practice.</p>
+        <div class="when">88,000 kits / yr</div>
+      </div>
+      <div class="card">
+        <div class="step">Pillar 03 · Infrastructure</div>
+        <h3>Permanent eco-friendly incinerators on every campus.</h3>
+        <p>Two units per institution — a one-time capital investment with a 10+ year service life and on-site training.</p>
+        <div class="when">550 units installed</div>
+      </div>
+      <div class="card">
+        <div class="step">Pillar 04 · Capacity</div>
+        <h3>Training of Trainers, so the programme outlives our presence.</h3>
+        <p>Lady wardens, science teachers, and peer-mentor students are certified to deliver content independently.</p>
+        <div class="when">825+ trained</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 06 — PROGRAMME COMPONENTS (image tiles) ============================== -->
+<section data-screen-label="06 Programme Components">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>06 · Programme Components</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>What Each Girl Receives</div>
+    <h1 class="slide-title">Four interventions, delivered together on every campus.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: repeat(4, 1fr); gap: 22px;">
+      <!-- AWARENESS -->
+      <div style="display:flex; flex-direction:column; border: 1px solid var(--rule); background: var(--cream);">
+        <div class="photo" style="background-image:url('assets/photo-workshop-speaker.jpg'); aspect-ratio: 4/5;"></div>
+        <div style="padding: 24px 22px 22px; display:flex; flex-direction:column; gap: 12px; flex:1;">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine);">01 · Awareness</div>
+          <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0; letter-spacing: -0.01em;">One-day MHM workshop in every institution.</h3>
+          <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Menstrual cycle, hygiene, myth-busting, emotional well-being &amp; incinerator use. Telugu flipbooks + facilitator script.</p>
+          <div style="margin-top: auto; padding-top: 14px; display:flex; justify-content:space-between; align-items:baseline; border-top: 1px solid var(--rule);">
+            <span style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Per year</span>
+            <span style="font-family: var(--serif); font-size: 30px; color: var(--ink); font-weight: 500;">275<span style="font-size: 14px; color: var(--ink-3); margin-left: 6px;">sessions</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCESS -->
+      <div style="display:flex; flex-direction:column; border: 1px solid var(--rule); background: var(--cream);">
+        <div class="photo" style="background-image:url('assets/photo-pads-distribution.jpg'); aspect-ratio: 4/5;"></div>
+        <div style="padding: 24px 22px 22px; display:flex; flex-direction:column; gap: 12px; flex:1;">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine);">02 · Access</div>
+          <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0; letter-spacing: -0.01em;">Sanitary napkin starter kits in every girl's hands.</h3>
+          <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">12 packs per newly-enrolled girl, with a printed user guide and live demonstration on safe disposal practice.</p>
+          <div style="margin-top: auto; padding-top: 14px; display:flex; justify-content:space-between; align-items:baseline; border-top: 1px solid var(--rule);">
+            <span style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Per year</span>
+            <span style="font-family: var(--serif); font-size: 30px; color: var(--ink); font-weight: 500;">88,000<span style="font-size: 14px; color: var(--ink-3); margin-left: 6px;">kits</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFRASTRUCTURE -->
+      <div style="display:flex; flex-direction:column; border: 1px solid var(--rule); background: var(--cream);">
+        <div class="photo" style="background-image:url('assets/photo-incinerator.png'); aspect-ratio: 4/5;"></div>
+        <div style="padding: 24px 22px 22px; display:flex; flex-direction:column; gap: 12px; flex:1;">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine);">03 · Infrastructure</div>
+          <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0; letter-spacing: -0.01em;">Permanent eco-friendly incinerators on every campus.</h3>
+          <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Two units per institution. One-time capital investment with a 10+ year service life and first-year maintenance contract.</p>
+          <div style="margin-top: auto; padding-top: 14px; display:flex; justify-content:space-between; align-items:baseline; border-top: 1px solid var(--rule);">
+            <span style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Total install</span>
+            <span style="font-family: var(--serif); font-size: 30px; color: var(--ink); font-weight: 500;">550<span style="font-size: 14px; color: var(--ink-3); margin-left: 6px;">units</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAPACITY -->
+      <div style="display:flex; flex-direction:column; border: 1px solid var(--rule); background: var(--cream);">
+        <div class="photo" style="background-image:url('assets/photo-group-poster.jpg'); aspect-ratio: 4/5;"></div>
+        <div style="padding: 24px 22px 22px; display:flex; flex-direction:column; gap: 12px; flex:1;">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine);">04 · Capacity</div>
+          <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0; letter-spacing: -0.01em;">Training of Trainers, so the programme outlives us.</h3>
+          <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Lady wardens, science teachers and senior peer mentors are ToT-certified to sustain delivery from Year 2 onwards.</p>
+          <div style="margin-top: auto; padding-top: 14px; display:flex; justify-content:space-between; align-items:baseline; border-top: 1px solid var(--rule);">
+            <span style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Trained</span>
+            <span style="font-family: var(--serif); font-size: 30px; color: var(--ink); font-weight: 500;">825+<span style="font-size: 14px; color: var(--ink-3); margin-left: 6px;">people</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 07 — WHO WE REACH ============================== -->
+<section data-screen-label="07 Who We Reach">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>07 · Who We Reach</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Who We Reach</div>
+    <h1 class="slide-title">Targeting the most underserved adolescent demographic in the state.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1.25fr 1fr; gap: 80px;">
+      <div style="display:flex; flex-direction:column; gap: 32px;">
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule);">
+          <div style="padding: 28px 16px 24px 0;">
+            <div class="metric"><div class="num">275</div><div class="lbl">Institutions</div></div>
+            <p class="small" style="margin-top: 10px;">146 schools &amp;<br/>129 jr. colleges</p>
+          </div>
+          <div style="padding: 28px 16px 24px 24px; border-left: 1px solid var(--rule);">
+            <div class="metric"><div class="num">1.23<span class="unit">L</span></div><div class="lbl">Girls / yr</div></div>
+            <p class="small" style="margin-top: 10px;">Classes VI–XII +<br/>Intermediate I &amp; II</p>
+          </div>
+          <div style="padding: 28px 16px 24px 24px; border-left: 1px solid var(--rule);">
+            <div class="metric"><div class="num">88<span class="unit">K</span></div><div class="lbl">Kit recipients</div></div>
+            <p class="small" style="margin-top: 10px;">Newly enrolled<br/>each year</p>
+          </div>
+          <div style="padding: 28px 16px 24px 24px; border-left: 1px solid var(--rule);">
+            <div class="metric"><div class="num">10</div><div class="lbl">Districts</div></div>
+            <p class="small" style="margin-top: 10px;">All erstwhile<br/>districts of Telangana</p>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px;">Community composition</div>
+          <div style="height: 22px; width: 100%; display: flex;">
+            <div style="background: var(--wine); width: 38%;"></div>
+            <div style="background: var(--gold); width: 26%;"></div>
+            <div style="background: var(--wine-soft); width: 22%;"></div>
+            <div style="background: var(--ink-3); width: 14%;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px;">
+            <span><span style="display:inline-block; width:10px; height:10px; background:var(--wine); margin-right:8px;"></span>BC</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:var(--gold); margin-right:8px;"></span>SC</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:var(--wine-soft); margin-right:8px;"></span>ST</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:var(--ink-3); margin-right:8px;"></span>Minority</span>
+          </div>
+        </div>
+
+        <p class="body" style="font-size: 25px; margin-top: 8px;">Every girl reached studies in a government residential institution from a BC, SC, ST, or minority community — the demographic with the steepest barriers to menstrual health, and the lowest baseline of awareness.</p>
+      </div>
+
+      <div class="photo" style="background-image:url('assets/photo-collage.jpg'); min-height: 100%;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 08 — IMPLEMENTATION PLAN ============================== -->
+<section data-screen-label="08 Implementation Plan">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>08 · Implementation Plan</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Implementation Plan</div>
+    <h1 class="slide-title">A five-phase annual cycle, anchored to the MJPTBCWREIS academic calendar.</h1>
+
+    <!-- timeline strip -->
+    <div style="display:flex; align-items:center; gap: 0; margin-bottom: 22px;">
+      <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--ink-3); width: 90px;">APR</div>
+      <div style="flex:1; height: 2px; background: var(--wine);"></div>
+      <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--ink-3); width: 60px; text-align:center;">JUN</div>
+      <div style="flex:1; height: 2px; background: var(--wine);"></div>
+      <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--ink-3); width: 60px; text-align:center;">JUL</div>
+      <div style="flex:1; height: 2px; background: var(--wine);"></div>
+      <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--ink-3); width: 60px; text-align:center;">MAR</div>
+      <div style="flex:1; height: 2px; background: var(--wine);"></div>
+      <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--ink-3); width: 90px; text-align:right;">QTR</div>
+    </div>
+
+    <div style="flex:1; display:grid; grid-template-columns: repeat(5, 1fr); gap: 18px;">
+      <!-- Phase 01 Planning -->
+      <div style="display:flex; flex-direction:column; background: var(--cream); border: 1px solid var(--rule); padding: 26px 22px;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 18px;">
+          <rect x="10" y="8" width="28" height="34" rx="2"/>
+          <path d="M16 18h16M16 24h16M16 30h10"/>
+          <circle cx="24" cy="6" r="2.5" fill="currentColor"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Phase 01</div>
+        <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 8px 0 14px; letter-spacing: -0.01em;">Planning</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Institution lists finalised, principals coordinated, site assessments for incinerators completed.</p>
+        <div style="margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; border-top: 1px solid var(--rule);">Apr — May</div>
+      </div>
+
+      <!-- Phase 02 Infrastructure -->
+      <div style="display:flex; flex-direction:column; background: var(--cream); border: 1px solid var(--rule); padding: 26px 22px;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 18px;">
+          <path d="M24 6v6M24 36v6M6 24h6M36 24h6M11 11l4 4M33 33l4 4M11 37l4-4M33 15l4-4"/>
+          <circle cx="24" cy="24" r="7"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Phase 02</div>
+        <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 8px 0 14px; letter-spacing: -0.01em;">Infrastructure &amp; Capacity</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">550 incinerators installed. ToT workshops with staff. Peer mentors trained on each campus.</p>
+        <div style="margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; border-top: 1px solid var(--rule);">May — Jun</div>
+      </div>
+
+      <!-- Phase 03 Awareness & Distribution -->
+      <div style="display:flex; flex-direction:column; background: var(--cream); border: 1px solid var(--rule); padding: 26px 22px;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 18px;">
+          <path d="M10 18v12l22 8V10L10 18z"/>
+          <path d="M10 18h-3a2 2 0 00-2 2v8a2 2 0 002 2h3"/>
+          <path d="M36 18a6 6 0 010 12"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Phase 03</div>
+        <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 8px 0 14px; letter-spacing: -0.01em;">Awareness &amp; Distribution</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">One-day MHM workshop per institution. Starter kits distributed to every newly-enrolled girl.</p>
+        <div style="margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; border-top: 1px solid var(--rule);">Jun — Jul</div>
+      </div>
+
+      <!-- Phase 04 Continuity -->
+      <div style="display:flex; flex-direction:column; background: var(--cream); border: 1px solid var(--rule); padding: 26px 22px;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 18px;">
+          <path d="M40 22a16 16 0 10-3 9"/>
+          <path d="M40 10v12h-12"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Phase 04</div>
+        <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 8px 0 14px; letter-spacing: -0.01em;">Institution-led Continuity</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Trained staff and peer mentors carry messaging independently. IEC materials displayed campus-wide.</p>
+        <div style="margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; border-top: 1px solid var(--rule);">Aug — Mar</div>
+      </div>
+
+      <!-- Phase 05 Monitoring -->
+      <div style="display:flex; flex-direction:column; background: var(--cream); border: 1px solid var(--rule); padding: 26px 22px;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 18px;">
+          <path d="M8 38V8M8 38h32"/>
+          <path d="M14 30l8-10 6 6 10-14"/>
+          <circle cx="38" cy="12" r="2" fill="currentColor"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Phase 05</div>
+        <h3 style="font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 8px 0 14px; letter-spacing: -0.01em;">Monitoring &amp; Reporting</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Quarterly warden check-ins, district field visits, incinerator audits, and a year-end impact report.</p>
+        <div style="margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; border-top: 1px solid var(--rule);">Quarterly</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">
+      <span style="color: var(--wine);">★</span>
+      <span>Key activities cluster around school reopening, so every new girl is reached at the start of the year.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 09 — SUSTAINABILITY MODEL ============================== -->
+<section data-screen-label="09 Sustainability Model">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>09 · Sustainability Model</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Sustainability Model</div>
+    <h1 class="slide-title">By Year 3, every campus runs the programme on its own — <em>without NGO dependency</em>.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1fr 1fr; gap: 80px;">
+      <div>
+        <table class="data" style="width:100%;">
+          <thead>
+            <tr>
+              <th style="width: 16%;">Year</th>
+              <th>Give For Society</th>
+              <th>Institution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong style="font-family: var(--serif); font-size: 36px; color: var(--wine);">1</strong></td>
+              <td><strong>Full implementation.</strong> Sessions, kits, incinerators, ToT delivered end-to-end.</td>
+              <td>Observe, nominate focal persons, host facilitation.</td>
+            </tr>
+            <tr>
+              <td><strong style="font-family: var(--serif); font-size: 36px; color: var(--wine);">2</strong></td>
+              <td><strong>Partial support.</strong> Joint sessions co-delivered with institution staff.</td>
+              <td>Lead delivery with NGO guidance; manage incinerators independently.</td>
+            </tr>
+            <tr>
+              <td><strong style="font-family: var(--serif); font-size: 36px; color: var(--wine);">3</strong></td>
+              <td><strong>Remote only.</strong> Refresher content and technical helpline.</td>
+              <td>Run programme fully independently; maintain infrastructure.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex; flex-direction:column; justify-content:center; gap: 28px;">
+        <p class="body" style="font-size: 28px;">The investment lasts beyond the funding year. <strong style="color: var(--ink);">Incinerators have a 10+ year service life.</strong> IEC materials are reusable. Trained staff stay on campus. Peer mentors graduate into the next cohort.</p>
+        <div style="display:flex; flex-direction: column; gap: 14px;">
+          <div style="display:flex; align-items: baseline; gap: 18px;"><span style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; color: var(--wine); width: 36px;">→</span><span style="font-size: 22px; color: var(--ink-2);">No recurring product procurement after Year 1 starter kit.</span></div>
+          <div style="display:flex; align-items: baseline; gap: 18px;"><span style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; color: var(--wine); width: 36px;">→</span><span style="font-size: 22px; color: var(--ink-2);">Self-financing pipeline routed through MJPTBCWREIS allocations.</span></div>
+          <div style="display:flex; align-items: baseline; gap: 18px;"><span style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; color: var(--wine); width: 36px;">→</span><span style="font-size: 22px; color: var(--ink-2);">Programme survives staff transfers via documented curriculum.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 10 — IMPACT & KPIs (visualized) ============================== -->
+<section data-screen-label="10 Impact and KPIs">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>10 · Impact &amp; KPIs</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Impact &amp; KPIs</div>
+    <h1 class="slide-title">What we measure, and what we commit to deliver.</h1>
+
+    <!-- DELIVERY: big metric cards -->
+    <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 28px;">
+      <div style="padding: 22px 18px; background: var(--cream); border: 1px solid var(--rule); display:flex; flex-direction:column; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine);">
+          <path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/>
+        </svg>
+        <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">275</div>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Institutions covered</div>
+      </div>
+      <div style="padding: 22px 18px; background: var(--cream); border: 1px solid var(--rule); display:flex; flex-direction:column; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine);">
+          <circle cx="9" cy="8" r="3.5"/><path d="M3 21c0-3 2.5-6 6-6s6 3 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M14 21c0-2 1.5-4 4-4s4 2 4 4"/>
+        </svg>
+        <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">1.23<span style="font-size: 22px; color: var(--ink-3);">L</span></div>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Girls with awareness</div>
+      </div>
+      <div style="padding: 22px 18px; background: var(--cream); border: 1px solid var(--rule); display:flex; flex-direction:column; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine);">
+          <path d="M5 7h14l-1 13H6L5 7z"/><path d="M9 7V5a3 3 0 016 0v2"/>
+        </svg>
+        <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">88<span style="font-size: 22px; color: var(--ink-3);">K</span></div>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Starter kits</div>
+      </div>
+      <div style="padding: 22px 18px; background: var(--cream); border: 1px solid var(--rule); display:flex; flex-direction:column; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine);">
+          <path d="M3 12h4l3-7 4 14 3-7h4"/>
+        </svg>
+        <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">275</div>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Awareness sessions</div>
+      </div>
+      <div style="padding: 22px 18px; background: var(--cream); border: 1px solid var(--rule); display:flex; flex-direction:column; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine);">
+          <rect x="6" y="9" width="12" height="13" rx="1"/><path d="M9 9V6a3 3 0 016 0v3"/><path d="M12 4V2"/>
+        </svg>
+        <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">550</div>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Incinerators live</div>
+      </div>
+      <div style="padding: 22px 18px; background: var(--cream); border: 1px solid var(--rule); display:flex; flex-direction:column; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine);">
+          <circle cx="12" cy="8" r="4"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/><path d="M16 4l2 2 4-4"/>
+        </svg>
+        <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">825+</div>
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Trainers certified</div>
+      </div>
+    </div>
+
+    <!-- OUTCOME: charts -->
+    <div style="flex:1; display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px;">
+      <!-- BEFORE / AFTER bars: Absenteeism -->
+      <div style="padding: 28px 28px 24px; background: var(--bg-warm); border: 1px solid var(--rule);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine); margin-bottom: 6px;">Outcome 01</div>
+        <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; margin-bottom: 24px; line-height: 1.2;">Period-related school absence</div>
+        <div style="display:flex; align-items: flex-end; gap: 24px; height: 170px;">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap: 10px; height: 100%;">
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; color: var(--ink-3);">4–5</div>
+            <div style="flex:1; width: 60%; background: var(--ink-3); align-self:flex-end;"></div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Baseline</div>
+          </div>
+          <div style="font-family: var(--serif); font-size: 32px; color: var(--wine); padding-bottom: 60px;">→</div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap: 10px; height: 100%;">
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; color: var(--wine);">↓</div>
+            <div style="height: 30%; width: 60%; background: var(--wine); align-self:flex-end;"></div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">After Yr 1</div>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--ink-3); margin-top: 16px; font-family: var(--mono); letter-spacing: 0.08em;">Pre/post attendance logs · days/month</p>
+      </div>
+
+      <!-- Pad usage rise -->
+      <div style="padding: 28px 28px 24px; background: var(--bg-warm); border: 1px solid var(--rule);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine); margin-bottom: 6px;">Outcome 02</div>
+        <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; margin-bottom: 24px; line-height: 1.2;">Girls using safe sanitary products</div>
+        <!-- two donuts side by side -->
+        <div style="display:flex; align-items:center; justify-content:center; gap: 18px; height: 170px;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap: 6px;">
+            <svg width="100" height="100" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="14" fill="none" stroke="oklch(0.85 0.012 60)" stroke-width="6"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="oklch(0.52 0.010 280)" stroke-width="6"
+                stroke-dasharray="50 88" stroke-dashoffset="22" transform="rotate(-90 18 18)" stroke-linecap="butt"/>
+            </svg>
+            <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--ink);">~50%</div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Baseline</div>
+          </div>
+          <div style="font-family: var(--serif); font-size: 32px; color: var(--wine);">→</div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap: 6px;">
+            <svg width="100" height="100" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="14" fill="none" stroke="oklch(0.85 0.012 60)" stroke-width="6"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--wine)" stroke-width="6"
+                stroke-dasharray="79 88" stroke-dashoffset="22" transform="rotate(-90 18 18)" stroke-linecap="butt"/>
+            </svg>
+            <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--wine);">Target ↑</div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">After Yr 1</div>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--ink-3); margin-top: 16px; font-family: var(--mono); letter-spacing: 0.08em;">Baseline vs follow-up survey · % of girls</p>
+      </div>
+
+      <!-- Self-delivery by year (progress bars) -->
+      <div style="padding: 28px 28px 24px; background: var(--bg-warm); border: 1px solid var(--rule); display:flex; flex-direction:column;">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--wine); margin-bottom: 6px;">Outcome 03</div>
+        <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; margin-bottom: 24px; line-height: 1.2;">Institutions running independently</div>
+        <div style="display:flex; flex-direction: column; gap: 16px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-family: var(--mono); font-size: 13px; color: var(--ink-3); margin-bottom: 6px;"><span>YR 1</span><span>0%</span></div>
+            <div style="height: 12px; background: oklch(0.85 0.012 60);"><div style="height:100%; width:0%; background: var(--wine);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-family: var(--mono); font-size: 13px; color: var(--ink-3); margin-bottom: 6px;"><span>YR 2</span><span>~60%</span></div>
+            <div style="height: 12px; background: oklch(0.85 0.012 60);"><div style="height:100%; width:60%; background: var(--wine);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-family: var(--mono); font-size: 13px; color: var(--ink-3); margin-bottom: 6px;"><span>YR 3</span><span style="color: var(--wine);">100%</span></div>
+            <div style="height: 12px; background: oklch(0.85 0.012 60);"><div style="height:100%; width:100%; background: var(--wine);"></div></div>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--ink-3); margin-top: auto; padding-top: 18px; font-family: var(--mono); letter-spacing: 0.08em;">% self-delivering — institution staff &amp; peer mentors</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 11 — SDG ALIGNMENT ============================== -->
+<section data-screen-label="11 SDG Alignment">
+  <div class="frame warm">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>11 · SDG &amp; Policy Alignment</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>SDG &amp; Policy Alignment</div>
+    <h1 class="slide-title">Contributing to five UN Sustainable Development Goals.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: repeat(5, 1fr); gap: 22px;">
+
+      <!-- SDG 3 -->
+      <div style="display:flex; flex-direction:column; gap: 18px;">
+        <div class="sdg-tile" style="background: var(--sdg-3);">
+          <div class="top"><span class="sdg-head">Sustainable Development<br/>Goal</span></div>
+          <div class="bottom">
+            <div>
+              <div class="sdg-num">3</div>
+              <div class="sdg-label">Good Health<br/>and Well-being</div>
+            </div>
+            <svg class="sdg-icon" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M32 54s-18-11-18-26a10 10 0 0118-6 10 10 0 0118 6c0 15-18 26-18 26z"/>
+              <path d="M22 28h6l2-6 4 12 2-6h6"/>
+            </svg>
+          </div>
+        </div>
+        <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 0;">Promotes menstrual hygiene; reduces RTIs &amp; UTIs; protects physical &amp; emotional well-being.</p>
+      </div>
+
+      <!-- SDG 4 -->
+      <div style="display:flex; flex-direction:column; gap: 18px;">
+        <div class="sdg-tile" style="background: var(--sdg-4);">
+          <div class="top"><span class="sdg-head">Sustainable Development<br/>Goal</span></div>
+          <div class="bottom">
+            <div>
+              <div class="sdg-num">4</div>
+              <div class="sdg-label">Quality<br/>Education</div>
+            </div>
+            <svg class="sdg-icon" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 22l24-10 24 10-24 10L8 22z"/>
+              <path d="M16 26v14c0 3 7 6 16 6s16-3 16-6V26"/>
+              <path d="M56 22v14"/>
+            </svg>
+          </div>
+        </div>
+        <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 0;">Cuts menstruation-driven absenteeism; preserves school attendance &amp; academic continuity.</p>
+      </div>
+
+      <!-- SDG 5 -->
+      <div style="display:flex; flex-direction:column; gap: 18px;">
+        <div class="sdg-tile" style="background: var(--sdg-5);">
+          <div class="top"><span class="sdg-head">Sustainable Development<br/>Goal</span></div>
+          <div class="bottom">
+            <div>
+              <div class="sdg-num">5</div>
+              <div class="sdg-label">Gender<br/>Equality</div>
+            </div>
+            <svg class="sdg-icon" viebox="0 0 64 64" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="32" cy="24" r="12"/>
+              <path d="M32 36v22M22 48h20"/>
+            </svg>
+          </div>
+        </div>
+        <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 0;">Challenges period stigma; ensures equitable access to dignity, knowledge &amp; menstrual care.</p>
+      </div>
+
+      <!-- SDG 6 -->
+      <div style="display:flex; flex-direction:column; gap: 18px;">
+        <div class="sdg-tile" style="background: var(--sdg-6);">
+          <div class="top"><span class="sdg-head">Sustainable Development<br/>Goal</span></div>
+          <div class="bottom">
+            <div>
+              <div class="sdg-num">6</div>
+              <div class="sdg-label">Clean Water<br/>&amp; Sanitation</div>
+            </div>
+            <svg class="sdg-icon" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M32 6c0 0 -14 18 -14 30a14 14 0 0028 0c0-12-14-30-14-30z"/>
+            </svg>
+          </div>
+        </div>
+        <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 0;">550 eco-friendly incinerators end open-burn pollution across all 275 campuses.</p>
+      </div>
+
+      <!-- SDG 10 -->
+      <div style="display:flex; flex-direction:column; gap: 18px;">
+        <div class="sdg-tile" style="background: var(--sdg-10);">
+          <div class="top"><span class="sdg-head">Sustainable Development<br/>Goal</span></div>
+          <div class="bottom">
+            <div>
+              <div class="sdg-num">10</div>
+              <div class="sdg-label">Reduced<br/>Inequalities</div>
+            </div>
+            <svg class="sdg-icon" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 36l-6 -10 14 -6 6 10z"/>
+              <path d="M50 36l6 -10 -14 -6 -6 10z"/>
+              <path d="M22 20l20 0"/>
+              <path d="M32 14v34"/>
+              <path d="M22 48h20"/>
+            </svg>
+          </div>
+        </div>
+        <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 0;">Exclusively serves BC, SC, ST &amp; minority adolescent girls — India's most underserved.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--rule); display: flex; gap: 56px; flex-wrap: wrap; font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">
+      <span style="color: var(--ink);">National policy alignment</span>
+      <span>Beti Bachao Beti Padhao</span>
+      <span>Swachh Bharat Mission</span>
+      <span>NEP 2020</span>
+      <span>Companies Act 2013 · Sch. VII (i, ii, iii)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 12 — CREDIBILITY ============================== -->
+<section data-screen-label="12 Credibility">
+  <div class="frame dark">
+    <div class="topbar">
+      <span class="mark"><span class="dot" style="background: var(--gold);"></span><span class="name" style="color: oklch(0.75 0.015 60);">Sthree Swabhiman</span></span>
+      <span>12 · Why Give For Society</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Why Give For Society</div>
+    <h1 class="slide-title" style="color: var(--cream);">Government-endorsed, award-recognised, with a <em>pilot already in the ground</em>.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1.05fr 1fr; gap: 64px;">
+      <div style="display:flex; flex-direction:column; gap: 22px;">
+        <div style="padding: 28px 32px; border: 1px solid oklch(0.45 0.030 25); display:flex; gap: 26px; align-items: flex-start;">
+          <div style="font-family: var(--serif); font-size: 56px; color: var(--gold); line-height:1;">★</div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;">Telangana Governor's Excellence Award 2025</div>
+            <p style="font-family: var(--serif); font-size: 24px; line-height: 1.35; color: var(--cream); margin: 0; font-weight: 400;">Corporate Volunteering — Organisation Category. Conferred by Hon'ble Governor Shri Jishnu Dev Varma on the 77th Republic Day, Lok Bhavan, Hyderabad.</p>
+          </div>
+        </div>
+
+        <div style="padding: 28px 32px; border: 1px solid oklch(0.45 0.030 25); display:flex; gap: 26px; align-items: flex-start;">
+          <div style="font-family: var(--serif); font-size: 56px; color: var(--gold); line-height:1;">§</div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;">MoC with MJPTBCWREIS</div>
+            <p style="font-family: var(--serif); font-size: 24px; line-height: 1.35; color: var(--cream); margin: 0; font-weight: 400;">Memorandum of Collaboration signed with the Secretary, MJPTBCWREIS — Lr.No.C2/3357/2025. Full institutional access across 275 girls-only campuses.</p>
+          </div>
+        </div>
+
+        <div style="padding: 28px 32px; border: 1px solid oklch(0.45 0.030 25); display:flex; gap: 26px; align-items: flex-start;">
+          <div style="font-family: var(--serif); font-size: 56px; color: var(--gold); line-height:1;">⌖</div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;">Pilot Delivered · Nov 2025</div>
+            <p style="font-family: var(--serif); font-size: 24px; line-height: 1.35; color: var(--cream); margin: 0; font-weight: 400;">1,200+ students reached in Warangal District. End-to-end workshop, kit distribution, and incinerator install documented.</p>
+          </div>
+        </div>
+
+        <!-- partner logos -->
+        <div style="margin-top: auto; padding: 24px 28px; background: var(--cream); display:flex; justify-content: space-around; align-items:center; gap: 24px;">
+          <div style="display:flex; align-items:center; gap: 14px;">
+            <img src="assets/give-for-society-logo.jpg" alt="Give For Society" style="width: 64px; height: 64px; border-radius: 50%;" />
+            <div style="line-height: 1.2;">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Implementing</div>
+              <div style="font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink);">Give For Society</div>
+            </div>
+          </div>
+          <div style="width: 1px; height: 50px; background: var(--rule);"></div>
+          <div style="display:flex; align-items:center; gap: 14px;">
+            <img src="assets/sthree-swabhiman-logo.png" alt="Sthree Swabhiman" style="width: 64px; height: 64px; object-fit: contain;" />
+            <div style="line-height: 1.2;">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Programme</div>
+              <div style="font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink);">Sthree Swabhiman</div>
+            </div>
+          </div>
+          <div style="width: 1px; height: 50px; background: var(--rule);"></div>
+          <div style="display:flex; align-items:center; gap: 14px;">
+            <img src="assets/mjptbcwreis-logo.webp" alt="MJPTBCWREIS" style="height: 56px; width: auto;" />
+            <div style="line-height: 1.2;">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">Govt. Partner</div>
+              <div style="font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink);">MJPTBCWREIS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2x2 photo composite -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px;">
+        <div style="position:relative;" class="photo" >
+          <div style="position:absolute; inset:0; background-image:url('assets/photo-students-kits.jpg'); background-size: cover; background-position: center;"></div>
+          <div style="position:absolute; bottom:0; left:0; right:0; padding: 14px 16px; background: linear-gradient(to top, rgba(20,12,8,0.85), transparent); font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);">Award ceremony · 2025</div>
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute; inset:0; background-image:url('assets/photo-group-poster.jpg'); background-size: cover; background-position: center;"></div>
+          <div style="position:absolute; bottom:0; left:0; right:0; padding: 14px 16px; background: linear-gradient(to top, rgba(20,12,8,0.85), transparent); font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);">MoC signing · MJPTBCWREIS</div>
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute; inset:0; background-image:url('assets/photo-workshop-speaker.jpg'); background-size: cover; background-position: center;"></div>
+          <div style="position:absolute; bottom:0; left:0; right:0; padding: 14px 16px; background: linear-gradient(to top, rgba(20,12,8,0.85), transparent); font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);">Pilot session · Warangal</div>
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute; inset:0; background-image:url('assets/photo-incinerator.png'); background-size: cover; background-position: center;"></div>
+          <div style="position:absolute; bottom:0; left:0; right:0; padding: 14px 16px; background: linear-gradient(to top, rgba(20,12,8,0.85), transparent); font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);">Eco-incinerator install</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 13 — BUDGET OVERVIEW (revamped) ============================== -->
+<section data-screen-label="13 Budget Overview">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>13 · Budget Overview</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Budget Overview</div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items:flex-start; margin-bottom: 40px;">
+      <div>
+        <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px;">Total programme cost · annual</div>
+        <div style="font-family: var(--serif); font-weight: 500; font-size: 168px; line-height: 0.9; letter-spacing: -0.03em; color: var(--wine);">₹8.04<span style="font-size: 0.4em; color: var(--ink-3); margin-left: 8px;">Cr</span></div>
+        <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.16em; color: var(--ink-3); margin-top: 14px;">INR Eight Crores Four Lakhs Sixty-Six Thousand · ₹8,04,66,000</div>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-top: 20px;">
+        <div style="padding: 22px 20px; background: var(--bg-warm); border-left: 4px solid var(--wine);">
+          <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px;">Per-girl cost</div>
+          <div style="font-family: var(--serif); font-size: 56px; line-height: 1; font-weight: 500; color: var(--wine); letter-spacing: -0.02em;">₹600</div>
+          <p style="font-size: 14px; color: var(--ink-2); margin: 12px 0 0; line-height: 1.4;">Year of awareness + 12 napkin packs + incinerator share.</p>
+        </div>
+        <div style="padding: 22px 20px; background: var(--bg-warm); border-left: 4px solid var(--gold);">
+          <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px;">Capital lifespan</div>
+          <div style="font-family: var(--serif); font-size: 56px; line-height: 1; font-weight: 500; color: var(--ink); letter-spacing: -0.02em;">10+ yr</div>
+          <p style="font-size: 14px; color: var(--ink-2); margin: 12px 0 0; line-height: 1.4;">Incinerators are a one-time investment; recurring cost drops year-on-year.</p>
+        </div>
+        <div style="padding: 22px 20px; background: var(--bg-warm); border-left: 4px solid var(--ink);">
+          <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px;">Scale discount</div>
+          <div style="font-family: var(--serif); font-size: 56px; line-height: 1; font-weight: 500; color: var(--ink); letter-spacing: -0.02em;">~10%</div>
+          <p style="font-size: 14px; color: var(--ink-2); margin: 12px 0 0; line-height: 1.4;">Estimated bulk procurement savings at full statewide volume.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="hr-rule"/>
+
+    <!-- 5 component cards -->
+    <div style="flex:1; display:grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 28px;">
+      <div style="display:flex; flex-direction:column; padding: 24px 22px; border: 1px solid var(--rule); background: var(--cream);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">A · Awareness</div>
+        <div style="margin-top: 14px; font-family: var(--serif); font-size: 38px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">₹68.75<span style="font-size: 16px; color: var(--ink-3); margin-left: 4px;">L</span></div>
+        <p style="font-size: 14px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45;">Sessions, ToT, peer mentor training, logistics.</p>
+        <div style="margin-top: auto; padding-top: 16px;">
+          <div style="height: 6px; background: oklch(0.90 0.012 60);"><div style="height:100%; width: 8.5%; background: var(--gold);"></div></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px;">8.5% of total</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 24px 22px; border: 1px solid var(--rule); background: var(--cream);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">B · Starter Kits</div>
+        <div style="margin-top: 14px; font-family: var(--serif); font-size: 38px; font-weight: 500; line-height: 1; color: var(--wine); letter-spacing: -0.02em;">₹5.28<span style="font-size: 16px; color: var(--ink-3); margin-left: 4px;">Cr</span></div>
+        <p style="font-size: 14px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45;">88,000 girls × 12 packs × ₹45 + packaging &amp; logistics.</p>
+        <div style="margin-top: auto; padding-top: 16px;">
+          <div style="height: 6px; background: oklch(0.90 0.012 60);"><div style="height:100%; width: 65.6%; background: var(--wine);"></div></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px;">65.6% of total</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 24px 22px; border: 1px solid var(--rule); background: var(--cream);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">C · IEC Materials</div>
+        <div style="margin-top: 14px; font-family: var(--serif); font-size: 38px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">₹8.25<span style="font-size: 16px; color: var(--ink-3); margin-left: 4px;">L</span></div>
+        <p style="font-size: 14px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45;">Telugu flipbooks, wall charts, lamination treatment.</p>
+        <div style="margin-top: auto; padding-top: 16px;">
+          <div style="height: 6px; background: oklch(0.90 0.012 60);"><div style="height:100%; width: 1.0%; background: var(--ink-3);"></div></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px;">1.0% of total</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 24px 22px; border: 1px solid var(--rule); background: var(--cream);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">D · Incinerators</div>
+        <div style="margin-top: 14px; font-family: var(--serif); font-size: 38px; font-weight: 500; line-height: 1; color: var(--wine-soft); letter-spacing: -0.02em;">₹1.38<span style="font-size: 16px; color: var(--ink-3); margin-left: 4px;">Cr</span></div>
+        <p style="font-size: 14px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45;">550 units, installation, first-year maintenance.</p>
+        <div style="margin-top: auto; padding-top: 16px;">
+          <div style="height: 6px; background: oklch(0.90 0.012 60);"><div style="height:100%; width: 17.1%; background: var(--wine-soft);"></div></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px;">17.1% of total · one-time</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 24px 22px; border: 1px solid var(--rule); background: var(--cream);">
+        <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">E · M&amp;E + Manpower</div>
+        <div style="margin-top: 14px; font-family: var(--serif); font-size: 38px; font-weight: 500; line-height: 1; color: var(--ink); letter-spacing: -0.02em;">₹62.16<span style="font-size: 16px; color: var(--ink-3); margin-left: 4px;">L</span></div>
+        <p style="font-size: 14px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45;">Field coordinators, M&amp;E officer, field visits &amp; reports.</p>
+        <div style="margin-top: auto; padding-top: 16px;">
+          <div style="height: 6px; background: oklch(0.90 0.012 60);"><div style="height:100%; width: 7.7%; background: var(--ink);"></div></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px;">7.7% of total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 14 — BUDGET BREAKDOWN ============================== -->
+<section data-screen-label="14 Budget Breakdown">
+  <div class="frame">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>14 · Detailed Budget</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Detailed Budget Breakdown</div>
+    <h1 class="slide-title" style="font-size: 52px;">Every line item — verifiable through Schedule VII utilisation certificates.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1fr 1fr; gap: 56px; column-gap: 56px;">
+      <!-- LEFT: A + C + E -->
+      <div style="display:flex; flex-direction:column; gap: 24px;">
+        <!-- A -->
+        <div style="border-top: 2px solid var(--wine);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding: 14px 0 12px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Component A</div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Awareness &amp; Capacity Building</div>
+            </div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--ink);">₹68,75,000</div>
+          </div>
+          <table class="data" style="font-size: 18px; margin-top: 4px;">
+            <tbody>
+              <tr><td>Facilitator costs</td><td style="color: var(--ink-3); text-align:right;">₹2,500 × 275</td><td class="num"><strong>₹25,00,000</strong></td></tr>
+              <tr><td>Training of Trainers workshops</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹20,00,000</strong></td></tr>
+              <tr><td>Peer mentor training materials</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹15,00,000</strong></td></tr>
+              <tr><td>Logistics &amp; coordination</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹8,75,000</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- C -->
+        <div style="border-top: 2px solid var(--wine);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding: 14px 0 12px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Component C</div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">IEC Materials</div>
+            </div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--ink);">₹8,25,000</div>
+          </div>
+          <table class="data" style="font-size: 18px; margin-top: 4px;">
+            <tbody>
+              <tr><td>Telugu flipbooks &amp; visual aids</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹4,12,500</strong></td></tr>
+              <tr><td>Wall charts and posters</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹2,75,000</strong></td></tr>
+              <tr><td>Lamination &amp; durability treatment</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹1,37,500</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- E -->
+        <div style="border-top: 2px solid var(--wine);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding: 14px 0 12px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Component E</div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Monitoring, Manpower &amp; Reporting</div>
+            </div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--ink);">₹62,16,000</div>
+          </div>
+          <table class="data" style="font-size: 18px; margin-top: 4px;">
+            <tbody>
+              <tr><td>Field coordinators</td><td style="color: var(--ink-3); text-align:right;">12 months</td><td class="num"><strong>₹36,00,000</strong></td></tr>
+              <tr><td>M&amp;E officer &amp; data management</td><td style="color: var(--ink-3); text-align:right;">12 months</td><td class="num"><strong>₹12,00,000</strong></td></tr>
+              <tr><td>Field monitoring visits</td><td style="color: var(--ink-3); text-align:right;">Quarterly</td><td class="num"><strong>₹8,16,000</strong></td></tr>
+              <tr><td>Reporting &amp; documentation</td><td style="color: var(--ink-3); text-align:right;">Annual</td><td class="num"><strong>₹6,00,000</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT: B + D + TOTAL -->
+      <div style="display:flex; flex-direction:column; gap: 24px;">
+        <!-- B -->
+        <div style="border-top: 2px solid var(--wine);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding: 14px 0 12px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Component B</div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Sanitary Napkin Starter Kits</div>
+            </div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--ink);">₹5,28,00,000</div>
+          </div>
+          <table class="data" style="font-size: 18px; margin-top: 4px;">
+            <tbody>
+              <tr><td>Sanitary napkins</td><td style="color: var(--ink-3); text-align:right;">88,000 × 12 × ₹45</td><td class="num"><strong>₹4,75,20,000</strong></td></tr>
+              <tr><td>Packaging &amp; user guides</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹22,00,000</strong></td></tr>
+              <tr><td>Logistics &amp; distribution</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹30,80,000</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- D -->
+        <div style="border-top: 2px solid var(--wine);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding: 14px 0 12px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.20em; color: var(--wine); text-transform: uppercase;">Component D · one-time capital</div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Incinerators (550 units)</div>
+            </div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--ink);">₹1,37,50,000</div>
+          </div>
+          <table class="data" style="font-size: 18px; margin-top: 4px;">
+            <tbody>
+              <tr><td>Incinerator units</td><td style="color: var(--ink-3); text-align:right;">550 × ₹20,000</td><td class="num"><strong>₹1,10,00,000</strong></td></tr>
+              <tr><td>Installation &amp; electrical</td><td style="color: var(--ink-3); text-align:right;">₹6,000 × 275</td><td class="num"><strong>₹16,50,000</strong></td></tr>
+              <tr><td>First-year maintenance</td><td style="color: var(--ink-3); text-align:right;">275 institutions</td><td class="num"><strong>₹8,25,000</strong></td></tr>
+              <tr><td>Training on op. &amp; maintenance</td><td style="color: var(--ink-3); text-align:right;">Lump sum</td><td class="num"><strong>₹2,75,000</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TOTAL -->
+        <div style="margin-top: auto; padding: 28px 32px; background: var(--bg-deep); color: var(--cream); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase;">Total Project Cost</div>
+            <div style="font-family: var(--serif); font-size: 14px; color: oklch(0.80 0.015 60); margin-top: 8px; font-style: italic;">INR Eight Crores Four Lakhs Sixty-Six Thousand</div>
+          </div>
+          <div style="font-family: var(--serif); font-size: 56px; font-weight: 500; color: var(--cream); letter-spacing: -0.02em;">₹8,04,66,000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 15 — WHAT CSR PARTNERS RECEIVE ============================== -->
+<section data-screen-label="15 What CSR Partners Receive">
+  <div class="frame warm">
+    <div class="topbar">
+      <span class="mark"><span class="dot"></span><span class="name">Sthree Swabhiman</span></span>
+      <span>15 · For CSR Partners</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>What CSR Partners Receive</div>
+    <h1 class="slide-title">Visibility, verification, and compliance — bundled with the impact.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 22px;">
+
+      <div style="display:flex; flex-direction:column; padding: 28px 28px 26px; background: var(--cream); border: 1px solid var(--rule); position: relative;">
+        <div style="position:absolute; top: 20px; right: 24px; font-family: var(--serif); font-size: 56px; color: oklch(0.90 0.012 60); font-weight: 500; line-height:1;">01</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 16px;">
+          <path d="M12 2l3 7h7l-6 4 2 8-6-5-6 5 2-8-6-4h7z"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;">Recognition</div>
+        <h3 style="font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -0.01em;">Named partner across all 275 campuses</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Co-branding on Telugu IEC materials, session backdrops, and partner credits delivered to 1,23,000 girls.</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 28px 28px 26px; background: var(--cream); border: 1px solid var(--rule); position: relative;">
+        <div style="position:absolute; top: 20px; right: 24px; font-family: var(--serif); font-size: 56px; color: oklch(0.90 0.012 60); font-weight: 500; line-height:1;">02</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 16px;">
+          <rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 8h6M9 12h6M9 16h4"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;">Recognition</div>
+        <h3 style="font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -0.01em;">Branded plaques on 550 incinerators</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Permanent metal plaques on every unit — a 10+ year visibility footprint anchored to real infrastructure.</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 28px 28px 26px; background: var(--cream); border: 1px solid var(--rule); position: relative;">
+        <div style="position:absolute; top: 20px; right: 24px; font-family: var(--serif); font-size: 56px; color: oklch(0.90 0.012 60); font-weight: 500; line-height:1;">03</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 16px;">
+          <path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;">Reporting</div>
+        <h3 style="font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -0.01em;">Quarterly progress reports with photo evidence</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Distribution records, install logs, and institution-wise data — formatted for CSR committee review.</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 28px 28px 26px; background: var(--cream); border: 1px solid var(--rule); position: relative;">
+        <div style="position:absolute; top: 20px; right: 24px; font-family: var(--serif); font-size: 56px; color: oklch(0.90 0.012 60); font-weight: 500; line-height:1;">04</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 16px;">
+          <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;">Reporting</div>
+        <h3 style="font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -0.01em;">Annual impact report &amp; field-visit access</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Year-end documentation, sample field visits, and third-party verification on request.</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 28px 28px 26px; background: var(--cream); border: 1px solid var(--rule); position: relative;">
+        <div style="position:absolute; top: 20px; right: 24px; font-family: var(--serif); font-size: 56px; color: oklch(0.90 0.012 60); font-weight: 500; line-height:1;">05</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 16px;">
+          <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;">Compliance</div>
+        <h3 style="font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -0.01em;">Full Schedule VII certification</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Utilisation certificates and expenditure data for Companies Act 2013 Schedule VII (Clauses i, ii &amp; iii).</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; padding: 28px 28px 26px; background: var(--cream); border: 1px solid var(--rule); position: relative;">
+        <div style="position:absolute; top: 20px; right: 24px; font-family: var(--serif); font-size: 56px; color: oklch(0.90 0.012 60); font-weight: 500; line-height:1;">06</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--wine); margin-bottom: 16px;">
+          <path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-7h6v7"/>
+        </svg>
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;">Compliance</div>
+        <h3 style="font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -0.01em;">Government-endorsed delivery chain</h3>
+        <p style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin: 0;">Delivered under a signed MoC with MJPTBCWREIS — full cooperation, named focal persons, audit-ready records.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 16 — CALL TO ACTION ============================== -->
+<section data-screen-label="16 Call to Action">
+  <div class="frame dark">
+    <div class="topbar">
+      <span class="mark"><span class="dot" style="background: var(--gold);"></span><span class="name" style="color: oklch(0.75 0.015 60);">Sthree Swabhiman</span></span>
+      <span>16 · Call to Action</span>
+    </div>
+    <div class="eyebrow"><span class="rule"></span>Call to Action</div>
+    <h1 class="slide-title" style="color: var(--cream); font-size: 64px; margin-bottom: 32px;">Partner with us — to reach <em>1,23,000 girls</em> across 275 campuses, starting this academic year.</h1>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1.1fr 1fr; gap: 80px;">
+      <!-- LEFT: roadmap -->
+      <div style="display:flex; flex-direction:column;">
+        <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px;">Roadmap to partnership</div>
+
+        <!-- vertical stepper -->
+        <div style="position:relative;">
+          <div style="position:absolute; left: 30px; top: 16px; bottom: 16px; width: 1px; background: oklch(0.40 0.020 25);"></div>
+          <div style="display:flex; flex-direction:column; gap: 18px;">
+
+            <div style="display:grid; grid-template-columns: 60px 1fr; gap: 28px; align-items:flex-start;">
+              <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--gold); display:grid; place-items:center; font-family: var(--serif); font-size: 24px; color: var(--bg-deep); font-weight: 500; z-index: 1;">01</div>
+              <div style="padding-top: 10px;">
+                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--cream); margin-bottom: 6px;">Partnership conversation</div>
+                <p style="font-size: 16px; line-height: 1.5; color: oklch(0.78 0.018 60); margin: 0;">A 45-minute review with your CSR committee — fit, scale, disbursement.</p>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 60px 1fr; gap: 28px; align-items:flex-start;">
+              <div style="width: 60px; height: 60px; border-radius: 50%; background: oklch(0.32 0.020 25); border: 2px solid var(--gold); display:grid; place-items:center; font-family: var(--serif); font-size: 24px; color: var(--gold); font-weight: 500; z-index: 1;">02</div>
+              <div style="padding-top: 10px;">
+                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--cream); margin-bottom: 6px;">Site visit &amp; pilot review</div>
+                <p style="font-size: 16px; line-height: 1.5; color: oklch(0.78 0.018 60); margin: 0;">Optional visit to the Warangal pilot — observe a session, inspect an install, meet wardens.</p>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 60px 1fr; gap: 28px; align-items:flex-start;">
+              <div style="width: 60px; height: 60px; border-radius: 50%; background: oklch(0.32 0.020 25); border: 2px solid var(--gold); display:grid; place-items:center; font-family: var(--serif); font-size: 24px; color: var(--gold); font-weight: 500; z-index: 1;">03</div>
+              <div style="padding-top: 10px;">
+                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--cream); margin-bottom: 6px;">MoU &amp; milestone-linked disbursement</div>
+                <p style="font-size: 16px; line-height: 1.5; color: oklch(0.78 0.018 60); margin: 0;">Sign the MoU; launch with the April–May planning phase.</p>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 60px 1fr; gap: 28px; align-items:flex-start;">
+              <div style="width: 60px; height: 60px; border-radius: 50%; background: oklch(0.32 0.020 25); border: 2px solid var(--gold); display:grid; place-items:center; font-family: var(--serif); font-size: 24px; color: var(--gold); font-weight: 500; z-index: 1;">04</div>
+              <div style="padding-top: 10px;">
+                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--cream); margin-bottom: 6px;">First reach — June 2026</div>
+                <p style="font-size: 16px; line-height: 1.5; color: oklch(0.78 0.018 60); margin: 0;">First girls receive kits, training, and access to safe disposal at academic year-start.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: the ask -->
+      <div style="display:flex; flex-direction:column; gap: 24px;">
+        <div style="padding: 40px; background: linear-gradient(160deg, oklch(0.30 0.030 25) 0%, oklch(0.24 0.025 25) 100%); border: 1px solid oklch(0.45 0.030 25);">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px;">The Ask</div>
+          <div style="font-family: var(--serif); font-size: 110px; line-height: 0.95; color: var(--cream); font-weight: 500; letter-spacing: -0.02em;">₹8.04<span style="font-size: 0.45em; color: oklch(0.78 0.018 60);"> Cr</span></div>
+          <p style="font-size: 18px; line-height: 1.5; color: oklch(0.85 0.018 60); margin: 20px 0 0;">For one full academic year of statewide delivery. Full, partial, or component-specific commitments welcomed.</p>
+        </div>
+
+        <div>
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: oklch(0.72 0.015 60); margin-bottom: 14px;">Or scope down the partnership</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+            <div style="padding: 18px; border: 1px solid oklch(0.40 0.020 25);">
+              <div style="font-family: var(--serif); font-size: 22px; color: var(--cream); font-weight: 500;">₹1.38<span style="font-size:14px; color: oklch(0.72 0.015 60); margin-left:4px;">Cr</span></div>
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.75 0.018 60); margin-top: 6px;">All 550 incinerators</div>
+            </div>
+            <div style="padding: 18px; border: 1px solid oklch(0.40 0.020 25);">
+              <div style="font-family: var(--serif); font-size: 22px; color: var(--cream); font-weight: 500;">₹68.75<span style="font-size:14px; color: oklch(0.72 0.015 60); margin-left:4px;">L</span></div>
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.75 0.018 60); margin-top: 6px;">Statewide awareness</div>
+            </div>
+            <div style="padding: 18px; border: 1px solid oklch(0.40 0.020 25);">
+              <div style="font-family: var(--serif); font-size: 22px; color: var(--cream); font-weight: 500;">₹2.92<span style="font-size:14px; color: oklch(0.72 0.015 60); margin-left:4px;">L</span></div>
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.75 0.018 60); margin-top: 6px;">Adopt 1 institution</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- contact strip -->
+        <div style="margin-top: auto; padding: 22px 24px; background: oklch(0.27 0.020 25); border: 1px solid oklch(0.40 0.020 25); display:flex; justify-content:space-between; align-items:center; gap: 24px;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--gold);">Next step</div>
+            <div style="font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--cream); margin-top: 4px;">Sign the MoU. Reach the first girls by June.</div>
+          </div>
+          <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.12em; color: var(--gold);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e98a86879d888a9da98e809f8c8f869b9a868a808c9d90c7869b8e">[email&#160;protected]</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 17 — THANK YOU ============================== -->
+<section data-screen-label="17 Thank You">
+  <div class="frame">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3);">Thank you</div>
+      <div style="font-family: var(--mono); font-size: 14px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3);">17 / 17</div>
+    </div>
+
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap: 48px; text-align:center;">
+      <div style="font-family: var(--serif); font-weight: 400; font-size: 92px; line-height: 1.05; letter-spacing: -0.02em; color: var(--ink); max-width: 1500px; text-wrap: balance;">
+        No girl should miss school <em style="color: var(--wine); font-style: italic;">because of her period.</em>
+      </div>
+      <div style="font-family: var(--serif); font-weight: 300; font-size: 30px; line-height: 1.4; color: var(--ink-2); max-width: 1100px;">
+        No campus should lack a safe way to dispose of menstrual waste. Your CSR partnership makes both possible — for 1,23,000 girls, across 275 institutions, starting this academic year.
+      </div>
+
+      <!-- three-logo partnership lockup -->
+      <div style="margin-top: 24px; display:flex; align-items:center; gap: 48px; padding: 36px 56px; background: var(--bg-warm); border: 1px solid var(--rule);">
+        <div style="display:flex; flex-direction:column; align-items:center; gap: 14px;">
+          <img src="assets/give-for-society-logo.jpg" alt="Give For Society" style="width: 130px; height: 130px; border-radius: 50%;" />
+          <div style="line-height: 1.25; text-align:center;">
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);">Implementing Agency</div>
+            <div style="font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--ink); margin-top: 4px;">Give For Society</div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3);">Reg. 1255/2017</div>
+          </div>
+        </div>
+
+        <div style="width: 1px; height: 130px; background: var(--rule);"></div>
+
+        <div style="display:flex; flex-direction:column; align-items:center; gap: 14px;">
+          <img src="assets/sthree-swabhiman-logo.png" alt="Sthree Swabhiman" style="width: 130px; height: 130px; object-fit: contain;" />
+          <div style="line-height: 1.25; text-align:center;">
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);">Programme</div>
+            <div style="font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--ink); margin-top: 4px;">Sthree Swabhiman</div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3);">Menstrual Hygiene &amp; Dignity</div>
+          </div>
+        </div>
+
+        <div style="width: 1px; height: 130px; background: var(--rule);"></div>
+
+        <div style="display:flex; flex-direction:column; align-items:center; gap: 14px;">
+          <div style="height: 130px; display:flex; align-items:center;">
+            <img src="assets/mjptbcwreis-logo.webp" alt="MJPTBCWREIS" style="height: 110px; width: auto;" />
+          </div>
+          <div style="line-height: 1.25; text-align:center;">
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);">Government Partner</div>
+            <div style="font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--ink); margin-top: 4px;">MJPTBCWREIS</div>
+            <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3);">Govt. of Telangana</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap: 56px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);">
+        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6a0905041e0b091e2a0d031c0f0c0518190509030f1e134405180d">[email&#160;protected]</a></span>
+        <span>·</span>
+        <span>Hyderabad, Telangana</span>
+        <span>·</span>
+        <span>MoC Lr.No.C2/3357/2025</span>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-top: 22px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 13px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-3);">
+      <span>★ Telangana Governor's Excellence Award 2025</span>
+      <span>Sthree Swabhiman · CSR Partnership Proposal</span>
+    </div>
+  </div>
+</section>
+
+</deck-stage>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="deck-stage.js"></script>
+</body>
+</html>
