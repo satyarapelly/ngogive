@@ -39,9 +39,9 @@ export function getSdgImagePath(number) {
 export const programs = [
   {
     title: 'Education & School Infrastructure', shortTitle: 'Education', slug: 'empowering-rural-learning', icon: 'BookOpen',
-    folder: '/assets/images/programs/core-area/empowering-rural-learning/',
-    defaultImage: '/assets/images/programs/core-area/empowering-rural-learning/logos/empowering-rural-learning-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/core-area/empowering-rural-learning/logos/empowering-rural-learning-logo.jpg'],
+    folder: '/assets/images/programs/empowering-rural-learning/',
+    defaultImage: '/assets/images/programs/empowering-rural-learning/logos/empowering-rural-learning-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/empowering-rural-learning/logos/empowering-rural-learning-logo.jpg'],
     sdgs: [3,4,6,10,17],
     subCategories: [
       makeSubCategory('empowering-rural-learning', 'classroom-infrastructure', 'Classroom Infrastructure', 'Upgrading school spaces with desks, repairs, and essentials for safe learning.', '20+ schools upgraded'),
@@ -51,22 +51,22 @@ export const programs = [
       makeSubCategory('empowering-rural-learning', 'back-to-school', 'Back to School', 'Learning kits and support that help vulnerable children return to school.', 'Return-to-school support delivered'),
       {
         title: 'School Sports Kits',
-        image: '/assets/images/programs/core-area/empowering-rural-learning/school-sports-kits.jpg',
+        image: '/assets/images/programs/empowering-rural-learning/school-sports-kits.jpg',
         description: 'Equipment support that enables regular sports participation in schools.',
       },
       {
         title: 'Rural Sports Training',
-        image: '/assets/images/programs/core-area/empowering-rural-learning/rural-sports-training.jpg',
+        image: '/assets/images/programs/empowering-rural-learning/rural-sports-training.jpg',
         description: 'Structured rural coaching to build fitness, skills, and confidence.',
       },
       {
         title: 'School Tournaments',
-        image: '/assets/images/programs/core-area/empowering-rural-learning/school-tournaments.jpg',
+        image: '/assets/images/programs/empowering-rural-learning/school-tournaments.jpg',
         description: 'Inter-school tournaments that encourage participation and talent identification.',
       },
       {
         title: 'Student Leadership & Fitness',
-        image: '/assets/images/programs/core-area/empowering-rural-learning/student-leadership-fitness.jpg',
+        image: '/assets/images/programs/empowering-rural-learning/student-leadership-fitness.jpg',
         description: 'Leadership-building activities through sports and teamwork to improve student confidence and wellbeing.',
       },
     ],
@@ -79,9 +79,9 @@ export const programs = [
   },
   {
     title: 'Menstrual Hygiene & Girls Dignity', shortTitle: 'Sthree Swabhiman', slug: 'sthree-swabhiman', icon: 'Heart',
-    folder: '/assets/images/programs/core-area/sthree-swabhiman/',
-    defaultImage: '/assets/images/programs/core-area/sthree-swabhiman/logos/sthree-swabhiman-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/sthree-swabhiman/logos/sthree-swabhiman-logo.jpg','/assets/images/programs/core-area/sthree-swabhiman/logos/MJPTBCWREIS_logo.jpg'],
+    folder: '/assets/images/programs/sthree-swabhiman/',
+    defaultImage: '/assets/images/programs/sthree-swabhiman/logos/sthree-swabhiman-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/sthree-swabhiman/logos/sthree-swabhiman-logo.jpg','/assets/images/programs/sthree-swabhiman/logos/MJPTBCWREIS_logo.jpg'],
     sdgs: [3,4,5,6,10],
     subCategories: [
       makeSubCategory('sthree-swabhiman', 'awareness-sessions', 'Awareness Sessions', 'Menstrual health education for adolescent girls, wardens, and school communities.', '1,23,000 girls reached'),
@@ -98,9 +98,9 @@ export const programs = [
   },
   {
     title: 'Health & Community Well-being', shortTitle: 'Health', slug: 'health-community-wellbeing', icon: 'Stethoscope',
-    folder: '/assets/images/programs/core-area/health-community-wellbeing/',
-    defaultImage: '/assets/images/programs/core-area/health-community-wellbeing/logos/health-community-wellbeing-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/health-community-wellbeing/logos/arogyasetu-logo.jpg'],
+    folder: '/assets/images/programs/health-community-wellbeing/',
+    defaultImage: '/assets/images/programs/health-community-wellbeing/logos/health-community-wellbeing-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/health-community-wellbeing/logos/arogyasetu-logo.jpg'],
     sdgs: [3,5,6,10,17],
     subCategories: [
       makeSubCategory('health-community-wellbeing', 'mobile-health-outreach', 'Mobile Health Outreach', 'Doorstep preventive health services for remote rural and tribal communities.'),
@@ -117,8 +117,8 @@ export const programs = [
   },
   {
     title: 'Disaster Relief & Humanitarian Response', shortTitle: 'Relief', slug: 'disaster-relief-humanitarian', icon: 'ShieldCheck',
-    folder: '/assets/images/programs/core-area/disaster-relief-humanitarian/', defaultImage: '/assets/images/programs/core-area/disaster-relief-humanitarian/logos/disaster-relief-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/disaster-relief-humanitarian/logos/disaster-relief-logo.jpg'], sdgs: [1,2,3,10,17],
+    folder: '/assets/images/programs/disaster-relief-humanitarian/', defaultImage: '/assets/images/programs/disaster-relief-humanitarian/logos/disaster-relief-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/disaster-relief-humanitarian/logos/disaster-relief-logo.jpg'], sdgs: [1,2,3,10,17],
     subCategories: [
       makeSubCategory('disaster-relief-humanitarian', 'covid-relief', 'COVID Relief', 'Rapid support with essentials and care during pandemic-related disruptions.'),
       makeSubCategory('disaster-relief-humanitarian', 'flood-relief-camps', 'Flood Relief Camps', 'Organized relief camps for families affected by floods and displacement.'),
@@ -131,8 +131,8 @@ export const programs = [
   },
   {
     title: 'Women & Youth Empowerment', shortTitle: 'Empowerment', slug: 'women-youth-empowerment', icon: 'Users',
-    folder: '/assets/images/programs/core-area/women-youth-empowerment/', defaultImage: '/assets/images/programs/core-area/women-youth-empowerment/logos/women-youth-empowerment-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/women-youth-empowerment/logos/women-youth-empowerment-logo.jpg'], sdgs: [4,5,8,10,17],
+    folder: '/assets/images/programs/women-youth-empowerment/', defaultImage: '/assets/images/programs/women-youth-empowerment/logos/women-youth-empowerment-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/women-youth-empowerment/logos/women-youth-empowerment-logo.jpg'], sdgs: [4,5,8,10,17],
     subCategories: [
       makeSubCategory('women-youth-empowerment', 'women-entrepreneurship', 'Women Entrepreneurship', 'Entrepreneurship support to help women build income-generating livelihoods.'),
       makeSubCategory('women-youth-empowerment', 'youth-skilling', 'Youth Skilling', 'Industry-relevant skilling programs to improve youth employability.'),
@@ -145,8 +145,8 @@ export const programs = [
   },
   {
     title: 'Integrated Learning Centers', shortTitle: 'ILCs', slug: 'integrated-learning-centers', icon: 'GraduationCap',
-    folder: '/assets/images/programs/core-area/integrated-learning-centers/', defaultImage: '/assets/images/programs/core-area/integrated-learning-centers/logos/integrated-learning-centers-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/integrated-learning-centers/logos/integrated-learning-centers-logo.jpg'], sdgs: [3,4,5,8,10,11,17],
+    folder: '/assets/images/programs/integrated-learning-centers/', defaultImage: '/assets/images/programs/integrated-learning-centers/logos/integrated-learning-centers-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/integrated-learning-centers/logos/integrated-learning-centers-logo.jpg'], sdgs: [3,4,5,8,10,11,17],
     subCategories: [
       makeSubCategory('integrated-learning-centers', 'community-libraries', 'Community Libraries', 'Accessible local libraries to promote reading, learning, and aspiration.'),
       makeSubCategory('integrated-learning-centers', 'digital-kiosk-labs', 'Digital Kiosk Labs', 'Digital access points for learning, services, and skill development.'),
@@ -159,8 +159,8 @@ export const programs = [
   },
   {
     title: 'Farmer Empowerment & Sustainable Agriculture', shortTitle: 'Farmer Empowerment', slug: 'farmer-empowerment-sustainable-agriculture', icon: 'Sprout',
-    folder: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/',
-    defaultImage: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/cover.jpg',
+    folder: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/',
+    defaultImage: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/cover.jpg',
     logos: ['/images/GiveForSociety_logo.jpg'], sdgs: [1,2,5,8,10,12,13,17],
     problemStatement: 'Small and marginal farmers face crop failure, debt burden, borewell failure, lack of formal credit access, weak market linkages, limited technical guidance, and income insecurity. Farmer families affected by distress need livelihood support and long-term resilience-building.',
     objectives: [
@@ -174,32 +174,32 @@ export const programs = [
     subCategories: [
       {
         title: 'Sustainable Farming Awareness',
-        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/sustainable-farming.jpg',
+        image: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/sustainable-farming.jpg',
         description: 'Training on soil health, water conservation, crop planning, organic/natural farming, and climate-resilient agriculture.',
       },
       {
         title: 'Farmer Livelihood Recovery',
-        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/livelihood-recovery.jpg',
+        image: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/livelihood-recovery.jpg',
         description: 'Livelihood support for vulnerable farmer families through goats, dairy, small shops, tailoring, food carts, or other income-generating assets.',
       },
       {
         title: 'FPO & Farmer Group Support',
-        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/fpo-support.jpg',
+        image: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/fpo-support.jpg',
         description: 'Capacity building for farmer producer organizations, farmer groups, collective procurement, aggregation, and market-based interventions.',
       },
       {
         title: 'Women Farmer Cooperatives',
-        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/women-cooperatives.jpg',
+        image: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/women-cooperatives.jpg',
         description: 'Supporting women-led cooperatives, SHGs, agri-livelihood groups, and rural women’s participation in income generation.',
       },
       {
         title: 'Market Linkages & Value Addition',
-        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/market-linkages.jpg',
+        image: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/market-linkages.jpg',
         description: 'Connecting farmers to better markets, buyers, processing opportunities, branding, and value-added local products.',
       },
       {
         title: 'Farmer Awareness Camps',
-        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/farmer-awareness-camps.jpg',
+        image: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/farmer-awareness-camps.jpg',
         description: 'Camps on crop insurance, formal credit, government schemes, tenant farmer support, financial literacy, and distress prevention.',
       },
     ],
@@ -212,8 +212,8 @@ export const programs = [
   },
   {
     title: 'Community Awareness & Social Action', shortTitle: 'Social Action', slug: 'community-awareness-social-action', icon: 'HandHeart',
-    folder: '/assets/images/programs/core-area/community-awareness-social-action/', defaultImage: '/assets/images/programs/core-area/community-awareness-social-action/logos/community-awareness-social-action-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/community-awareness-social-action/logos/community-awareness-social-action-logo.jpg'], sdgs: [3,6,10,11,13,17],
+    folder: '/assets/images/programs/community-awareness-social-action/', defaultImage: '/assets/images/programs/community-awareness-social-action/logos/community-awareness-social-action-logo.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/community-awareness-social-action/logos/community-awareness-social-action-logo.jpg'], sdgs: [3,6,10,11,13,17],
     subCategories: [
       makeSubCategory('community-awareness-social-action', 'blood-donation-camps', 'Blood Donation Camps', 'Voluntary blood-donation drives to strengthen emergency health support.'),
       makeSubCategory('community-awareness-social-action', 'public-awareness-drives', 'Public Awareness Drives', 'Public campaigns on health, civic responsibility, and social well-being.'),
