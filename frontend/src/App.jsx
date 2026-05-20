@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, BarChart3, BookOpen, ChevronDown, ClipboardCheck, FileText, GraduationCap, HandHeart, Heart, Image as ImageIcon, MapPin, Menu, ShieldCheck, Stethoscope, Target, Users, X } from 'lucide-react'
+import { ArrowRight, BarChart3, BookOpen, ChevronDown, ClipboardCheck, FileText, GraduationCap, HandHeart, Heart, Image as ImageIcon, MapPin, Menu, ShieldCheck, Sprout, Stethoscope, Target, Users, X } from 'lucide-react'
 import { NGO_LOGO, accreditations, awards, getSdgImagePath, impact, programs } from './data/programs'
 
-const iconMap = { BookOpen, Heart, Stethoscope, ShieldCheck, Users, GraduationCap, MapPin, HandHeart }
+const iconMap = { BookOpen, Heart, Stethoscope, ShieldCheck, Users, GraduationCap, MapPin, HandHeart, Sprout }
 
 function Button({ children, variant = 'primary', onClick }) {
   return <button onClick={onClick} className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'}`}>{children}</button>
@@ -82,7 +82,7 @@ function Contact(){
   return <section id="contact" className="content-section"><div className="cta"><h2>Let’s build stronger rural communities together.</h2><p>For CSR partnerships, donations, volunteering, project collaboration, and field implementation support, reach out to Give For Society.</p><Button onClick={openContact}>Contact Us</Button></div></section>
 }
 
-function Footer(){ const footerOurWork=programs.slice(0,6); return <footer className="footer"><div className="footer-grid"><div><div className="footer-brand"><img src={NGO_LOGO}/><div><h3>Give For Society</h3><small>NGOGIVE</small></div></div><p>Empowering rural, tribal, and underserved communities through education, health, hygiene, women empowerment, youth skilling, disaster relief, and community development.</p></div><div><h4>About Us</h4><a href="#about">About</a><a href="#impact">Impact</a><a href="#awards">Awards & Accreditations</a><a href="#partners">CSR Partnerships</a></div><div><h4>Our Work</h4>{footerOurWork.map(p=><a key={p.slug} href="#work">{p.shortTitle}</a>)}</div><div><h4>Get Involved</h4><a>Corporate CSR</a><a>Donate</a><a>Volunteer</a><a>Request Proposal</a></div><div><h4>Contact</h4><p>A31 Flat 307, Samskruthi Township, Pocharam, Hyderabad - 500088</p><p>Phone: +91 98854 23560</p><p>Email: giveforsociety@gmail.com</p><p>Website: www.give4society.org</p></div></div><div className="footer-bottom">© 2026 Give For Society. All rights reserved. <span>Privacy Policy • Terms of Use • Annual Reports</span></div></footer> }
+function Footer(){ const footerOurWork=programs; return <footer className="footer"><div className="footer-grid"><div><div className="footer-brand"><img src={NGO_LOGO}/><div><h3>Give For Society</h3><small>NGOGIVE</small></div></div><p>Empowering rural, tribal, and underserved communities through education, health, hygiene, women empowerment, youth skilling, disaster relief, and community development.</p></div><div><h4>About Us</h4><a href="#about">About</a><a href="#impact">Impact</a><a href="#awards">Awards & Accreditations</a><a href="#partners">CSR Partnerships</a></div><div><h4>Our Work</h4>{footerOurWork.map(p=><a key={p.slug} href="#work">{p.shortTitle}</a>)}</div><div><h4>Get Involved</h4><a>Corporate CSR</a><a>Donate</a><a>Volunteer</a><a>Request Proposal</a></div><div><h4>Contact</h4><p>A31 Flat 307, Samskruthi Township, Pocharam, Hyderabad - 500088</p><p>Phone: +91 98854 23560</p><p>Email: giveforsociety@gmail.com</p><p>Website: www.give4society.org</p></div></div><div className="footer-bottom">© 2026 Give For Society. All rights reserved. <span>Privacy Policy • Terms of Use • Annual Reports</span></div></footer> }
 
 function Home({ onOpenProgram }){ return <><SiteHeader onOpenProgram={onOpenProgram} onGoHome={()=>{}}/><Hero/><ImpactStats/><About/><Work onOpenProgram={onOpenProgram}/><SDGSection/><Partners/><Contact/><Footer/></> }
 
