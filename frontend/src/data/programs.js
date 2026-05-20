@@ -49,6 +49,26 @@ export const programs = [
       makeSubCategory('empowering-rural-learning', 'digital-learning', 'Digital Learning', 'Digital tools and computer access to build modern learning skills.', '2,000+ students supported'),
       makeSubCategory('empowering-rural-learning', 'school-wash', 'School WASH', 'Clean water, toilets, and hygiene facilities to support attendance and dignity.', 'Safe WASH facilities added'),
       makeSubCategory('empowering-rural-learning', 'back-to-school', 'Back to School', 'Learning kits and support that help vulnerable children return to school.', 'Return-to-school support delivered'),
+      {
+        title: 'School Sports Kits',
+        image: '/assets/images/programs/core-area/empowering-rural-learning/school-sports-kits.jpg',
+        description: 'Equipment support that enables regular sports participation in schools.',
+      },
+      {
+        title: 'Rural Sports Training',
+        image: '/assets/images/programs/core-area/empowering-rural-learning/rural-sports-training.jpg',
+        description: 'Structured rural coaching to build fitness, skills, and confidence.',
+      },
+      {
+        title: 'School Tournaments',
+        image: '/assets/images/programs/core-area/empowering-rural-learning/school-tournaments.jpg',
+        description: 'Inter-school tournaments that encourage participation and talent identification.',
+      },
+      {
+        title: 'Student Leadership & Fitness',
+        image: '/assets/images/programs/core-area/empowering-rural-learning/student-leadership-fitness.jpg',
+        description: 'Leadership-building activities through sports and teamwork to improve student confidence and wellbeing.',
+      },
     ],
     overview: 'Strengthening government schools through classrooms, benches, STEM labs, digital learning, libraries, safe drinking water, toilets, and Back to School support.',
     beneficiaries: ['Government school students in rural and tribal areas','Adolescent girls requiring school health and hygiene support','Teachers, school administrators, and local education systems'],
@@ -138,18 +158,57 @@ export const programs = [
     kpis: ['Center footfall','Library memberships','Digital literacy completions','Training participation','Community satisfaction'], monitoring: ['Monthly dashboard','Library registers','Training certificates','Community surveys','Annual reports'], activities: ['Library access','Digital kiosk services','Career guidance','Women empowerment','Health awareness','Agriculture support']
   },
   {
-    title: 'Sports, Leadership & Youth Development', shortTitle: 'Sports', slug: 'sports-youth-development', icon: 'MapPin',
-    folder: '/assets/images/programs/core-area/sports-youth-development/', defaultImage: '/assets/images/programs/core-area/sports-youth-development/logos/sports-youth-development-logo.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/core-area/sports-youth-development/logos/sports-youth-development-logo.jpg'], sdgs: [3,4,5,10,17],
-    subCategories: [
-      makeSubCategory('sports-youth-development', 'school-sports-kits', 'School Sports Kits', 'Equipment support that enables regular sports participation in schools.'),
-      makeSubCategory('sports-youth-development', 'rural-sports-training', 'Rural Sports Training', 'Structured rural coaching to build fitness, skills, and confidence.'),
-      makeSubCategory('sports-youth-development', 'youth-leadership', 'Youth Leadership', 'Leadership-building activities through sports and teamwork.'),
-      makeSubCategory('sports-youth-development', 'school-tournaments', 'School Tournaments', 'Inter-school tournaments that encourage participation and talent identification.'),
+    title: 'Farmer Empowerment & Sustainable Agriculture', shortTitle: 'Farmer Empowerment', slug: 'farmer-empowerment-sustainable-agriculture', icon: 'Sprout',
+    folder: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/',
+    defaultImage: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/cover.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg'], sdgs: [1,2,5,8,10,12,13,17],
+    problemStatement: 'Small and marginal farmers face crop failure, debt burden, borewell failure, lack of formal credit access, weak market linkages, limited technical guidance, and income insecurity. Farmer families affected by distress need livelihood support and long-term resilience-building.',
+    objectives: [
+      'Promote sustainable and climate-resilient farming practices.',
+      'Support farmer families facing distress through livelihood recovery.',
+      'Strengthen FPOs, farmer groups, and women cooperatives.',
+      'Improve access to training, market linkages, and government schemes.',
+      'Build awareness on soil health, water conservation, crop planning, and financial literacy.',
+      'Support income diversification through livestock, small enterprises, and value-added livelihoods.',
     ],
-    overview: 'Promoting physical fitness, confidence, teamwork, leadership, and talent identification through rural sports and school-level sports support.',
-    beneficiaries: ['Government school children','Rural and tribal youth','Young girls and boys','School teams and coaches'], metrics: ['Sports kits','School tournaments','Rural coaching','Youth clubs','Talent identification'],
-    kpis: ['Schools covered','Students participating','Kits distributed','Coaches engaged','Tournaments conducted'], monitoring: ['Participation records','Kit distribution reports','Coach logs','Student progress cards','Event documentation'], activities: ['Sports kits','School sports events','Kabaddi/Kho-Kho/Athletics','Coaching','Mini sports centers','Progress tracking']
+    subCategories: [
+      {
+        title: 'Sustainable Farming Awareness',
+        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/sustainable-farming.jpg',
+        description: 'Training on soil health, water conservation, crop planning, organic/natural farming, and climate-resilient agriculture.',
+      },
+      {
+        title: 'Farmer Livelihood Recovery',
+        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/livelihood-recovery.jpg',
+        description: 'Livelihood support for vulnerable farmer families through goats, dairy, small shops, tailoring, food carts, or other income-generating assets.',
+      },
+      {
+        title: 'FPO & Farmer Group Support',
+        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/fpo-support.jpg',
+        description: 'Capacity building for farmer producer organizations, farmer groups, collective procurement, aggregation, and market-based interventions.',
+      },
+      {
+        title: 'Women Farmer Cooperatives',
+        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/women-cooperatives.jpg',
+        description: 'Supporting women-led cooperatives, SHGs, agri-livelihood groups, and rural women’s participation in income generation.',
+      },
+      {
+        title: 'Market Linkages & Value Addition',
+        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/market-linkages.jpg',
+        description: 'Connecting farmers to better markets, buyers, processing opportunities, branding, and value-added local products.',
+      },
+      {
+        title: 'Farmer Awareness Camps',
+        image: '/assets/images/programs/core-area/farmer-empowerment-sustainable-agriculture/farmer-awareness-camps.jpg',
+        description: 'Camps on crop insurance, formal credit, government schemes, tenant farmer support, financial literacy, and distress prevention.',
+      },
+    ],
+    overview: 'Supporting small and marginal farmers, tenant farmers, farmer families, women cooperatives, and rural agriculture-based livelihoods through awareness, training, sustainable farming practices, FPO support, market linkages, and livelihood recovery assistance.',
+    beneficiaries: ['Small and marginal farmers','Tenant farmers','Farmer families affected by distress','Women farmers and SHG members','FPOs and farmer collectives','Tribal and rain-fed farming communities'],
+    metrics: ['Farmers trained','Farmer families supported','FPOs/farmer groups strengthened','Women farmers/cooperatives supported','Livelihood assets distributed','Market linkage partnerships created','Awareness camps conducted'],
+    kpis: ['Number of farmers attending training','Number of livelihood recovery cases supported','Increase in farmer group participation','Number of women farmers enrolled','Number of FPOs supported','Market linkage outcomes','Follow-up visits completed'],
+    monitoring: ['Farmer baseline profile','Training attendance records','Livelihood asset distribution records','Follow-up income tracking','FPO/group meeting records','Market linkage documentation','Quarterly field monitoring reports','Photo and case study documentation'],
+    activities: ['Sustainable farming awareness sessions','Livelihood recovery support','FPO and farmer group capacity building','Women cooperative strengthening','Market linkage facilitation','Farmer awareness camps']
   },
   {
     title: 'Community Awareness & Social Action', shortTitle: 'Social Action', slug: 'community-awareness-social-action', icon: 'HandHeart',
