@@ -1,1 +1,12 @@
-export default function App(){ return <div>GiveNGO</div>}
+import { Route, Routes } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import ProgramDetailPage from './pages/ProgramDetailPage'
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/programs/:slug" element={<ProgramDetailPage />} />
+    </Routes>
+  )
+}
