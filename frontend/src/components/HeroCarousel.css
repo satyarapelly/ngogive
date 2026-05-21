@@ -1,0 +1,120 @@
+.hero-carousel {
+  position: relative;
+  min-height: 72vh;
+  max-height: 820px;
+  overflow: hidden;
+  border-radius: 0 0 24px 24px;
+}
+
+.hero-carousel-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.02);
+  transition: opacity 500ms ease, transform 700ms ease;
+}
+
+.hero-carousel-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.hero-carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(3, 8, 20, 0.86) 10%, rgba(3, 8, 20, 0.3) 70%);
+}
+
+.hero-carousel-content {
+  position: relative;
+  z-index: 2;
+  min-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+  color: #ffffff;
+}
+
+.hero-carousel-content h1 {
+  font-size: clamp(2rem, 3.5vw, 3.3rem);
+  max-width: 720px;
+}
+
+.hero-carousel-subtitle {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.hero-carousel-description {
+  max-width: 680px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.hero-carousel-actions {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.hero-carousel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: transform 250ms ease, background 250ms ease, color 250ms ease;
+}
+
+.hero-carousel-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hero-carousel-btn-primary {
+  background: #f97316;
+  color: #fff;
+}
+
+.hero-carousel-btn-outline {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: #fff;
+}
+
+.hero-carousel-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hero-carousel-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.hero-carousel-dot.is-active {
+  width: 28px;
+  background: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .hero-carousel,
+  .hero-carousel-content {
+    min-height: 64vh;
+  }
+}
