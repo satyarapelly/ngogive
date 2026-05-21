@@ -443,7 +443,6 @@ function SDGSection() {
         <div>
           <p className="eyebrow orange">SUSTAINABLE DEVELOPMENT GOALS</p>
           <h2>Aligned with national priorities and global goals.</h2>
-          <p>Your SDG images are loaded from: /assets/images/sdg/sdg-NN.jpg</p>
         </div>
         <div className="sdg-row large">
           {[1, 2, 3, 4, 5, 6, 8, 10, 11, 13, 17].map((s) => (
@@ -587,7 +586,7 @@ function SupportCauseSection() {
 function Contact() {
   const openContact = () => {
     window.location.href =
-      "mailto:giveforsociety@gmail.com?subject=Contact%20Us%20-%20Give%20For%20Society";
+      "mailto:contact@give4society.org?subject=Contact%20Us%20-%20Give%20For%20Society";
   };
   return (
     <section id="contact" className="content-section">
@@ -649,7 +648,7 @@ function Footer() {
           <h4>Contact</h4>
           <p>A31 Flat 307, Samskruthi Township, Pocharam, Hyderabad - 500088</p>
           <p>Phone: +91 98854 23560</p>
-          <p>Email: giveforsociety@gmail.com</p>
+          <p>Email: contact@give4society.org</p>
           <p>Website: www.give4society.org</p>
         </div>
       </div>
