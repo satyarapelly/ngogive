@@ -213,6 +213,18 @@ button {
 .hero-card svg {
   color: #fed7aa;
 }
+
+.hero-focus-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.hero-focus-link:hover,
+.hero-focus-link:focus-visible {
+  text-decoration: underline;
+  color: #fed7aa;
+}
 .section-icon {
   height: 54px;
   width: 54px;
@@ -321,6 +333,47 @@ button {
   color: #475569;
   line-height: 1.8;
 }
+
+.about-intro h2 {
+  max-width: 620px;
+}
+
+.about-body {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 22px;
+}
+
+.about-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.about-highlight-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid var(--orange);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.about-highlight-card strong {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.about-highlight-card span {
+  color: #0f172a;
+  font-weight: 700;
+}
+
 .mission-grid,
 .two-card-grid {
   display: grid;
@@ -700,7 +753,8 @@ button {
   }
   .three-col,
   .mission-grid,
-  .two-card-grid {
+  .two-card-grid,
+  .about-highlights {
     grid-template-columns: 1fr;
   }
   .footer-grid {
