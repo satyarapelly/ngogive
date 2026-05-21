@@ -89,7 +89,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
         </nav>
         <div className="desktop-actions">
           <Button variant="outline">Partner With Us</Button>
-          <Button>Donate</Button>
+          <Button onClick={() => window.location.assign("donate-now.html")}>Donate</Button>
         </div>
         <button
           className="mobile-menu"
@@ -117,7 +117,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
   );
 }
 
-function Hero() {
+function Hero({ onOpenDonations }) {
   return (
     <section className="hero">
       <div className="hero-bg" />
@@ -138,7 +138,7 @@ function Hero() {
             programmes across Telangana.
           </p>
           <div className="hero-actions">
-            <Button>
+            <Button onClick={onOpenDonations}>
               Support a Cause <ArrowRight size={16} />
             </Button>
             <Button variant="outline">Explore Projects</Button>
@@ -582,11 +582,11 @@ function Footer() {
   );
 }
 
-function Home({ onOpenProgram }) {
+function Home({ onOpenProgram, onOpenDonations }) {
   return (
     <>
       <SiteHeader onOpenProgram={onOpenProgram} onGoHome={() => {}} />
-      <Hero />
+      <Hero onOpenDonations={onOpenDonations} />
       <ImpactStats />
       <About />
       <Work onOpenProgram={onOpenProgram} />
@@ -607,6 +607,6 @@ export default function App() {
   return activeProgram ? (
     <ProgramDetail program={activeProgram} onBack={() => setActiveSlug(null)} />
   ) : (
-    <Home onOpenProgram={setActiveSlug} />
+    <Home onOpenProgram={setActiveSlug} onOpenDonations={() => window.location.assign("donate-now.html")} />
   );
 }
