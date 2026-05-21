@@ -1,12 +1,14 @@
-import { Link } from 'react-router-dom'
-import { programs } from '../data/programs'
+import { Link } from "react-router-dom";
+import { programs } from "../data/programs";
 
 export default function SiteHeader() {
   return (
     <header className="site-header">
       <div className="container nav-wrap">
         <Link to="/" className="brand" aria-label="Give For Society home">
-          <span className="brand-mark" aria-hidden="true">GFS</span>
+          <span className="brand-mark" aria-hidden="true">
+            GFS
+          </span>
           <span>Give For Society</span>
         </Link>
         <nav>
@@ -28,5 +30,5 @@ export default function SiteHeader() {
         </nav>
       </div>
     </header>
-  )
+  );
 }
