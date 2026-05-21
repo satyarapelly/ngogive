@@ -10,15 +10,17 @@ import {
   ShieldCheck,
   Target,
   X,
+  CheckCircle2,
+  ClipboardCheck,
 } from "lucide-react";
 import {
   NGO_LOGO,
   getSdgImagePath,
   impact,
-  mouMoc,
   programs,
 } from "./data/programs";
 import AwardsCarousel from "./components/AwardsCarousel";
+import InstitutionalRecognition from "./components/InstitutionalRecognition";
 
 function Button({ children, variant = "primary", onClick }) {
   return (
@@ -85,11 +87,13 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
           </span>
           <a href="#awards">Awards</a>
           <a href="#partners">CSR Partners</a>
+          <a href="#institutional-recognition">MoUs & Recognition</a>
+          <a href="#support-cause">Support a Cause</a>
           <a href="#contact">Contact</a>
         </nav>
         <div className="desktop-actions">
           <Button variant="outline">Partner With Us</Button>
-          <Button onClick={() => window.location.assign("donate-now.html")}>Donate</Button>
+          <Button onClick={() => scrollToSection("support-cause")}>Donate</Button>
         </div>
         <button
           className="mobile-menu"
@@ -249,27 +253,6 @@ function Awards() {
       <div className="two-card-grid">
         <div className="card" style={{ gridColumn: "1 / -1" }}>
           <AwardsCarousel />
-        </div>
-      </div>
-      <div className="two-card-grid" style={{ marginTop: "24px" }}>
-        <div className="card">
-          <h3>
-            <FileText /> MoU / MoC
-          </h3>
-          <ul className="nice-list">
-            {(mouMoc || []).map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="card">
-          <h3>
-            <ShieldCheck /> Institutional Recognition
-          </h3>
-          <p className="body-text">
-            State and district collaborations, recognition events, and statutory
-            compliance records are maintained for transparent NGO operations.
-          </p>
         </div>
       </div>
     </section>
@@ -508,6 +491,97 @@ function Partners() {
   );
 }
 
+
+
+function SupportCauseSection() {
+  const causes = [
+    {
+      title: "Sthree Swabhiman – Menstrual Hygiene & Girls Dignity",
+      description: "Support dignity-led menstrual health education and safe hygiene access for adolescent girls in schools and hostels.",
+      impact: "Impact: safer periods, improved attendance, stronger confidence.",
+      image: "/assets/images/programs/sthree-swabhiman/photo-distribution-group.jpg",
+    },
+    {
+      title: "Education & School Infrastructure",
+      description: "Enable classrooms, school essentials, learning kits, and child-friendly spaces for government school students.",
+      impact: "Impact: better learning conditions and school retention.",
+      image: "/assets/images/programs/empowering-rural-learning/IMG_4802.JPG",
+    },
+    {
+      title: "Health & Community Well-being",
+      description: "Contribute to preventive camps, health awareness, and community outreach for vulnerable families.",
+      impact: "Impact: early care, awareness, and healthier communities.",
+      image: "/assets/images/programs/sthree-swabhiman/photo-iec-poster.jpg",
+    },
+    {
+      title: "Disaster Relief & Humanitarian Response",
+      description: "Help deliver emergency food, hygiene, and basic support during floods, heatwaves, and local crises.",
+      impact: "Impact: timely relief and protection for affected families.",
+      image: "/assets/images/programs/sthree-swabhiman/photo-group-poster.jpg",
+    },
+    {
+      title: "Women & Youth Empowerment",
+      description: "Back skills, entrepreneurship, and livelihoods that improve economic resilience for women and young people.",
+      impact: "Impact: enhanced livelihoods and self-reliance.",
+      image: "/assets/images/programs/sthree-swabhiman/photo-workshop-speaker.jpg",
+    },
+    { title: "Integrated Learning Centers", description: "Strengthen rural learning hubs that combine libraries, digital support, guidance, and local development services.", impact: "Impact: inclusive access to knowledge and opportunities.", image: "/assets/images/programs/empowering-rural-learning/IMG_4753.JPG" },
+    { title: "Farmer Empowerment & Sustainable Agriculture", description: "Support training, farmer groups, and livelihood recovery for small and marginal farmers.", impact: "Impact: climate-resilient agriculture and income stability.", image: "/assets/images/programs/empowering-rural-learning/IMG_4732.JPG" },
+    { title: "Community Awareness & Social Action", description: "Fuel blood donation drives, social campaigns, and civic participation across Telangana communities.", impact: "Impact: stronger social responsibility and local action.", image: "/assets/images/programs/sthree-swabhiman/photo-marathon-awareness.jpg" },
+  ];
+
+  const trustItems = ["Registered NGO since 2017", "CSR-1 Registered", "Darpan Registered", "12A & 80G Certified", "Field implementation reports", "Photo documentation and utilization certificates"];
+
+  return (
+    <section id="support-cause" className="support-cause-section">
+      <div className="support-hero">
+        <p className="eyebrow orange">GIVE FOR SOCIETY DONATIONS</p>
+        <h2>Support a Cause</h2>
+        <p>Your contribution helps Give For Society strengthen education, health, dignity, livelihoods, disaster relief, and rural transformation across underserved communities in Telangana.</p>
+        <Button onClick={() => scrollToSection("donation-form")}>Donate Now</Button>
+      </div>
+      <div className="cause-grid">
+        {causes.map((cause) => (
+          <article key={cause.title} className="cause-card">
+            <img src={cause.image} alt={cause.title} />
+            <div className="cause-content">
+              <h3>{cause.title}</h3><p>{cause.description}</p><small>{cause.impact}</small>
+              <Button variant="outline">Select Cause</Button>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="donation-layout">
+        <div>
+          <div className="amount-panel">
+            <h3>Select Donation Amount</h3>
+            <div className="amount-options">{["₹500", "₹1,000", "₹2,500", "₹5,000", "₹10,000", "Custom Amount"].map((amount) => <button key={amount}>{amount}</button>)}</div>
+          </div>
+          <div className="tax-box">
+            <h4>80G Tax Benefit</h4><p>Your contribution may be eligible for tax benefits under Section 80G as per applicable Income Tax rules. Donation receipt and 80G certificate will be shared after successful contribution and verification.</p>
+            <p><strong>PAN:</strong> AADAG7386BF</p><p><strong>80G Registration:</strong> AADAG7386BF20231</p><p><strong>12A Registration:</strong> AADAG7386BE20231</p>
+          </div>
+          <div className="bank-box">
+            <h4>Bank Transfer / Direct Donation</h4>
+            <p><strong>Account Name:</strong> Give For Society</p><p><strong>Bank:</strong> HDFC</p><p><strong>Account Number:</strong> 50200085716044</p><p><strong>IFSC:</strong> HDFC0004854</p><p><strong>Branch:</strong> Pragathi Nagar</p>
+          </div>
+          <div className="trust-grid">{trustItems.map((item) => <div key={item} className="trust-card"><CheckCircle2 size={18} /> {item}</div>)}</div>
+          <div className="impact-list"><h4>Donation Impact Examples</h4><ul><li>₹500 can support awareness materials for school girls</li><li>₹1,000 can support hygiene education and student materials</li><li>₹2,500 can support school kit or health camp outreach</li><li>₹5,000 can support community awareness or relief assistance</li><li>₹10,000 can support infrastructure, kits, or field implementation</li></ul></div>
+          <div className="impact-list"><h4>Important Notes</h4><ul><li>Receipts will be issued after verification</li><li>PAN is required for 80G receipt</li><li>Donations are used for selected cause or similar urgent need</li><li>For CSR partnerships, contact Give For Society directly</li></ul></div>
+        </div>
+        <div className="donor-form" id="donation-form">
+          <h3>Donor Details</h3>
+          <form>
+            {["Full Name","Email","Mobile Number","PAN Number","Address","City","State","Pincode","Donation Purpose","Amount"].map((field) => <input key={field} placeholder={field} aria-label={field} />)}
+            <label className="consent"><input type="checkbox" /> I agree that Give For Society may contact me through phone, email, SMS, or WhatsApp regarding donation confirmation, receipts, programme updates, and impact reports.</label>
+            <Button>Submit Donation Interest</Button>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Contact() {
   const openContact = () => {
     window.location.href =
@@ -551,6 +625,7 @@ function Footer() {
           <a href="#about">About</a>
           <a href="#impact">Impact</a>
           <a href="#awards">Awards & Accreditations</a>
+          <a href="#institutional-recognition">MoUs & Recognition</a>
           <a href="#partners">CSR Partnerships</a>
         </div>
         <div>
@@ -592,8 +667,10 @@ function Home({ onOpenProgram, onOpenDonations }) {
       <ImpactStats />
       <About />
       <Work onOpenProgram={onOpenProgram} />
+      <InstitutionalRecognition />
       <SDGSection />
       <Partners />
+      <SupportCauseSection />
       <Contact />
       <Footer />
     </>
@@ -609,6 +686,6 @@ export default function App() {
   return activeProgram ? (
     <ProgramDetail program={activeProgram} onBack={() => setActiveSlug(null)} />
   ) : (
-    <Home onOpenProgram={setActiveSlug} onOpenDonations={() => window.location.assign("donate-now.html")} />
+    <Home onOpenProgram={setActiveSlug} onOpenDonations={() => scrollToSection("support-cause")} />
   );
 }
