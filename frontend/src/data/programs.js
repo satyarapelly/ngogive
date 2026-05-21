@@ -47,10 +47,10 @@ export const accreditations = [
 ]
 
 export const impact = [
-  ['1,23,000+', 'Girls targeted through menstrual hygiene initiative'],
-  ['275', 'Residential institutions proposed for MHM support'],
-  ['8', 'Core development areas across rural Telangana'],
-  ['2017', 'Established as a registered grassroots NGO'],
+  { number: '1,23,000+', label: 'Girls reached through menstrual hygiene awareness', detail: 'Dignity-focused sessions across residential schools and junior colleges.' },
+  { number: '88,000+', label: 'Starter kits distributed', detail: 'Essential menstrual hygiene kits delivered to adolescent girls annually.' },
+  { number: '275+', label: 'Institutions covered', detail: 'Partnerships with hostels and schools in underserved communities.' },
+  { number: '550+', label: 'Safe disposal units proposed/installed', detail: 'Incinerator and hygiene infrastructure support for safe practices.' },
 ]
 
 
