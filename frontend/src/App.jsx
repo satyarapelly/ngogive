@@ -7,7 +7,6 @@ import {
   ClipboardCheck,
   FileText,
   Heart,
-  Image as ImageIcon,
   Menu,
   ShieldCheck,
   Target,
@@ -16,8 +15,6 @@ import {
 import {
   NGO_LOGO,
   accreditations,
-  awardGallery,
-  awards,
   getSdgImagePath,
   impact,
   mouMoc,
@@ -250,125 +247,7 @@ function Awards() {
       </div>
       <div className="two-card-grid">
         <div className="card">
-          <h3>
-            <ImageIcon /> Awards & Recognition Photos
-          </h3>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                    }}
-                  >
-                    Photo
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                    }}
-                  >
-                    Type
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                    }}
-                  >
-                    Title
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                    }}
-                  >
-                    Organization
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                    }}
-                  >
-                    Year
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {(awardGallery || []).map((item) => (
-                  <tr key={item.title}>
-                    <td
-                      style={{
-                        padding: "10px",
-                        borderBottom: "1px solid #f1f5f9",
-                      }}
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        style={{
-                          height: "56px",
-                          width: "56px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        borderBottom: "1px solid #f1f5f9",
-                      }}
-                    >
-                      {item.type}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        borderBottom: "1px solid #f1f5f9",
-                      }}
-                    >
-                      {item.title}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        borderBottom: "1px solid #f1f5f9",
-                      }}
-                    >
-                      {item.organization}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        borderBottom: "1px solid #f1f5f9",
-                      }}
-                    >
-                      {item.year}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {(awards || []).map((a) => (
-            <div className="award" key={a.title}>
-              <strong>{a.title}</strong>
-              <span>
-                {a.organization} • {a.year}
-              </span>
-            </div>
-          ))}
+          <AwardsCarousel />
         </div>
         <div className="card">
           <h3>
