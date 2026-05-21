@@ -152,11 +152,11 @@ function Hero({ onOpenDonations }) {
           <h2>Flagship Focus</h2>
           <p>Rural Youth & Women Development</p>
           <ul>
-            <li>Menstrual Hygiene & Dignity Initiative</li>
-            <li>Integrated Learning Centers</li>
-            <li>School infrastructure, STEM labs, sanitation</li>
-            <li>Health outreach and fluorosis awareness</li>
-            <li>Disaster relief, blood donation, social action</li>
+            <li><a className="hero-focus-link" href="#work">Education & School Infrastructure</a></li>
+            <li><a className="hero-focus-link" href="#work">Menstrual Hygiene & Girls Dignity</a></li>
+            <li><a className="hero-focus-link" href="#work">Women & Youth Empowerment</a></li>
+            <li><a className="hero-focus-link" href="#work">Integrated Learning Centers</a></li>
+            <li><a className="hero-focus-link" href="#work">Health & Community Well-being</a></li>
           </ul>
         </motion.div>
       </div>
@@ -195,14 +195,14 @@ function About() {
   return (
     <>
       <section id="about" className="content-section">
-        <div className="two-col">
-          <div>
+        <div className="two-col about-grid">
+          <div className="about-intro">
             <p className="eyebrow">ABOUT GIVE FOR SOCIETY</p>
             <h2>
               A grassroots NGO creating long-term community transformation.
             </h2>
           </div>
-          <div className="body-text">
+          <div className="body-text about-body">
             <p>
               Founded in 2017, Give For Society is a grassroots non-profit
               organization committed to empowering underserved rural and tribal
@@ -216,6 +216,11 @@ function About() {
               scalable, and impact-driven programmes.
             </p>
           </div>
+        </div>
+        <div className="about-highlights">
+          <div className="about-highlight-card"><strong>Founded</strong><span>2017</span></div>
+          <div className="about-highlight-card"><strong>Focus</strong><span>Rural & Tribal Communities</span></div>
+          <div className="about-highlight-card"><strong>Approach</strong><span>Scalable, Impact-Driven Programmes</span></div>
         </div>
         <div className="mission-grid">
           <InfoCard
