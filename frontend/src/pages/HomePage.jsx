@@ -2,6 +2,7 @@ import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
 import ProgramsSection from "../components/ProgramsSection";
 import SiteHeader from "../components/SiteHeader";
+import ProjectPhotoCarousel from "../components/ProjectPhotoCarousel";
 import VisionMissionSection from "../components/VisionMissionSection";
 
 export default function HomePage() {
@@ -20,6 +21,7 @@ export default function HomePage() {
         </div>
       </section>
       <ProgramsSection />
+      <ProjectPhotoCarousel />
       <section className="section" id="sdg">
         <div className="container">
           <h2>SDG</h2>
