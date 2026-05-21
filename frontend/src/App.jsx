@@ -177,13 +177,25 @@ function Hero({ onOpenDonations }) {
 function ImpactStats() {
   return (
     <section id="impact" className="impact-band">
-      <div className="impact-grid">
-        {impact.map(([n, l]) => (
-          <div className="metric-card" key={n}>
-            <h3>{n}</h3>
-            <p>{l}</p>
-          </div>
-        ))}
+      <div className="impact-wrap">
+        <div className="impact-header">
+          <p className="eyebrow">OUR IMPACT</p>
+          <h2>Transforming lives at scale through sustained grassroots action.</h2>
+          <p>
+            Inspired by high-credibility NGO storytelling, this section highlights
+            measurable outcomes delivered through programmes in menstrual hygiene,
+            school development, and community health.
+          </p>
+        </div>
+        <div className="impact-grid">
+          {impact.map((item) => (
+            <article className="metric-card" key={item.number + item.label}>
+              <h3>{item.number}</h3>
+              <h4>{item.label}</h4>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
