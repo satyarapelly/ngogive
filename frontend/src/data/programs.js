@@ -8,9 +8,27 @@ export const awards = [
 ]
 
 export const awardGallery = [
-  '/assets/images/programs/sthree-swabhiman/slide12-award.jpg',
-  '/assets/images/programs/sthree-swabhiman/slide12-governor.jpg',
-  '/assets/images/programs/sthree-swabhiman/slide12-banner.jpg',
+  {
+    image: '/assets/images/programs/sthree-swabhiman/slide12-award.jpg',
+    type: 'Award Ceremony',
+    title: 'Telangana Governor Excellence Recognition',
+    organization: 'Raj Bhavan, Telangana',
+    year: '2025',
+  },
+  {
+    image: '/assets/images/programs/sthree-swabhiman/slide12-governor.jpg',
+    type: 'Recognition Event',
+    title: 'Governor Interaction with Programme Team',
+    organization: 'Government of Telangana',
+    year: '2025',
+  },
+  {
+    image: '/assets/images/programs/sthree-swabhiman/slide12-banner.jpg',
+    type: 'Public Recognition',
+    title: 'Sthree Swabhiman Public Appreciation',
+    organization: 'State-level Partners',
+    year: '2025',
+  },
 ]
 
 export const mouMoc = [
