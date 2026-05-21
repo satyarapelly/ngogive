@@ -35,6 +35,12 @@ function Button({ children, variant = "primary", onClick }) {
   );
 }
 
+function scrollToSection(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function SiteHeader({ onOpenProgram, onGoHome }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
@@ -58,6 +64,15 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
             </button>
             {workOpen && (
               <div className="dropdown-menu">
+                <button
+                  onClick={() => {
+                    setWorkOpen(false);
+                    onGoHome();
+                    setTimeout(() => scrollToSection("work"), 0);
+                  }}
+                >
+                  Core Areas
+                </button>
                 {programs.map((p) => (
                   <button
                     key={p.slug}
