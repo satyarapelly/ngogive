@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -37,6 +37,14 @@ function scrollToSection(id) {
   const section = document.getElementById(id);
   if (!section) return;
   section.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+
+function navigateToSectionHash(hash, onGoHome) {
+  if (!hash || !hash.startsWith("#")) return;
+  const sectionId = hash.slice(1);
+  onGoHome?.();
+  setTimeout(() => scrollToSection(sectionId), 0);
 }
 
 function SiteHeader({ onOpenProgram, onGoHome }) {
@@ -85,15 +93,15 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
               </div>
             )}
           </span>
-          <a href="#awards">Awards</a>
-          <a href="#partners">CSR Partners</a>
+          <a href="#awards" onClick={(e) => { e.preventDefault(); navigateToSectionHash("#awards", onGoHome); }}>Awards</a>
+          <a href="#partners" onClick={(e) => { e.preventDefault(); navigateToSectionHash("#partners", onGoHome); }}>CSR Partners</a>
           <a href="#institutional-recognition">MoUs & Recognition</a>
-          <a href="#support-cause">Support a Cause</a>
-          <a href="#contact">Contact</a>
+          <a href="#support-cause" onClick={(e) => { e.preventDefault(); navigateToSectionHash("#support-cause", onGoHome); }}>Support a Cause</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); navigateToSectionHash("#contact", onGoHome); }}>Contact</a>
         </nav>
         <div className="desktop-actions">
           <Button variant="outline">Partner With Us</Button>
-          <Button onClick={() => scrollToSection("support-cause")}>Donate</Button>
+          <Button onClick={() => navigateToSectionHash("#support-cause", onGoHome)}>Donate</Button>
         </div>
         <button
           className="mobile-menu"
@@ -695,6 +703,20 @@ export default function App() {
     () => programs.find((p) => p.slug === activeSlug),
     [activeSlug],
   );
+
+  useEffect(() => {
+    const openHashSection = () => {
+      const hash = window.location.hash;
+      if (!hash || !hash.startsWith("#")) return;
+      const sectionId = hash.slice(1);
+      setActiveSlug(null);
+      setTimeout(() => scrollToSection(sectionId), 0);
+    };
+
+    openHashSection();
+    window.addEventListener("hashchange", openHashSection);
+    return () => window.removeEventListener("hashchange", openHashSection);
+  }, []);
   return activeProgram ? (
     <ProgramDetail program={activeProgram} onBack={() => setActiveSlug(null)} />
   ) : (
