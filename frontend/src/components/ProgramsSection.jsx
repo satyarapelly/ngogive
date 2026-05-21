@@ -1,5 +1,5 @@
-import { programs } from '../data/programs'
-import ProgramCard from './ProgramCard'
+import { programs } from "../data/programs";
+import ProgramCard from "./ProgramCard";
 
 export default function ProgramsSection() {
   return (
@@ -13,5 +13,5 @@ export default function ProgramsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
