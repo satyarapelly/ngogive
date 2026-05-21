@@ -21,6 +21,8 @@ import {
 } from "./data/programs";
 import AwardsCarousel from "./components/AwardsCarousel";
 import InstitutionalRecognition from "./components/InstitutionalRecognition";
+import HeroCarousel from "./components/HeroCarousel";
+import CoreAreas from "./components/CoreAreas";
 import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 
 function Button({ children, variant = "primary", onClick }) {
@@ -665,8 +667,10 @@ function Home({ onOpenProgram, onOpenDonations }) {
     <>
       <SiteHeader onOpenProgram={onOpenProgram} onGoHome={() => {}} />
       <Hero onOpenDonations={onOpenDonations} />
+      <HeroCarousel />
       <ImpactStats />
       <About />
+      <CoreAreas />
       <Work onOpenProgram={onOpenProgram} />
       <InstitutionalRecognition />
       <SDGSection />
