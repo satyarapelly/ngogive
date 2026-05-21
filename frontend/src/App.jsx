@@ -20,6 +20,7 @@ import {
   mouMoc,
   programs,
 } from "./data/programs";
+import AwardsCarousel from "./components/AwardsCarousel";
 
 function Button({ children, variant = "primary", onClick }) {
   return (
