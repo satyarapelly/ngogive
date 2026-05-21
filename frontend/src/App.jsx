@@ -21,6 +21,7 @@ import {
 } from "./data/programs";
 import AwardsCarousel from "./components/AwardsCarousel";
 import InstitutionalRecognition from "./components/InstitutionalRecognition";
+import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 
 function Button({ children, variant = "primary", onClick }) {
   return (
@@ -31,12 +32,6 @@ function Button({ children, variant = "primary", onClick }) {
       {children}
     </button>
   );
-}
-
-function scrollToSection(id) {
-  const section = document.getElementById(id);
-  if (!section) return;
-  section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function SiteHeader({ onOpenProgram, onGoHome }) {
@@ -66,7 +61,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
                   onClick={() => {
                     setWorkOpen(false);
                     onGoHome();
-                    setTimeout(() => scrollToSection("work"), 0);
+                    window.location.hash = "#work";
                   }}
                 >
                   Core Areas
@@ -88,12 +83,12 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
           <a href="#awards">Awards</a>
           <a href="#partners">CSR Partners</a>
           <a href="#institutional-recognition">MoUs & Recognition</a>
-          <a href="#support-cause">Support a Cause</a>
+          <Link to="/support-a-cause">Support a Cause</Link>
           <a href="#contact">Contact</a>
         </nav>
         <div className="desktop-actions">
           <Button variant="outline">Partner With Us</Button>
-          <Button onClick={() => scrollToSection("support-cause")}>Donate</Button>
+          <Link to="/support-a-cause" className="btn btn-primary">Donate</Link>
         </div>
         <button
           className="mobile-menu"
@@ -145,9 +140,7 @@ function Hero({ onOpenDonations }) {
             <Button onClick={onOpenDonations}>
               Support a Cause <ArrowRight size={16} />
             </Button>
-            <Button variant="outline" onClick={() => scrollToSection("work")}>
-              Explore Projects
-            </Button>
+            <a className="btn btn-outline" href="#work">Explore Projects</a>
           </div>
         </motion.div>
         <motion.div
@@ -177,13 +170,25 @@ function Hero({ onOpenDonations }) {
 function ImpactStats() {
   return (
     <section id="impact" className="impact-band">
-      <div className="impact-grid">
-        {impact.map(([n, l]) => (
-          <div className="metric-card" key={n}>
-            <h3>{n}</h3>
-            <p>{l}</p>
-          </div>
-        ))}
+      <div className="impact-wrap">
+        <div className="impact-header">
+          <p className="eyebrow">OUR IMPACT</p>
+          <h2>Transforming lives at scale through sustained grassroots action.</h2>
+          <p>
+            Inspired by high-credibility NGO storytelling, this section highlights
+            measurable outcomes delivered through programmes in menstrual hygiene,
+            school development, and community health.
+          </p>
+        </div>
+        <div className="impact-grid">
+          {impact.map((item) => (
+            <article className="metric-card" key={item.number + item.label}>
+              <h3>{item.number}</h3>
+              <h4>{item.label}</h4>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -533,12 +538,12 @@ function SupportCauseSection() {
   const trustItems = ["Registered NGO since 2017", "CSR-1 Registered", "Darpan Registered", "12A & 80G Certified", "Field implementation reports", "Photo documentation and utilization certificates"];
 
   return (
-    <section id="support-cause" className="support-cause-section">
+    <section className="support-cause-section">
       <div className="support-hero">
         <p className="eyebrow orange">GIVE FOR SOCIETY DONATIONS</p>
         <h2>Support a Cause</h2>
         <p>Your contribution helps Give For Society strengthen education, health, dignity, livelihoods, disaster relief, and rural transformation across underserved communities in Telangana.</p>
-        <Button onClick={() => scrollToSection("donation-form")}>Donate Now</Button>
+        <Button>Donate Now</Button>
       </div>
       <div className="cause-grid">
         {causes.map((cause) => (
@@ -546,7 +551,7 @@ function SupportCauseSection() {
             <img src={cause.image} alt={cause.title} />
             <div className="cause-content">
               <h3>{cause.title}</h3><p>{cause.description}</p><small>{cause.impact}</small>
-              <Button variant="outline">Select Cause</Button>
+              <Link to="/support-a-cause" className="btn btn-outline">Select Cause</Link>
             </div>
           </article>
         ))}
@@ -670,22 +675,44 @@ function Home({ onOpenProgram, onOpenDonations }) {
       <InstitutionalRecognition />
       <SDGSection />
       <Partners />
+            <Contact />
+      <Footer />
+    </>
+  );
+}
+
+function HomePageRoute() {
+  const navigate = useNavigate();
+  return <Home onOpenProgram={(slug) => navigate(`/programs/${slug}`)} onOpenDonations={() => navigate("/support-a-cause")} />;
+}
+
+function ProgramDetailRoute() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const program = useMemo(() => programs.find((p) => p.slug === slug), [slug]);
+  if (!program) return <HomePageRoute />;
+  return <ProgramDetail program={program} onBack={() => navigate("/")} />;
+}
+
+function SupportCausePage() {
+  const navigate = useNavigate();
+  return (
+    <>
+      <SiteHeader onOpenProgram={(slug) => navigate(`/programs/${slug}`)} onGoHome={() => navigate("/")} />
       <SupportCauseSection />
-      <Contact />
       <Footer />
     </>
   );
 }
 
 export default function App() {
-  const [activeSlug, setActiveSlug] = useState(null);
-  const activeProgram = useMemo(
-    () => programs.find((p) => p.slug === activeSlug),
-    [activeSlug],
-  );
-  return activeProgram ? (
-    <ProgramDetail program={activeProgram} onBack={() => setActiveSlug(null)} />
-  ) : (
-    <Home onOpenProgram={setActiveSlug} onOpenDonations={() => scrollToSection("support-cause")} />
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePageRoute />} />
+        <Route path="/support-a-cause" element={<SupportCausePage />} />
+        <Route path="/programs/:slug" element={<ProgramDetailRoute />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
