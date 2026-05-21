@@ -587,7 +587,7 @@ function SupportCauseSection() {
 function Contact() {
   const openContact = () => {
     window.location.href =
-      "mailto:giveforsociety@gmail.com?subject=Contact%20Us%20-%20Give%20For%20Society";
+      "mailto:contact@give4society.org?subject=Contact%20Us%20-%20Give%20For%20Society";
   };
   return (
     <section id="contact" className="content-section">
@@ -649,7 +649,7 @@ function Footer() {
           <h4>Contact</h4>
           <p>A31 Flat 307, Samskruthi Township, Pocharam, Hyderabad - 500088</p>
           <p>Phone: +91 98854 23560</p>
-          <p>Email: giveforsociety@gmail.com</p>
+          <p>Email: contact@give4society.org</p>
           <p>Website: www.give4society.org</p>
         </div>
       </div>
