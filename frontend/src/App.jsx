@@ -303,14 +303,25 @@ function InfoCard({ icon: Icon, title, items }) {
 
 function ProgramCard({ program, onOpen }) {
   const subCategories = (program.subCategories || []).slice(0, 3);
+  const [imageError, setImageError] = useState(false);
   return (
     <div className="program-card">
-      <div className="program-image-wrap">
-        <img src={program.defaultImage} alt={program.title} />
+      <div className="program-image-wrap" aria-hidden={imageError}>
+        {!imageError ? (
+          <img
+            src={program.defaultImage}
+            alt={program.title}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="program-image-fallback" role="img" aria-label={`${program.title} image placeholder`}>
+            <span>{program.shortTitle || program.title}</span>
+          </div>
+        )}
       </div>
       <div className="program-body">
-        <h3>{program.title}</h3>
-        <p>{program.overview}</p>
+        <h3 className="program-title">{program.title}</h3>
+        <p className="program-description">{program.overview}</p>
         <p className="subcat-title">Sub-categories of work</p>
         <ul className="subcat-list">
           {subCategories.map((item) => (
@@ -322,7 +333,7 @@ function ProgramCard({ program, onOpen }) {
             <img key={s} src={getSdgImagePath(s)} alt={`SDG ${s}`} />
           ))}
         </div>
-        <button className="text-link" onClick={() => onOpen(program.slug)}>
+        <button className="text-link program-button" onClick={() => onOpen(program.slug)}>
           Know More <ArrowRight size={15} />
         </button>
       </div>
