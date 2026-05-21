@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, BarChart3, BookOpen, ChevronDown, ClipboardCheck, FileText, GraduationCap, HandHeart, Heart, Image as ImageIcon, MapPin, Menu, ShieldCheck, Sprout, Stethoscope, Target, Users, X } from 'lucide-react'
+import { ArrowRight, BarChart3, ChevronDown, ClipboardCheck, FileText, Heart, Image as ImageIcon, Menu, ShieldCheck, Target, X } from 'lucide-react'
 import { NGO_LOGO, accreditations, awardGallery, awards, getSdgImagePath, impact, mouMoc, programs } from './data/programs'
-
-const iconMap = { BookOpen, Heart, Stethoscope, ShieldCheck, Users, GraduationCap, MapPin, HandHeart, Sprout }
 
 function Button({ children, variant = 'primary', onClick }) {
   return <button onClick={onClick} className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'}`}>{children}</button>
