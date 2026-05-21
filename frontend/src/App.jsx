@@ -303,11 +303,6 @@ function ProgramCard({ program, onOpen }) {
             <li key={item.title}>{item.title}</li>
           ))}
         </ul>
-        <div className="sdg-row">
-          {program.sdgs.slice(0, 4).map((s) => (
-            <img key={s} src={getSdgImagePath(s)} alt={`SDG ${s}`} />
-          ))}
-        </div>
         <button className="text-link program-button" onClick={() => onOpen(program.slug)}>
           Know More <ArrowRight size={15} />
         </button>
