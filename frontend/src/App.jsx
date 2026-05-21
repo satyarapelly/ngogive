@@ -80,10 +80,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
               </div>
             )}
           </span>
-          <a href="#awards">Awards</a>
           <a href="#partners">CSR Partners</a>
-          <a href="#institutional-recognition">MoUs & Recognition</a>
-          <Link to="/support-a-cause">Support a Cause</Link>
           <a href="#contact">Contact</a>
         </nav>
         <div className="desktop-actions">

@@ -14,7 +14,6 @@ export default function SiteHeader() {
         <nav>
           <a href="#mission">Mission</a>
           <a href="#vision">Vision</a>
-          <a href="#awards">Awards & Accreditations</a>
           <div className="dropdown">
             <button type="button">Our Work</button>
             <div className="dropdown-menu">
