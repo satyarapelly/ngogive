@@ -8,9 +8,9 @@ export const awards = [
 ]
 
 export const awardGallery = [
-  { type: 'Award', title: 'Telangana Governor’s Excellence Award 2025', organization: 'Telangana State Governor', year: '2026', image: '/assets/images/programs/sthree-swabhiman/slide12-award.jpg' },
-  { type: 'Award', title: 'Best NGO in Telangana', organization: 'TDF', year: '2020', image: '/assets/images/programs/sthree-swabhiman/slide12-governor.jpg' },
-  { type: 'Certification', title: 'Indian Charity Awards', organization: 'TS - Government', year: '2021', image: '/assets/images/programs/sthree-swabhiman/slide12-banner.jpg' },
+  '/assets/images/programs/sthree-swabhiman/slide12-award.jpg',
+  '/assets/images/programs/sthree-swabhiman/slide12-governor.jpg',
+  '/assets/images/programs/sthree-swabhiman/slide12-banner.jpg',
 ]
 
 export const mouMoc = [
