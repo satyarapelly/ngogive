@@ -779,3 +779,122 @@ button {
   color: #334155;
   background: #fff;
 }
+
+.photo-carousel-heading {
+  margin-bottom: 20px !important;
+}
+.photo-carousel-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.photo-carousel-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-weight: 900;
+}
+.project-photo-carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 12px;
+  scrollbar-width: thin;
+}
+.project-photo-card {
+  flex: 0 0 calc((100% - 60px) / 4);
+  min-width: 280px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+.project-photo-image-wrap {
+  position: relative;
+  height: 260px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.project-photo-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.project-photo-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 46px 16px 14px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0));
+}
+.project-photo-overlay h3 {
+  margin: 5px 0 0;
+  font-size: 18px;
+}
+.project-photo-core-area {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fed7aa;
+}
+.project-photo-body {
+  padding: 14px 16px 18px;
+}
+.project-photo-body p {
+  margin: 0 0 12px;
+  color: #475569;
+  line-height: 1.6;
+  font-size: 14px;
+}
+.project-photo-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  color: #334155;
+  gap: 6px;
+  background: linear-gradient(135deg, #e2e8f0, #fed7aa);
+}
+.project-photo-fallback span {
+  font-size: 38px;
+}
+.photo-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.photo-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+.photo-dot.active {
+  background: #f97316;
+}
+@media (max-width: 1200px) {
+  .project-photo-card {
+    flex: 0 0 calc((100% - 40px) / 3);
+  }
+}
+@media (max-width: 900px) {
+  .project-photo-card {
+    flex: 0 0 calc((100% - 20px) / 2);
+  }
+}
+@media (max-width: 620px) {
+  .project-photo-card {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+}
