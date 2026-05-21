@@ -141,7 +141,9 @@ function Hero() {
             <Button>
               Support a Cause <ArrowRight size={16} />
             </Button>
-            <Button variant="outline">Explore Projects</Button>
+            <Button variant="outline" onClick={() => scrollToSection("work")}>
+              Explore Projects
+            </Button>
           </div>
         </motion.div>
         <motion.div
