@@ -666,6 +666,7 @@ function Home({ onOpenProgram, onOpenDonations }) {
   return (
     <>
       <SiteHeader onOpenProgram={onOpenProgram} onGoHome={() => {}} />
+      <Hero onOpenDonations={onOpenDonations} />
       <HeroCarousel />
       <ImpactStats />
       <About />
