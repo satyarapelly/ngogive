@@ -4,7 +4,6 @@ import {
   ArrowRight,
   BarChart3,
   ChevronDown,
-  ClipboardCheck,
   FileText,
   Heart,
   Menu,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 import {
   NGO_LOGO,
-  accreditations,
   getSdgImagePath,
   impact,
   mouMoc,
@@ -239,26 +237,16 @@ function Awards() {
   return (
     <section id="awards" className="gray-section">
       <div className="section-heading">
-        <p className="eyebrow">AWARDS, CERTIFICATIONS & ACCREDITATIONS</p>
-        <h2>Recognition and compliance records with photo evidence.</h2>
+        <p className="eyebrow">AWARDS & ACCREDITATIONS</p>
+        <h2>Recognition records with photo evidence.</h2>
         <p>
-          Explore awards, certification details, and institutional compliance
-          highlights of Give For Society.
+          Explore awards and institutional recognition highlights of Give For
+          Society.
         </p>
       </div>
       <div className="two-card-grid">
-        <div className="card">
+        <div className="card" style={{ gridColumn: "1 / -1" }}>
           <AwardsCarousel />
-        </div>
-        <div className="card">
-          <h3>
-            <ClipboardCheck /> Certifications & Compliance
-          </h3>
-          <ul className="nice-list">
-            {(accreditations || []).map((x) => (
-              <li key={x}>{x}</li>
-            ))}
-          </ul>
         </div>
       </div>
       <div className="two-card-grid" style={{ marginTop: "24px" }}>
