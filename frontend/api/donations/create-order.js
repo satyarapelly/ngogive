@@ -1,5 +1,8 @@
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || process.env.VITE_RAZORPAY_KEY_SECRET;
+const RAZORPAY_KEY_SECRET =
+  process.env.RAZORPAY_KEY_SECRET ||
+  process.env.VITE_RAZORPAY_KEY_SECRET ||
+  process.env.RAZORPAY_KE5173Y_SECRET;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

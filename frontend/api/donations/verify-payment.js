@@ -1,6 +1,9 @@
 import crypto from "node:crypto";
 
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || process.env.VITE_RAZORPAY_KEY_SECRET;
+const RAZORPAY_KEY_SECRET =
+  process.env.RAZORPAY_KEY_SECRET ||
+  process.env.VITE_RAZORPAY_KEY_SECRET ||
+  process.env.RAZORPAY_KE5173Y_SECRET;
 
 export default function handler(req, res) {
   if (req.method !== "POST") {
