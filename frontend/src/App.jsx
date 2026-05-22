@@ -565,15 +565,12 @@ function SupportCauseSection() {
   };
 
   const configuredApiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").trim();
-  const useSameOriginApi =
-    !configuredApiBaseUrl ||
-    (typeof window !== "undefined" &&
-      configuredApiBaseUrl.includes("localhost:5000") &&
-      window.location.origin !== "http://localhost:5000");
-  const apiBaseUrl = useSameOriginApi ? "" : configuredApiBaseUrl.replace(/\/$/, "");
+  const configuredApiFallbackBaseUrl = (import.meta.env.VITE_API_FALLBACK_BASE_URL || "").trim();
+  const apiBaseUrl = configuredApiBaseUrl ? configuredApiBaseUrl.replace(/\/$/, "") : "";
   const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
 
-  const fallbackApiBaseUrls = [apiBaseUrl, "http://localhost:5000"].filter((baseUrl, index, arr) => baseUrl !== undefined && arr.indexOf(baseUrl) === index);
+  const fallbackApiBaseUrls = [apiBaseUrl, configuredApiFallbackBaseUrl.replace(/\/$/, "")]
+    .filter((baseUrl, index, arr) => baseUrl !== undefined && baseUrl !== null && arr.indexOf(baseUrl) === index);
 
   const postDonationApi = async (path, payload) => {
     let lastError = null;
@@ -602,6 +599,10 @@ function SupportCauseSection() {
         lastError = error;
         if (baseUrl !== fallbackApiBaseUrls[fallbackApiBaseUrls.length - 1]) continue;
       }
+    }
+
+    if (!lastError && typeof window !== "undefined" && window.location.hostname === "localhost" && !configuredApiBaseUrl && !configuredApiFallbackBaseUrl) {
+      throw new Error("Donation API is not configured for local Vite. Set VITE_API_BASE_URL to your API host (for example your Vercel/hosted domain, or local API server).");
     }
 
     throw lastError || new Error("Unable to reach donation API.");
