@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || process.env.VITE_RAZORPAY_KEY_SECRET;
 
 export default function handler(req, res) {
   if (req.method !== "POST") {
@@ -8,7 +8,9 @@ export default function handler(req, res) {
   }
 
   if (!RAZORPAY_KEY_SECRET) {
-    return res.status(500).json({ error: "Razorpay is not configured on server." });
+    return res.status(500).json({
+      error: "Razorpay is not configured on server. Set RAZORPAY_KEY_SECRET for API runtime.",
+    });
   }
 
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, donationPayload = {} } = req.body || {};

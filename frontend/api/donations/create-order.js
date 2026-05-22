@@ -1,5 +1,5 @@
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || process.env.VITE_RAZORPAY_KEY_SECRET;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -7,7 +7,9 @@ export default async function handler(req, res) {
   }
 
   if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-    return res.status(500).json({ error: "Razorpay is not configured on server." });
+    return res.status(500).json({
+      error: "Razorpay is not configured on server. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET for API runtime.",
+    });
   }
 
   try {
@@ -45,6 +47,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error creating Razorpay order", error);
-    return res.status(500).json({ error: "Unable to create order." });
+    return res.status(500).json({ error: error?.message || "Unable to create order." });
   }
 }
