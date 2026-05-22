@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -25,10 +25,11 @@ import HeroCarousel from "./components/HeroCarousel";
 import CoreAreas from "./components/CoreAreas";
 import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 
-function Button({ children, variant = "primary", onClick }) {
+function Button({ children, variant = "primary", onClick, disabled = false }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`btn ${variant === "outline" ? "btn-outline" : "btn-primary"}`}
     >
       {children}
@@ -497,6 +498,14 @@ function Partners() {
 
 
 function SupportCauseSection() {
+  const donationFormRef = useRef(null);
+  const [selectedCause, setSelectedCause] = useState("");
+  const [donorName, setDonorName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [amount, setAmount] = useState("");
+  const [message, setMessage] = useState("");
+
   const causes = [
     {
       title: "Sthree Swabhiman – Menstrual Hygiene & Girls Dignity",
@@ -535,6 +544,32 @@ function SupportCauseSection() {
 
   const trustItems = ["Registered NGO since 2017", "CSR-1 Registered", "Darpan Registered", "12A & 80G Certified", "Field implementation reports", "Photo documentation and utilization certificates"];
 
+  const amountOptions = ["₹500", "₹1,000", "₹2,500", "₹5,000", "₹10,000"];
+  const canProceedToPayment = Boolean(
+    selectedCause && donorName.trim() && (email.trim() || phone.trim()) && amount
+  );
+
+  const handleSelectCause = (causeTitle) => {
+    setSelectedCause(causeTitle);
+    donationFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => donationFormRef.current?.focus(), 200);
+  };
+
+  const handleProceedToPayment = (event) => {
+    event.preventDefault();
+    if (!canProceedToPayment) return;
+    const donationPayload = {
+      selectedCause,
+      donorName,
+      email,
+      phone,
+      amount,
+      message,
+    };
+    console.log("Donation payload", donationPayload);
+    // TODO: Integrate payment gateway (Razorpay / Cashfree / Stripe).
+  };
+
   return (
     <section className="support-cause-section">
       <div className="support-hero">
@@ -545,11 +580,11 @@ function SupportCauseSection() {
       </div>
       <div className="cause-grid">
         {causes.map((cause) => (
-          <article key={cause.title} className="cause-card">
+          <article key={cause.title} className={`cause-card ${selectedCause === cause.title ? "selected" : ""}`}>
             <img src={cause.image} alt={cause.title} />
             <div className="cause-content">
               <h3>{cause.title}</h3><p>{cause.description}</p><small>{cause.impact}</small>
-              <Link to="/support-a-cause" className="btn btn-outline">Select Cause</Link>
+              <button type="button" className="btn btn-outline" onClick={() => handleSelectCause(cause.title)}>Select Cause</button>
             </div>
           </article>
         ))}
@@ -558,7 +593,15 @@ function SupportCauseSection() {
         <div>
           <div className="amount-panel">
             <h3>Select Donation Amount</h3>
-            <div className="amount-options">{["₹500", "₹1,000", "₹2,500", "₹5,000", "₹10,000", "Custom Amount"].map((amount) => <button key={amount}>{amount}</button>)}</div>
+            <div className="amount-options">{amountOptions.map((amountOption) => <button type="button" key={amountOption} className={amount === amountOption ? "selected" : ""} onClick={() => setAmount(amountOption)}>{amountOption}</button>)}</div>
+            <input
+              type="number"
+              min="1"
+              placeholder="Custom Amount"
+              aria-label="Custom Amount"
+              value={amountOptions.includes(amount) ? "" : amount}
+              onChange={(event) => setAmount(event.target.value)}
+            />
           </div>
           <div className="tax-box">
             <h4>80G Tax Benefit</h4><p>Your contribution may be eligible for tax benefits under Section 80G as per applicable Income Tax rules. Donation receipt and 80G certificate will be shared after successful contribution and verification.</p>
@@ -572,12 +615,18 @@ function SupportCauseSection() {
           <div className="impact-list"><h4>Donation Impact Examples</h4><ul><li>₹500 can support awareness materials for school girls</li><li>₹1,000 can support hygiene education and student materials</li><li>₹2,500 can support school kit or health camp outreach</li><li>₹5,000 can support community awareness or relief assistance</li><li>₹10,000 can support infrastructure, kits, or field implementation</li></ul></div>
           <div className="impact-list"><h4>Important Notes</h4><ul><li>Receipts will be issued after verification</li><li>PAN is required for 80G receipt</li><li>Donations are used for selected cause or similar urgent need</li><li>For CSR partnerships, contact Give For Society directly</li></ul></div>
         </div>
-        <div className="donor-form" id="donation-form">
+        <div className="donor-form" id="donation-form" ref={donationFormRef} tabIndex={-1}>
           <h3>Donor Details</h3>
-          <form>
-            {["Full Name","Email","Mobile Number","PAN Number","Address","City","State","Pincode","Donation Purpose","Amount"].map((field) => <input key={field} placeholder={field} aria-label={field} />)}
+          <form onSubmit={handleProceedToPayment}>
+            {selectedCause && <p className="selected-cause-summary"><strong>Selected Cause:</strong> {selectedCause}</p>}
+            <input placeholder="Full Name" aria-label="Full Name" value={donorName} onChange={(event) => setDonorName(event.target.value)} />
+            <input placeholder="Email" aria-label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+            <input placeholder="Mobile Number" aria-label="Mobile Number" value={phone} onChange={(event) => setPhone(event.target.value)} />
+            <input placeholder="Selected Cause" aria-label="Selected Cause" value={selectedCause} readOnly />
+            <input placeholder="Amount" aria-label="Amount" value={amount} readOnly />
+            <input placeholder="Donation Message" aria-label="Donation Message" value={message} onChange={(event) => setMessage(event.target.value)} />
             <label className="consent"><input type="checkbox" /> I agree that Give For Society may contact me through phone, email, SMS, or WhatsApp regarding donation confirmation, receipts, programme updates, and impact reports.</label>
-            <Button>Submit Donation Interest</Button>
+            <Button disabled={!canProceedToPayment}>Proceed to Payment</Button>
           </form>
         </div>
       </div>
