@@ -7,35 +7,35 @@ const slides = [
     subtitle: "Menstrual health and dignity initiative",
     description:
       "Improving access to menstrual hygiene products, awareness sessions, and safe sanitation infrastructure for adolescent girls and women.",
-    image: "/images/sthree-swabhiman.jpg",
+    image: "/images/programs/sthree-swabhiman/sthree-swabhiman.jpg",
   },
   {
     title: "ArogyaSetu",
     subtitle: "Community health outreach",
     description:
       "Delivering preventive healthcare awareness, health camps, and early screening support in underserved rural communities.",
-    image: "/images/arogyasetu.jpg",
+    image: "/images/programs/arogyasetu-health-initiative/arogyasetu.jpg",
   },
   {
     title: "Empowering Rural Learning",
     subtitle: "Strengthening school education",
     description:
       "Enhancing learning outcomes through school infrastructure, classroom support, and child-centered educational interventions.",
-    image: "/images/rural-learning.jpg",
+    image: "/images/programs/empowering-rural-learning/rural-learning.jpg",
   },
   {
     title: "Integrated Learning Centers (ILCs)",
     subtitle: "Bridge education for first-generation learners",
     description:
       "Creating safe neighborhood learning spaces that provide academic reinforcement, mentorship, and holistic growth for children.",
-    image: "/images/ilc.jpg",
+    image: "/images/programs/integrated-learning-centers-ilc/ilc-prog.png",
   },
   {
     title: "Rural Youth Digital Employability",
     subtitle: "Skilling youth for modern livelihoods",
     description:
       "Building digital and workplace readiness among rural youth through practical training, career guidance, and employability pathways.",
-    image: "/images/youth-employability.jpg",
+    image: "/images/programs/women-youth-empowerment/youth-employability.jpg",
   },
 ];
 
