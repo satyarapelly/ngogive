@@ -565,22 +565,38 @@ function SupportCauseSection() {
   };
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
 
   const handleProceedToPayment = async (event) => {
     event.preventDefault();
     if (isProcessingPayment) return;
 
     const parsedAmount = Number(String(amount).replace(/[^0-9.]/g, ""));
-    if (!selectedCause || !donorName.trim() || (!email.trim() && !phone.trim()) || !parsedAmount || parsedAmount <= 0) {
+    const normalizedEmail = email.trim();
+    const normalizedPhone = phone.trim();
+    const emailValid = !normalizedEmail || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
+    const phoneValid = !normalizedPhone || /^\d{10}$/.test(normalizedPhone);
+
+    if (!selectedCause || !donorName.trim() || (!normalizedEmail && !normalizedPhone) || !parsedAmount || parsedAmount <= 0) {
       setPaymentMessage({ type: "error", text: "Please fill all required fields with a valid amount before proceeding." });
+      return;
+    }
+
+    if (!emailValid) {
+      setPaymentMessage({ type: "error", text: "Please enter a valid email address." });
+      return;
+    }
+
+    if (!phoneValid) {
+      setPaymentMessage({ type: "error", text: "Please enter a valid 10-digit mobile number." });
       return;
     }
 
     const donationPayload = {
       selectedCause,
       donorName: donorName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
+      email: normalizedEmail,
+      phone: normalizedPhone,
       amount: parsedAmount,
       message: message.trim(),
       requiresDonorCertificate,
@@ -599,13 +615,13 @@ function SupportCauseSection() {
         body: JSON.stringify(donationPayload),
       });
 
-      const createOrderData = await createOrderResponse.json();
+      const createOrderData = await createOrderResponse.json().catch(() => ({}));
       if (!createOrderResponse.ok) {
         throw new Error(createOrderData.error || "Unable to create payment order.");
       }
 
       const options = {
-        key: createOrderData.razorpayKeyId,
+        key: razorpayKeyId || createOrderData.razorpayKeyId,
         amount: createOrderData.amount,
         currency: createOrderData.currency,
         name: "Give For Society",
