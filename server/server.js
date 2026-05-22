@@ -26,10 +26,7 @@ if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
   process.exit(1);
 }
 
-const razorpay = new Razorpay({
-  key_id: RAZORPAY_KEY_ID,
-  key_secret: RAZORPAY_KEY_SECRET
-});
+const razorpay = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
 
 app.use(cors());
 app.use(express.json());
@@ -45,28 +42,24 @@ app.get("/org-details", (req, res) => {
     orgAddressLine2: ORG_ADDRESS_LINE2 || "",
     orgCityStatePin: ORG_CITY_STATE_PIN || "",
     orgEmail: ORG_EMAIL || "",
-    orgPhone: ORG_PHONE || ""
+    orgPhone: ORG_PHONE || "",
   });
 });
 
-app.post("/create-order", async (req, res) => {
+app.post("/api/donations/create-order", async (req, res) => {
   try {
-    const { amount, currency = "INR", donor = {} } = req.body || {};
+    const { selectedCause, donorName, email, phone, amount, message } = req.body || {};
     const parsedAmount = Number(amount);
 
-    if (!parsedAmount || parsedAmount <= 0) {
-      return res.status(400).json({ error: "Invalid donation amount." });
+    if (!selectedCause || !donorName || (!email && !phone) || !parsedAmount || parsedAmount <= 0) {
+      return res.status(400).json({ error: "Invalid donation payload." });
     }
 
     const options = {
-      amount: Math.round(parsedAmount),
-      currency,
-      receipt: `donation_${Date.now()}`,
-      notes: {
-        name: donor.name || "",
-        email: donor.email || "",
-        phone: donor.phone || ""
-      }
+      amount: Math.round(parsedAmount * 100),
+      currency: "INR",
+      receipt: `donation_${Date.now()}_${String(selectedCause).slice(0, 20).replace(/\s+/g, "_")}`,
+      notes: { selectedCause, donorName, email: email || "", phone: phone || "", message: message || "" },
     };
 
     const order = await razorpay.orders.create(options);
@@ -75,7 +68,7 @@ app.post("/create-order", async (req, res) => {
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,
-      keyId: RAZORPAY_KEY_ID
+      razorpayKeyId: RAZORPAY_KEY_ID,
     });
   } catch (error) {
     console.error("Error creating Razorpay order", error);
@@ -83,8 +76,8 @@ app.post("/create-order", async (req, res) => {
   }
 });
 
-app.post("/verify-payment", (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
+app.post("/api/donations/verify-payment", (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, donationPayload = {} } = req.body || {};
 
   if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
     return res.status(400).json({ error: "Missing payment verification payload." });
@@ -95,49 +88,25 @@ app.post("/verify-payment", (req, res) => {
   const generatedSignature = hmac.digest("hex");
 
   if (generatedSignature !== razorpay_signature) {
+    const failedDonation = {
+      ...donationPayload,
+      razorpay_order_id,
+      razorpay_payment_id,
+      paymentStatus: "failed",
+    };
+    console.warn("Donation verification failed", failedDonation);
     return res.status(400).json({ verified: false, error: "Signature mismatch." });
   }
 
-  return res.json({ verified: true });
-});
+  const successfulDonation = {
+    ...donationPayload,
+    razorpay_order_id,
+    razorpay_payment_id,
+    paymentStatus: "successful",
+  };
+  console.log("Donation successful", successfulDonation);
 
-app.post("/verify-upi-payment", async (req, res) => {
-  const { upiId, amount } = req.body || {};
-
-  if (!upiId || !amount) {
-    return res.status(400).json({ error: "Missing upiId or amount." });
-  }
-
-  try {
-    const expectedAmount = Math.round(Number(amount) * 100);
-    const to = Math.floor(Date.now() / 1000);
-    const from = to - 7 * 24 * 60 * 60;
-    const paymentsResponse = await razorpay.payments.all({ from, to, count: 100 });
-    const payments = paymentsResponse?.items || [];
-    const match = payments.find((payment) => {
-      const paymentUpiId = payment?.vpa || "";
-      return (
-        payment?.method === "upi" &&
-        payment?.status === "captured" &&
-        payment?.amount === expectedAmount &&
-        paymentUpiId.toLowerCase() === upiId.toLowerCase()
-      );
-    });
-
-    return res.json({
-      verified: Boolean(match),
-      payment: {
-        id: match?.id,
-        status: match?.status,
-        method: match?.method,
-        vpa: match?.vpa,
-        amount: match?.amount
-      }
-    });
-  } catch (error) {
-    console.error("Error verifying UPI payment", error);
-    return res.status(500).json({ error: "Unable to verify payment." });
-  }
+  return res.json({ verified: true, paymentStatus: "successful" });
 });
 
 app.listen(PORT, () => {
