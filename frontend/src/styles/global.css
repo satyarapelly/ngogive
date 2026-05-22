@@ -1090,6 +1090,8 @@ button {
 .amount-options button { border:1px solid #cbd5e1; border-radius: 12px; padding: 11px 12px; font-weight: 700; background: #fff; }
 .amount-options button:hover { background:#fff7ed; border-color:#fb923c; }
 .amount-options button.selected { background:#fff7ed; border-color:#f97316; }
+.custom-amount-input { width: 100%; margin-top: 12px; border:1px solid #cbd5e1; border-radius: 12px; padding: 12px; font-weight: 600; }
+.custom-amount-input:focus { outline: none; border-color:#f97316; box-shadow: 0 0 0 3px rgba(249,115,22,.15); }
 .trust-grid { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
 .trust-card { background:#ecfdf5; border:1px solid #bbf7d0; border-radius: 12px; padding: 12px; font-weight:600; display:flex; gap:8px; align-items:flex-start; }
 .donor-form { position: sticky; top: 90px; background: #fff; border:1px solid #fdba74; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(249,115,22,.14); }

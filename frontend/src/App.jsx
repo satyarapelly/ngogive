@@ -605,6 +605,7 @@ function SupportCauseSection() {
             <input
               type="number"
               min="1"
+              className="custom-amount-input"
               placeholder="Custom Amount"
               aria-label="Custom Amount"
               value={amountOptions.includes(amount) ? "" : amount}
