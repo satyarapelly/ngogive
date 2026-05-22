@@ -564,8 +564,48 @@ function SupportCauseSection() {
     setTimeout(() => donationFormRef.current?.focus(), 200);
   };
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const configuredApiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").trim();
+  const useSameOriginApi =
+    !configuredApiBaseUrl ||
+    (typeof window !== "undefined" &&
+      configuredApiBaseUrl.includes("localhost:5000") &&
+      window.location.origin !== "http://localhost:5000");
+  const apiBaseUrl = useSameOriginApi ? "" : configuredApiBaseUrl.replace(/\/$/, "");
   const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
+
+  const fallbackApiBaseUrls = [apiBaseUrl, "http://localhost:5000"].filter((baseUrl, index, arr) => baseUrl !== undefined && arr.indexOf(baseUrl) === index);
+
+  const postDonationApi = async (path, payload) => {
+    let lastError = null;
+
+    for (const baseUrl of fallbackApiBaseUrls) {
+      try {
+        const response = await fetch(`${baseUrl}${path}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          const shouldFallback = (response.status === 404 || response.status === 502 || response.status === 503) && baseUrl !== fallbackApiBaseUrls[fallbackApiBaseUrls.length - 1];
+          if (shouldFallback) {
+            lastError = new Error(data.error || `API ${path} unavailable at ${baseUrl || "same-origin"}.`);
+            continue;
+          }
+          throw new Error(data.error || "Request failed.");
+        }
+
+        return data;
+      } catch (error) {
+        lastError = error;
+        if (baseUrl !== fallbackApiBaseUrls[fallbackApiBaseUrls.length - 1]) continue;
+      }
+    }
+
+    throw lastError || new Error("Unable to reach donation API.");
+  };
 
   const handleProceedToPayment = async (event) => {
     event.preventDefault();
@@ -609,16 +649,7 @@ function SupportCauseSection() {
 
       await loadRazorpayScript();
 
-      const createOrderResponse = await fetch(`${apiBaseUrl}/api/donations/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(donationPayload),
-      });
-
-      const createOrderData = await createOrderResponse.json().catch(() => ({}));
-      if (!createOrderResponse.ok) {
-        throw new Error(createOrderData.error || "Unable to create payment order.");
-      }
+      const createOrderData = await postDonationApi("/api/donations/create-order", donationPayload);
 
       const options = {
         key: razorpayKeyId || createOrderData.razorpayKeyId,
@@ -638,19 +669,14 @@ function SupportCauseSection() {
         },
         handler: async (paymentResult) => {
           try {
-            const verifyResponse = await fetch(`${apiBaseUrl}/api/donations/verify-payment`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_payment_id: paymentResult.razorpay_payment_id,
-                razorpay_order_id: paymentResult.razorpay_order_id,
-                razorpay_signature: paymentResult.razorpay_signature,
-                donationPayload,
-              }),
+            const verifyData = await postDonationApi("/api/donations/verify-payment", {
+              razorpay_payment_id: paymentResult.razorpay_payment_id,
+              razorpay_order_id: paymentResult.razorpay_order_id,
+              razorpay_signature: paymentResult.razorpay_signature,
+              donationPayload,
             });
-            const verifyData = await verifyResponse.json();
 
-            if (!verifyResponse.ok || !verifyData.verified) {
+            if (!verifyData.verified) {
               throw new Error(verifyData.error || "Payment verification failed.");
             }
 
