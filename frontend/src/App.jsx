@@ -505,6 +505,8 @@ function SupportCauseSection() {
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [requiresDonorCertificate, setRequiresDonorCertificate] = useState(false);
+  const [panCard, setPanCard] = useState("");
 
   const causes = [
     {
@@ -546,7 +548,11 @@ function SupportCauseSection() {
 
   const amountOptions = ["₹500", "₹1,000", "₹2,500", "₹5,000", "₹10,000"];
   const canProceedToPayment = Boolean(
-    selectedCause && donorName.trim() && (email.trim() || phone.trim()) && amount
+    selectedCause &&
+      donorName.trim() &&
+      (email.trim() || phone.trim()) &&
+      amount &&
+      (!requiresDonorCertificate || panCard.trim())
   );
 
   const handleSelectCause = (causeTitle) => {
@@ -565,6 +571,8 @@ function SupportCauseSection() {
       phone,
       amount,
       message,
+      requiresDonorCertificate,
+      panCard,
     };
     console.log("Donation payload", donationPayload);
     // TODO: Integrate payment gateway (Razorpay / Cashfree / Stripe).
@@ -619,11 +627,24 @@ function SupportCauseSection() {
           <h3>Donor Details</h3>
           <form onSubmit={handleProceedToPayment}>
             {selectedCause && <p className="selected-cause-summary"><strong>Selected Cause:</strong> {selectedCause}</p>}
+            {amount && <p className="selected-cause-summary"><strong>Selected Amount:</strong> {amount}</p>}
             <input placeholder="Full Name" aria-label="Full Name" value={donorName} onChange={(event) => setDonorName(event.target.value)} />
             <input placeholder="Email" aria-label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
             <input placeholder="Mobile Number" aria-label="Mobile Number" value={phone} onChange={(event) => setPhone(event.target.value)} />
             <input placeholder="Selected Cause" aria-label="Selected Cause" value={selectedCause} readOnly />
             <input placeholder="Amount" aria-label="Amount" value={amount} readOnly />
+            <label className="consent">
+              <input type="checkbox" checked={requiresDonorCertificate} onChange={(event) => setRequiresDonorCertificate(event.target.checked)} />
+              I need donor certificate for tax exemption (80G).
+            </label>
+            {requiresDonorCertificate && (
+              <input
+                placeholder="PAN Card Number (Required for 80G)"
+                aria-label="PAN Card Number"
+                value={panCard}
+                onChange={(event) => setPanCard(event.target.value.toUpperCase())}
+              />
+            )}
             <input placeholder="Donation Message" aria-label="Donation Message" value={message} onChange={(event) => setMessage(event.target.value)} />
             <label className="consent"><input type="checkbox" /> I agree that Give For Society may contact me through phone, email, SMS, or WhatsApp regarding donation confirmation, receipts, programme updates, and impact reports.</label>
             <Button disabled={!canProceedToPayment}>Proceed to Payment</Button>
