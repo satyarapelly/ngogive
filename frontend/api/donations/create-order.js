@@ -37,9 +37,14 @@ export default async function handler(req, res) {
       }),
     });
 
-    const order = await razorpayResponse.json();
+    const order = await razorpayResponse.json().catch(() => ({}));
     if (!razorpayResponse.ok) {
-      throw new Error(order?.error?.description || "Unable to create order.");
+      const razorpayMessage =
+        order?.error?.description ||
+        order?.error?.code ||
+        order?.message ||
+        `Razorpay API error (${razorpayResponse.status}).`;
+      throw new Error(`Unable to create order: ${razorpayMessage}`);
     }
 
     return res.status(200).json({
