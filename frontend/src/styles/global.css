@@ -1277,3 +1277,7 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
 @media (hover: none) {
   .core-area-card:hover, .core-area-card:hover::after { transform: none; }
 }
+
+.payment-message { margin-top: 10px; font-weight: 600; font-size: 14px; }
+.payment-message.success { color: #166534; }
+.payment-message.error { color: #b91c1c; }
