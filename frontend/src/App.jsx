@@ -564,7 +564,7 @@ function SupportCauseSection() {
     setTimeout(() => donationFormRef.current?.focus(), 200);
   };
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
   const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
 
   const handleProceedToPayment = async (event) => {
