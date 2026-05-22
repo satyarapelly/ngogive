@@ -24,6 +24,7 @@ import InstitutionalRecognition from "./components/InstitutionalRecognition";
 import HeroCarousel from "./components/HeroCarousel";
 import CoreAreas from "./components/CoreAreas";
 import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import loadRazorpayScript from "./utils/loadRazorpayScript";
 
 function Button({ children, variant = "primary", onClick, disabled = false }) {
   return (
@@ -507,6 +508,8 @@ function SupportCauseSection() {
   const [message, setMessage] = useState("");
   const [requiresDonorCertificate, setRequiresDonorCertificate] = useState(false);
   const [panCard, setPanCard] = useState("");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentMessage, setPaymentMessage] = useState({ type: "", text: "" });
 
   const causes = [
     {
@@ -561,21 +564,105 @@ function SupportCauseSection() {
     setTimeout(() => donationFormRef.current?.focus(), 200);
   };
 
-  const handleProceedToPayment = (event) => {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+  const handleProceedToPayment = async (event) => {
     event.preventDefault();
-    if (!canProceedToPayment) return;
+    if (isProcessingPayment) return;
+
+    const parsedAmount = Number(String(amount).replace(/[^0-9.]/g, ""));
+    if (!selectedCause || !donorName.trim() || (!email.trim() && !phone.trim()) || !parsedAmount || parsedAmount <= 0) {
+      setPaymentMessage({ type: "error", text: "Please fill all required fields with a valid amount before proceeding." });
+      return;
+    }
+
     const donationPayload = {
       selectedCause,
-      donorName,
-      email,
-      phone,
-      amount,
-      message,
+      donorName: donorName.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      amount: parsedAmount,
+      message: message.trim(),
       requiresDonorCertificate,
-      panCard,
+      panCard: panCard.trim().toUpperCase(),
     };
-    console.log("Donation payload", donationPayload);
-    // TODO: Integrate payment gateway (Razorpay / Cashfree / Stripe).
+
+    try {
+      setIsProcessingPayment(true);
+      setPaymentMessage({ type: "", text: "" });
+
+      await loadRazorpayScript();
+
+      const createOrderResponse = await fetch(`${apiBaseUrl}/api/donations/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(donationPayload),
+      });
+
+      const createOrderData = await createOrderResponse.json();
+      if (!createOrderResponse.ok) {
+        throw new Error(createOrderData.error || "Unable to create payment order.");
+      }
+
+      const options = {
+        key: createOrderData.razorpayKeyId,
+        amount: createOrderData.amount,
+        currency: createOrderData.currency,
+        name: "Give For Society",
+        description: donationPayload.selectedCause,
+        order_id: createOrderData.orderId,
+        prefill: {
+          name: donationPayload.donorName,
+          email: donationPayload.email,
+          contact: donationPayload.phone,
+        },
+        notes: {
+          selectedCause: donationPayload.selectedCause,
+          message: donationPayload.message,
+        },
+        handler: async (paymentResult) => {
+          try {
+            const verifyResponse = await fetch(`${apiBaseUrl}/api/donations/verify-payment`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_payment_id: paymentResult.razorpay_payment_id,
+                razorpay_order_id: paymentResult.razorpay_order_id,
+                razorpay_signature: paymentResult.razorpay_signature,
+                donationPayload,
+              }),
+            });
+            const verifyData = await verifyResponse.json();
+
+            if (!verifyResponse.ok || !verifyData.verified) {
+              throw new Error(verifyData.error || "Payment verification failed.");
+            }
+
+            setPaymentMessage({ type: "success", text: "Payment successful and verified. Thank you for your donation!" });
+          } catch (verifyError) {
+            setPaymentMessage({ type: "error", text: verifyError.message || "Payment verification failed." });
+          } finally {
+            setIsProcessingPayment(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setIsProcessingPayment(false);
+            setPaymentMessage({ type: "error", text: "Payment was cancelled before completion." });
+          },
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.on("payment.failed", (response) => {
+        setIsProcessingPayment(false);
+        setPaymentMessage({ type: "error", text: response.error?.description || "Payment failed. Please try again." });
+      });
+      paymentObject.open();
+    } catch (error) {
+      setIsProcessingPayment(false);
+      setPaymentMessage({ type: "error", text: error.message || "Unable to start payment." });
+    }
   };
 
   return (
@@ -648,7 +735,8 @@ function SupportCauseSection() {
             )}
             <input placeholder="Donation Message" aria-label="Donation Message" value={message} onChange={(event) => setMessage(event.target.value)} />
             <label className="consent"><input type="checkbox" /> I agree that Give For Society may contact me through phone, email, SMS, or WhatsApp regarding donation confirmation, receipts, programme updates, and impact reports.</label>
-            <Button disabled={!canProceedToPayment}>Proceed to Payment</Button>
+            <Button disabled={!canProceedToPayment || isProcessingPayment}>{isProcessingPayment ? "Processing..." : "Proceed to Payment"}</Button>
+            {paymentMessage.text && <p className={`payment-message ${paymentMessage.type}`}>{paymentMessage.text}</p>}
           </form>
         </div>
       </div>
