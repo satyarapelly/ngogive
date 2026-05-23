@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satya Rapelly — Public Leadership Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* CORE RESTRUCTURING & STYLING STAGE */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #f1f5f9; display: grid; gap: 24px; grid-template-columns: 1fr; padding: 40px 0; place-items: center; }
+
+        /* FIXED SLIDE CONTAINER ARCHITECTURE */
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px 80px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            border-radius: 8px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        /* PREMIUM BRANDING ACCENTS — Minimalist and Corporate Only */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #002147 0%, #00A86B 100%);
+            z-index: 5;
+        }
+
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 168, 107, 0.02) 0%, transparent 75%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* TYPOGRAPHY RULES */
+        h1, h2, h3, .profile-title { font-family: 'Poppins', sans-serif; color: #002147; font-weight: 700; }
+        p, li { font-size: 18px; line-height: 1.6; color: #334155; font-weight: 400; }
+        
+        .slide-header { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; z-index: 2; }
+        .slide-title { font-size: 38px; border-left: 6px solid #00A86B; padding-left: 18px; line-height: 1.2; }
+        .slide-footer { width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 15px; position: relative; z-index: 2; }
+        .footer-brand { font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; font-weight: 700; }
+        
+        /* CONTENT LAYOUT ARCHITECTURES */
+        .content-body { flex-grow: 1; display: flex; align-items: center; width: 100%; position: relative; z-index: 2; }
+        
+        /* Hero Cover Layout */
+        .hero-layout { flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; height: 100%; max-width: 950px; }
+        .hero-layout h1 { font-size: 64px; line-height: 1.1; margin-bottom: 15px; color: #002147; }
+        .hero-layout .tagline { font-size: 24px; color: #00A86B; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 25px; }
+        .hero-layout .divider { width: 80px; height: 4px; background-color: #00A86B; margin-bottom: 30px; }
+        .hero-layout .intro-text { font-size: 20px; color: #475569; max-width: 800px; }
+
+        /* Two Column Split Architecture */
+        .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; width: 100%; align-items: center; }
+        
+        /* Tiled Content Matrix */
+        .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; }
+        .matrix-cell { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 35px; border-bottom: 4px solid #002147; height: 100%; }
+        .matrix-cell .cell-icon { font-size: 36px; color: #00A86B; margin-bottom: 20px; }
+        .matrix-cell h3 { font-size: 22px; margin-bottom: 12px; color: #002147; }
+        
+        /* Data & List Structures */
+        .clean-list { list-style: none; }
+        .clean-list li { position: relative; padding-left: 35px; margin-bottom: 16px; font-size: 19px; }
+        .clean-list li i { position: absolute; left: 0; top: 4px; color: #00A86B; font-size: 20px; }
+
+        /* Graphic/Image Box Architecture */
+        .graphic-frame { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; width: 100%; height: 400px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+        .graphic-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .graphic-frame.contain img { object-fit: contain; padding: 20px; }
+
+        /* Big Highlight Figures */
+        .stat-banner { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; width: 100%; }
+        .stat-block { text-align: left; }
+        .stat-number { font-size: 96px; font-weight: 700; color: #00A86B; font-family: 'Poppins', sans-serif; line-height: 1; margin-bottom: 10px; }
+        .stat-label { font-size: 20px; font-weight: 700; color: #002147; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <div class="footer-brand">Public Leadership Vision</div>
+        </div>
+        <div class="content-body">
+            <div class="hero-layout">
+                <div class="tagline">Systems Thinking • Grassroots Transformation</div>
+                <h1>Satya Narayana Rapelly</h1>
+                <div class="divider"></div>
+                <p class="intro-text">A technology leader and social impact strategist bridging enterprise digital architecture with sustainable, rural human development systems across Telangana.</p>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Give For Society</div>
+            <div class="footer-brand">2026 Strategy Portfolio</div>
+        </div>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <h2 class="slide-title">The Leadership Blueprint</h2>
+        </div>
+        <div class="content-body">
+            <div class="split-grid">
+                <div>
+                    <h3 style="margin-bottom: 20px; color: #00A86B;"><i class="fa-solid fa-network-wired" style="margin-right: 12px;"></i>Enterprise Systems Systems</h3>
+                    <p style="margin-bottom: 25px;">Leveraging 25+ years of global technology engineering leadership at organizations including Microsoft, Infosys, Cognizant, and Wipro to architect scalable social frameworks.</p>
+                    <h3 style="margin-bottom: 20px; color: #002147;"><i class="fa-solid fa-seedling" style="margin-right: 12px;"></i>Grassroots Delivery</h3>
+                    <p>Translating corporate precision and structural logic into high-impact programs serving rural and tribal communities via Give For Society.</p>
+                </div>
+                <div class="graphic-frame">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/12615450414151558235" alt="Professional conceptual portrait representing strategic social development leadership">
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Satya Rapelly Profile</div>
+            <div class="footer-brand">Slide 02</div>
+        </div>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <h2 class="slide-title">The Strategic Convergence Framework</h2>
+        </div>
+        <div class="content-body">
+            <div class="split-grid">
+                <div class="graphic-frame contain">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/4533255153284811904" alt="Clean conceptual diagram showing a central partnership hub linked with health, education, and skilling components">
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 15px;">Five Deficits, One Solution</h3>
+                    <p style="margin-bottom: 20px;">Human development models succeed only when execution points are combined. Our strategy structures five critical areas to share physical space and delivery metrics:</p>
+                    <ul class="clean-list">
+                        <li><i class="fa-solid fa-circle-dot"></i> <strong>Shared Infrastructure:</strong> Combining spaces for multi-use longevity.</li>
+                        <li><i class="fa-solid fa-circle-dot"></i> <strong>Asset Creation:</strong> Permanent public centers, avoiding temporary events.</li>
+                        <li><i class="fa-solid fa-circle-dot"></i> <strong>Community Custody:</strong> Direct long-term institutional ownership.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Development Architecture</div>
+            <div class="footer-brand">Slide 03</div>
+        </div>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <h2 class="slide-title">Core Development Portfolios</h2>
+        </div>
+        <div class="content-body">
+            <div class="matrix-grid">
+                <div class="matrix-cell">
+                    <div class="cell-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h3>Empowering Rural Learning</h3>
+                    <p>Modernizing government schools with advanced STEM infrastructure, smart technology labs, and proper institutional sanitation setups.</p>
+                </div>
+                <div class="matrix-cell">
+                    <div class="cell-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                    <h3>Sthree Swabhiman</h3>
+                    <p>Preserving adolescent dignity and health through structured Menstrual Hygiene Management (MHM) and infrastructure integration.</p>
+                </div>
+                <div class="matrix-cell">
+                    <div class="cell-icon"><i class="fa-solid fa-truck-medical"></i></div>
+                    <h3>ArogyaSetu Outreach</h3>
+                    <p>Bringing direct preventive screening, mobile diagnostic labs, and active telemedicine capabilities directly to remote habitations.</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Program Portfolio Matrix</div>
+            <div class="footer-brand">Slide 04</div>
+        </div>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <h2 class="slide-title">Integrated Learning Centers & Future Skills</h2>
+        </div>
+        <div class="content-body">
+            <div class="split-grid">
+                <div>
+                    <h3 style="color:#00A86B; margin-bottom: 15px;">Integrated Learning Centers (ILCs)</h3>
+                    <p style="margin-bottom: 25px;">Establishing regional community knowledge hubs that function as digital libraries, public access points, and platforms for localized community growth.</p>
+                    
+                    <h3 style="color:#002147; margin-bottom: 15px;">Rural Youth Digital Employability</h3>
+                    <p>Providing structured training pipelines in advanced technology disciplines—including Data Science, Python, and AI awareness—bridging the rural-urban technical divide.</p>
+                </div>
+                <div class="graphic-frame">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/10457121512492028549" alt="Modern computer lab setup used for technical skill building and digital enablement">
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Digital Inclusion Initiatives</div>
+            <div class="footer-brand">Slide 05</div>
+        </div>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <h2 class="slide-title">Validated Scale & Credibility</h2>
+        </div>
+        <div class="content-body">
+            <div class="split-grid">
+                <div class="stat-banner">
+                    <div class="stat-block">
+                        <div class="stat-number">1.9L+</div>
+                        <div class="stat-label">Adolescent Girls Reached</div>
+                    </div>
+                    <div class="stat-block">
+                        <div class="stat-number">9+</div>
+                        <div class="stat-label">SDGs Explicitly Addressed</div>
+                    </div>
+                </div>
+                <div>
+                    <ul class="clean-list">
+                        <li><i class="fa-solid fa-award"></i> <strong>Governor’s Excellence Award:</strong> Conferred for exemplary leadership in driving grassroot community advancement across Telangana.</li>
+                        <li><i class="fa-solid fa-building-columns"></i> <strong>Institutional Trust:</strong> Functioning as a vetted transformation partner alongside regional departments, welfare residential schools, and institutional bodies.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Impact Metrics & Governance</div>
+            <div class="footer-brand">Slide 06</div>
+        </div>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-header">
+            <h2 class="slide-title">Strategic Mission Ahead</h2>
+        </div>
+        <div class="content-body">
+            <div class="split-grid">
+                <div>
+                    <p style="font-size: 22px; line-height: 1.6; font-style: italic; color: #002147; margin-bottom: 30px; font-family: 'Poppins', sans-serif;">
+                        "Development becomes meaningful only when dignity, education, opportunity, and technology reach every community."
+                    </p>
+                    <p>The forward framework concentrates these operational models within model regions like Manthani, demonstrating how focused corporate social investment can realize complete, long-term regional transformation.</p>
+                </div>
+                <div class="graphic-frame">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/9712144577627679900" alt="Minimalist symbolic image of paths converging towards a common progressive vision">
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <div class="footer-brand">Satya Rapelly Vision Document</div>
+            <div class="footer-brand">Slide 07</div>
+        </div>
+    </div>
+
+</body>
+</html>
