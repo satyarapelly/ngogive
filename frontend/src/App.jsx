@@ -522,7 +522,7 @@ function SupportCauseSection() {
       title: "Education & School Infrastructure",
       description: "Enable classrooms, school essentials, learning kits, and child-friendly spaces for government school students.",
       impact: "Impact: better learning conditions and school retention.",
-      image: "/assets/images/programs/empowering-rural-learning/IMG_4802.JPG",
+      image: "/assets/images/programs/empowering-rural-learning/back2-school-2.jpg",
     },
     {
       title: "Health & Community Well-being",

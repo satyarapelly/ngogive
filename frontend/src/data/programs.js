@@ -57,7 +57,7 @@ export const impact = [
 
 const makeSubCategory = (programSlug, slug, title, description, kpi) => ({
   title,
-  image: '/assets/images/programs/empowering-rural-learning/IMG_4802.JPG',
+  image: '/assets/images/programs/empowering-rural-learning/' + slug + ".JPG",
   description,
   kpi,
 })
@@ -70,7 +70,7 @@ export const programs = [
   {
     title: 'Education & School Infrastructure', shortTitle: 'Education', slug: 'empowering-rural-learning', icon: 'BookOpen',
     folder: '/assets/images/programs/empowering-rural-learning/',
-    defaultImage: '/assets/images/programs/empowering-rural-learning/IMG_4802.JPG',
+    defaultImage: '/assets/images/programs/empowering-rural-learning/school-infra1.jpg',
     logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/empowering-rural-learning/IMG_4802.JPG'],
     sdgs: [3,4,6,10,17],
     subCategories: [
@@ -81,17 +81,17 @@ export const programs = [
       makeSubCategory('empowering-rural-learning', 'back-to-school', 'Back to School', 'Learning kits and support that help vulnerable children return to school.', 'Return-to-school support delivered'),
       {
         title: 'School Sports Kits',
-        image: '/assets/images/programs/empowering-rural-learning/IMG_4755.JPG',
+        image: '/assets/images/programs/empowering-rural-learning/school-photo-shoes.jpg',
         description: 'Equipment support that enables regular sports participation in schools.',
       },
       {
         title: 'Rural Sports Training',
-        image: '/assets/images/programs/empowering-rural-learning/DSC_0460.JPG',
+        image: '/assets/images/programs/empowering-rural-learning/sports-training.jpg',
         description: 'Structured rural coaching to build fitness, skills, and confidence.',
       },
       {
         title: 'School Tournaments',
-        image: '/assets/images/programs/empowering-rural-learning/DSC_0568.JPG',
+        image: '/assets/images/programs/empowering-rural-learning/tournament-1.jpg',
         description: 'Inter-school tournaments that encourage participation and talent identification.',
       },
     ],
@@ -105,7 +105,7 @@ export const programs = [
   {
     title: 'Menstrual Hygiene & Girls Dignity', shortTitle: 'Sthree Swabhiman', slug: 'sthree-swabhiman', icon: 'Heart',
     folder: '/assets/images/programs/sthree-swabhiman/',
-    defaultImage: '/assets/images/programs/sthree-swabhiman/sthree-swabhiman-logo.png',
+    defaultImage: '/assets/images/programs/sthree-swabhiman/sthree-swabhiman-main.jpeg',
     logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/sthree-swabhiman/sthree-swabhiman-logo.png','/assets/images/programs/sthree-swabhiman/MJPTBCWREIS_logo.webp'],
     sdgs: [3,4,5,6,10],
     subCategories: [
@@ -124,7 +124,7 @@ export const programs = [
   {
     title: 'Health & Community Well-being', shortTitle: 'Health', slug: 'health-community-wellbeing', icon: 'Stethoscope',
     folder: '/assets/images/programs/health-community-wellbeing/',
-    defaultImage: '/assets/images/programs/empowering-rural-learning/IMG_4802.JPG',
+    defaultImage: '/assets/images/programs/arogyasetu-health-initiative/arogyasetu.jpg',
     logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/sthree-swabhiman/give-for-society-logo.jpg'],
     sdgs: [3,5,6,10,17],
     subCategories: [
@@ -142,7 +142,7 @@ export const programs = [
   },
   {
     title: 'Disaster Relief & Humanitarian Response', shortTitle: 'Relief', slug: 'disaster-relief-humanitarian', icon: 'ShieldCheck',
-    folder: '/assets/images/programs/disaster-relief-humanitarian/', defaultImage: '/assets/images/programs/sthree-swabhiman/photo-distribution-group.jpg',
+    folder: '/assets/images/programs/disaster-relief-humanitarian/', defaultImage: '/assets/images/programs/disaster-relief-humanitarian/flood-relief.jpg',
     logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/sthree-swabhiman/photo-distribution-group.jpg'], sdgs: [1,2,3,10,17],
     subCategories: [
       makeSubCategory('disaster-relief-humanitarian', 'covid-relief', 'COVID Relief', 'Rapid support with essentials and care during pandemic-related disruptions.'),
@@ -156,7 +156,7 @@ export const programs = [
   },
   {
     title: 'Women & Youth Empowerment', shortTitle: 'Empowerment', slug: 'women-youth-empowerment', icon: 'Users',
-    folder: '/assets/images/programs/women-youth-empowerment/', defaultImage: '/assets/images/programs/sthree-swabhiman/photo-group-poster.jpg',
+    folder: '/assets/images/programs/women-youth-empowerment/', defaultImage: '/assets/images/programs/women-youth-empowerment/youth-employability-main.jpg',
     logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/sthree-swabhiman/photo-group-poster.jpg'], sdgs: [4,5,8,10,17],
     subCategories: [
       makeSubCategory('women-youth-empowerment', 'women-entrepreneurship', 'Women Entrepreneurship', 'Entrepreneurship support to help women build income-generating livelihoods.'),
@@ -170,8 +170,8 @@ export const programs = [
   },
   {
     title: 'Integrated Learning Centers', shortTitle: 'ILCs', slug: 'integrated-learning-centers', icon: 'GraduationCap',
-    folder: '/assets/images/programs/integrated-learning-centers/', defaultImage: '/assets/images/programs/empowering-rural-learning/IMG_4753.JPG',
-    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/empowering-rural-learning/IMG_4753.JPG'], sdgs: [3,4,5,8,10,11,17],
+    folder: '/assets/images/programs/integrated-learning-centers-ilc/', defaultImage: '/assets/images/programs/integrated-learning-centers-ilc/ilc-main.jpg',
+    logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/integrated-learning-centers-ilc/IMG_4753.JPG'], sdgs: [3,4,5,8,10,11,17],
     subCategories: [
       makeSubCategory('integrated-learning-centers', 'community-libraries', 'Community Libraries', 'Accessible local libraries to promote reading, learning, and aspiration.'),
       makeSubCategory('integrated-learning-centers', 'digital-kiosk-labs', 'Digital Kiosk Labs', 'Digital access points for learning, services, and skill development.'),
@@ -185,7 +185,7 @@ export const programs = [
   {
     title: 'Farmer Empowerment & Sustainable Agriculture', shortTitle: 'Farmer Empowerment', slug: 'farmer-empowerment-sustainable-agriculture', icon: 'Sprout',
     folder: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/',
-    defaultImage: '/assets/images/programs/sthree-swabhiman/photo-workshop-speaker.jpg',
+    defaultImage: '/assets/images/programs/farmer-empowerment-sustainable-agriculture/give4-farmers.jpg',
     logos: ['/images/GiveForSociety_logo.jpg'], sdgs: [1,2,5,8,10,12,13,17],
     problemStatement: 'Small and marginal farmers face crop failure, debt burden, borewell failure, lack of formal credit access, weak market linkages, limited technical guidance, and income insecurity. Farmer families affected by distress need livelihood support and long-term resilience-building.',
     objectives: [

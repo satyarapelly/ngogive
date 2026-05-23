@@ -4,7 +4,7 @@ export const institutionalRecognition = [
     type: "MoC",
     institution: "Mahatma Jyotiba Phule Telangana Backward Classes Welfare Residential Educational Institutions Society",
     year: "2025",
-    image: "/assets/images/programs/sthree-swabhiman/MJPTBCWREIS_logo.webp",
+    image: "/assets/images/awards/moc1.png",
     description:
       "Programme collaboration for menstrual hygiene awareness sessions, starter kit support, and institutional implementation guidance.",
   },
@@ -13,7 +13,7 @@ export const institutionalRecognition = [
     type: "MoU",
     institution: "District Administration, Mulugu",
     year: "2025",
-    image: "/assets/images/programs/empowering-rural-learning/IMG_4753.JPG",
+    image: "/assets/images/awards/mou-ilc-mulugu.jpg",
     description:
       "Administrative approval for integrated learning center implementation in selected rural locations.",
   },
