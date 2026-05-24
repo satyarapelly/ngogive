@@ -12,23 +12,28 @@ const impactHighlights = [
   { value: "12", label: "Ongoing multi-sector interventions" },
 ];
 
+const focusAreas = [
+  "Education and digital learning for rural children",
+  "Women and adolescent health with dignity initiatives",
+  "Youth employability and local leadership development",
+  "Emergency relief and climate resilient community planning",
+];
+
 export default function HomePage() {
   return (
     <>
       <SiteHeader />
       <HeroSection />
 
-      <section className="section patterned-impact" aria-label="Impact highlights">
+      <section className="touch-impact section" aria-label="Impact highlights">
         <div className="container">
-          <div className="patterned-head">
-            <h2>Building change through trusted local partnerships</h2>
-            <p>
-              We design community-led programs with schools, women groups, and local institutions for measurable social impact.
-            </p>
+          <div className="touch-heading">
+            <p className="eyebrow">Our footprint</p>
+            <h2>Community-led action with measurable outcomes</h2>
           </div>
-          <div className="patterned-grid">
+          <div className="touch-impact-grid">
             {impactHighlights.map((item) => (
-              <article className="patterned-card" key={item.label}>
+              <article className="touch-stat-card" key={item.label}>
                 <strong>{item.value}</strong>
                 <p>{item.label}</p>
               </article>
@@ -37,33 +42,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      <VisionMissionSection />
-      <section className="section" id="awards">
-        <div className="container">
-          <h2>Awards & Accreditations</h2>
-          <p>
-            Recognized for grassroots impact, transparent governance, and
-            community-centered implementation.
-          </p>
+      <section className="touch-split section" id="mission">
+        <div className="container touch-split-grid">
+          <article className="touch-panel touch-panel-dark">
+            <p className="eyebrow">Approach</p>
+            <h3>Partnership-first model</h3>
+            <p>
+              We collaborate with panchayats, schools, self-help groups, and district institutions to co-design interventions that are relevant,
+              localized, and sustainable.
+            </p>
+          </article>
+          <article className="touch-panel">
+            <p className="eyebrow">What we prioritize</p>
+            <ul>
+              {focusAreas.map((area) => (
+                <li key={area}>{area}</li>
+              ))}
+            </ul>
+          </article>
         </div>
       </section>
+
+      <VisionMissionSection />
       <ProgramsSection />
       <ProjectPhotoCarousel />
-      <section className="section" id="sdg">
-        <div className="container">
-          <h2>SDG</h2>
-          <p>
-            Aligned with SDG 3, SDG 4, SDG 5, SDG 6, and SDG 10 through
-            inclusive health and education initiatives.
-          </p>
+
+      <section className="touch-cta section" id="csr">
+        <div className="container touch-cta-inner">
+          <div>
+            <p className="eyebrow">CSR partnerships</p>
+            <h2>Build your next high-impact social initiative with us</h2>
+            <p>
+              From baseline assessment to impact reporting, we deliver transparent program execution for corporates and philanthropic partners.
+            </p>
+          </div>
+          <a className="btn btn-primary" href="/donate-now.html">
+            Start a partnership
+          </a>
         </div>
       </section>
-      <section className="section" id="csr">
+
+      <section className="section" id="sdg">
         <div className="container">
-          <h2>CSR Partnership</h2>
+          <h2>SDG Alignment</h2>
           <p>
-            We co-create measurable CSR programs with organizations aligned to
-            sustainable and inclusive impact.
+            Our work aligns with SDG 3, 4, 5, 6, and 10 by advancing equitable access to health, education, and dignified livelihoods.
           </p>
         </div>
       </section>
