@@ -5,11 +5,38 @@ import SiteHeader from "../components/SiteHeader";
 import ProjectPhotoCarousel from "../components/ProjectPhotoCarousel";
 import VisionMissionSection from "../components/VisionMissionSection";
 
+const impactHighlights = [
+  { value: "15+", label: "Years of grassroots action" },
+  { value: "40K+", label: "Lives engaged through programs" },
+  { value: "100+", label: "Villages and urban communities reached" },
+  { value: "12", label: "Ongoing multi-sector interventions" },
+];
+
 export default function HomePage() {
   return (
     <>
       <SiteHeader />
       <HeroSection />
+
+      <section className="section patterned-impact" aria-label="Impact highlights">
+        <div className="container">
+          <div className="patterned-head">
+            <h2>Building change through trusted local partnerships</h2>
+            <p>
+              We design community-led programs with schools, women groups, and local institutions for measurable social impact.
+            </p>
+          </div>
+          <div className="patterned-grid">
+            {impactHighlights.map((item) => (
+              <article className="patterned-card" key={item.label}>
+                <strong>{item.value}</strong>
+                <p>{item.label}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <VisionMissionSection />
       <section className="section" id="awards">
         <div className="container">
