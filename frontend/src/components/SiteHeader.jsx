@@ -19,9 +19,14 @@ export default function SiteHeader() {
       <div className="container nav-wrap">
         <Link to="/" className="brand" aria-label="Give For Society home" onClick={closeMenu}>
           <span className="brand-mark" aria-hidden="true">
-            GFS
+            <span className="brand-mark-ring">
+              <span className="brand-mark-core">GFS</span>
+            </span>
           </span>
-          <span>Give For Society</span>
+          <span className="brand-copy">
+            <strong>Give For Society</strong>
+            <small>NGO for Education, Dignity & Sustainable Change</small>
+          </span>
         </Link>
 
         <button
