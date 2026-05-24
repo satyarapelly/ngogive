@@ -16,6 +16,12 @@ export default function SiteHeader() {
 
   return (
     <header className="site-header">
+      <div className="top-strip" aria-hidden="true">
+        <div className="container top-strip-inner">
+          <span>Registered non-profit · Since 2014</span>
+          <span>People-first development in Telangana</span>
+        </div>
+      </div>
       <div className="container nav-wrap">
         <Link to="/" className="brand" aria-label="Give For Society home" onClick={closeMenu}>
           <span className="brand-mark" aria-hidden="true">
@@ -25,7 +31,7 @@ export default function SiteHeader() {
           </span>
           <span className="brand-copy">
             <strong>Give For Society</strong>
-            <small>NGO for Education, Dignity & Sustainable Change</small>
+            <small>Education, Health & Dignity for Every Community</small>
           </span>
         </Link>
 
