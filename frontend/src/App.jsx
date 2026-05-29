@@ -1,17 +1,15 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
+  BookOpen,
   ChevronDown,
   FileText,
   Heart,
-  Menu,
   ShieldCheck,
   Target,
-  X,
   CheckCircle2,
-  ClipboardCheck,
 } from "lucide-react";
 import {
   NGO_LOGO,
@@ -20,9 +18,8 @@ import {
   programs,
 } from "./data/programs";
 import AwardsCarousel from "./components/AwardsCarousel";
-import InstitutionalRecognition from "./components/InstitutionalRecognition";
 import HeroCarousel from "./components/HeroCarousel";
-import CoreAreas from "./components/CoreAreas";
+import FiveYearVision from "./components/FiveYearVision";
 import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import loadRazorpayScript from "./utils/loadRazorpayScript";
 
@@ -41,76 +38,128 @@ function Button({ children, variant = "primary", onClick, disabled = false }) {
 function SiteHeader({ onOpenProgram, onGoHome }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const navRef = useRef(null);
+
+  const closeAll = () => {
+    setWorkOpen(false);
+    setAboutOpen(false);
+  };
+
+  useEffect(() => {
+    if (!workOpen && !aboutOpen) return;
+    const handler = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) closeAll();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [workOpen, aboutOpen]);
+
+  const goToHash = (hash) => {
+    onGoHome();
+    setTimeout(() => { window.location.hash = hash; }, 50);
+  };
+
+  const handleOpenProgram = (slug) => {
+    closeAll();
+    onOpenProgram(slug);
+  };
 
   return (
     <header className="site-header">
       <div className="nav-wrap">
-        <button onClick={onGoHome} className="brand">
+        <button onClick={() => { closeAll(); onGoHome(); }} className="brand">
           <img src={NGO_LOGO} alt="Give For Society" className="brand-logo" />
-          <span>
+          <span className="brand-copy">
             <strong>Give For Society</strong>
-            <small>Empowering Rural Telangana</small>
+            <small>Education, Health &amp; Dignity for Every Community</small>
           </span>
         </button>
-        <nav className="desktop-nav">
-          <button onClick={onGoHome}>Home</button>
-          <a href="#about">About</a>
+
+        <nav className="desktop-nav" ref={navRef}>
+          <button onClick={() => { closeAll(); onGoHome(); }}>Home</button>
+
           <span className="nav-dropdown">
-            <button onClick={() => setWorkOpen(!workOpen)}>
-              Our Work <ChevronDown size={16} />
+            <button onClick={() => { setAboutOpen(!aboutOpen); setWorkOpen(false); }}>
+              About Us <ChevronDown size={16} />
+            </button>
+            {aboutOpen && (
+              <div className="dropdown-menu">
+                <button onClick={() => { setAboutOpen(false); goToHash("#about"); }}>Who We Are</button>
+                <button onClick={() => { setAboutOpen(false); goToHash("#awards"); }}>Awards &amp; Recognition</button>
+                <button onClick={() => { setAboutOpen(false); goToHash("#impact"); }}>Our Impact</button>
+              </div>
+            )}
+          </span>
+
+          <span className="nav-dropdown">
+            <button onClick={() => { setWorkOpen(!workOpen); setAboutOpen(false); }}>
+              Our Projects <ChevronDown size={16} />
             </button>
             {workOpen && (
-              <div className="dropdown-menu">
-                <button
-                  onClick={() => {
-                    setWorkOpen(false);
-                    onGoHome();
-                    window.location.hash = "#work";
-                  }}
-                >
-                  Core Areas
-                </button>
+              <div className="dropdown-menu" style={{ maxHeight: 380, overflowY: "auto" }}>
+                <button onClick={() => { setWorkOpen(false); goToHash("#work"); }}>All Programmes</button>
                 {programs.map((p) => (
-                  <button
-                    key={p.slug}
-                    onClick={() => {
-                      setWorkOpen(false);
-                      onOpenProgram(p.slug);
-                    }}
-                  >
+                  <button key={p.slug} onClick={() => handleOpenProgram(p.slug)}>
                     {p.title}
                   </button>
                 ))}
               </div>
             )}
           </span>
-          <a href="#partners">CSR Partners</a>
-          <a href="#contact">Contact</a>
+
+          <a href="#success-stories" onClick={closeAll}>Success Stories</a>
+          <Link to="/support-a-cause" onClick={closeAll}>Support Us</Link>
+          <a href="#media" onClick={closeAll}>Media</a>
+          <a href="#contact" onClick={closeAll}>Contact Us</a>
         </nav>
+
         <div className="desktop-actions">
           <Button variant="outline">Partner With Us</Button>
-          <Link to="/support-a-cause" className="btn btn-primary">Donate</Link>
+          <Link to="/support-a-cause" className="btn btn-primary" onClick={closeAll}>
+            Donate Now
+          </Link>
         </div>
+
         <button
-          className="mobile-menu"
-          onClick={() => setMobileOpen(!mobileOpen)}
+          type="button"
+          className={`mobile-menu${mobileOpen ? " is-open" : ""}`}
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
+          onClick={() => { setMobileOpen(!mobileOpen); closeAll(); }}
         >
-          {mobileOpen ? <X /> : <Menu />}
+          <span /><span /><span />
         </button>
       </div>
+
       {mobileOpen && (
         <div className="mobile-panel">
+          <button onClick={() => { setMobileOpen(false); onGoHome(); }}>Home</button>
+          <button onClick={() => { setMobileOpen(false); goToHash("#about"); }}>About Us</button>
+          <button onClick={() => { setMobileOpen(false); goToHash("#work"); }}>Our Projects</button>
           {programs.map((p) => (
             <button
               key={p.slug}
-              onClick={() => {
-                setMobileOpen(false);
-                onOpenProgram(p.slug);
-              }}
+              className="mobile-panel-sub"
+              onClick={() => { setMobileOpen(false); onOpenProgram(p.slug); }}
             >
               {p.title}
             </button>
           ))}
+          <button onClick={() => { setMobileOpen(false); window.location.hash = "#success-stories"; }}>
+            Success Stories
+          </button>
+          <Link to="/support-a-cause" className="mobile-panel-link" onClick={() => setMobileOpen(false)}>
+            Support Us
+          </Link>
+          <button onClick={() => { setMobileOpen(false); window.location.hash = "#media"; }}>Media</button>
+          <button onClick={() => { setMobileOpen(false); window.location.hash = "#contact"; }}>Contact Us</button>
+          <div className="mobile-panel-actions">
+            <Button variant="outline">Partner With Us</Button>
+            <Link to="/support-a-cause" className="btn btn-primary" onClick={() => setMobileOpen(false)}>
+              Donate Now
+            </Link>
+          </div>
         </div>
       )}
     </header>
@@ -172,77 +221,132 @@ function ImpactStats() {
   return (
     <section id="impact" className="impact-band">
       <div className="impact-wrap">
-        <div className="impact-header">
-          <p className="eyebrow">OUR IMPACT</p>
-          <h2>Transforming lives at scale through sustained grassroots action.</h2>
-          <p>
-            Inspired by high-credibility NGO storytelling, this section highlights
-            measurable outcomes delivered through programmes in menstrual hygiene,
-            school development, and community health.
-          </p>
-        </div>
-        <div className="impact-grid">
-          {impact.map((item) => (
-            <article className="metric-card" key={item.number + item.label}>
-              <h3>{item.number}</h3>
-              <h4>{item.label}</h4>
-              <p>{item.detail}</p>
-            </article>
-          ))}
+        <div className="impact-with-photo">
+          <div className="impact-left">
+            <div className="impact-header">
+              <p className="eyebrow">OUR IMPACT</p>
+              <h2>Transforming lives at scale through sustained grassroots action.</h2>
+              <p>
+                Inspired by high-credibility NGO storytelling, this section highlights
+                measurable outcomes delivered through programmes in menstrual hygiene,
+                school development, and community health.
+              </p>
+            </div>
+            <div className="impact-grid">
+              {impact.map((item) => (
+                <article className="metric-card" key={item.number + item.label}>
+                  <h3>{item.number}</h3>
+                  <h4>{item.label}</h4>
+                  <p>{item.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="impact-photo-side">
+            <img
+              src="/images/programs/sthree-swabhiman/photo-distribution-group.jpg"
+              alt="Community welfare programme"
+            />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+const pillars = [
+  {
+    icon: Heart,
+    title: "Empowerment",
+    description:
+      "Enabling women, youth, and communities to lead their own development through skills, awareness, and economic opportunity at the grassroots level.",
+  },
+  {
+    icon: BookOpen,
+    title: "Education & Scholarships",
+    description:
+      "Investing in school infrastructure, learning resources, and direct scholarship support to keep rural children in school and thriving.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Holistic Approach",
+    description:
+      "Addressing education, health, hygiene, livelihood, and disaster resilience together for sustained and measurable community transformation.",
+  },
+];
+
 function About() {
   return (
     <>
       <section id="about" className="content-section">
-        <div className="two-col about-grid">
-          <div className="about-intro">
+        <div className="about-with-photo">
+          <div className="about-left">
             <p className="eyebrow">ABOUT GIVE FOR SOCIETY</p>
             <h2>
               A grassroots NGO creating long-term community transformation.
             </h2>
+            <div className="body-text about-body">
+              <p>
+                Founded in 2017, Give For Society is a grassroots non-profit
+                organization committed to empowering underserved rural and tribal
+                communities across Telangana through sustainable development
+                initiatives in education, health, women empowerment, youth
+                skilling, hygiene, disaster relief, and community well-being.
+              </p>
+              <p>
+                The organization works closely with government institutions,
+                schools, CSR partners, and local communities to design practical,
+                scalable, and impact-driven programmes.
+              </p>
+            </div>
+            <div className="about-highlights">
+              <div className="about-highlight-card"><strong>Founded</strong><span>2017</span></div>
+              <div className="about-highlight-card"><strong>Focus</strong><span>Rural &amp; Tribal Communities</span></div>
+              <div className="about-highlight-card"><strong>Approach</strong><span>Scalable, Impact-Driven Programmes</span></div>
+            </div>
           </div>
-          <div className="body-text about-body">
-            <p>
-              Founded in 2017, Give For Society is a grassroots non-profit
-              organization committed to empowering underserved rural and tribal
-              communities across Telangana through sustainable development
-              initiatives in education, health, women empowerment, youth
-              skilling, hygiene, disaster relief, and community well-being.
-            </p>
-            <p>
-              The organization works closely with government institutions,
-              schools, CSR partners, and local communities to design practical,
-              scalable, and impact-driven programmes.
-            </p>
+          <div className="about-photo-side">
+            <img
+              src="/images/programs/sthree-swabhiman/photo-workshop-speaker.jpg"
+              alt="Give For Society community workshop"
+            />
           </div>
-        </div>
-        <div className="about-highlights">
-          <div className="about-highlight-card"><strong>Founded</strong><span>2017</span></div>
-          <div className="about-highlight-card"><strong>Focus</strong><span>Rural & Tribal Communities</span></div>
-          <div className="about-highlight-card"><strong>Approach</strong><span>Scalable, Impact-Driven Programmes</span></div>
         </div>
         <div className="mission-grid">
-          <InfoCard
-            icon={Target}
-            title="Our Mission"
-            items={[
-              "Empower rural, tribal, and underserved communities through sustainable initiatives in education, health, hygiene, women empowerment, youth skilling, and community development.",
-              "Create scalable, impact-driven programmes that promote dignity, equality, self-reliance, resilience, and long-term social transformation.",
-            ]}
-          />
-          <InfoCard
-            icon={Heart}
-            title="Our Vision"
-            items={[
-              "Build inclusive, healthy, educated, and self-reliant rural communities where every child, youth, and woman has access to dignity and opportunity.",
-              "Promote community-led development, institutional sustainability, youth empowerment, women leadership, and measurable grassroots impact.",
-            ]}
-          />
+          <div className="mission-feat-card mission-feat-card--primary">
+            <div className="mission-feat-icon">
+              <Target size={26} />
+            </div>
+            <h3>Our Mission</h3>
+            <ul className="mission-feat-list">
+              <li>Empower rural, tribal, and underserved communities through sustainable initiatives in education, health, hygiene, women empowerment, youth skilling, and community development.</li>
+              <li>Create scalable, impact-driven programmes that promote dignity, equality, self-reliance, resilience, and long-term social transformation.</li>
+            </ul>
+          </div>
+          <div className="mission-feat-card mission-feat-card--accent">
+            <div className="mission-feat-icon">
+              <Heart size={26} />
+            </div>
+            <h3>Our Vision</h3>
+            <ul className="mission-feat-list">
+              <li>Build inclusive, healthy, educated, and self-reliant rural communities where every child, youth, and woman has access to dignity and opportunity.</li>
+              <li>Promote community-led development, institutional sustainability, youth empowerment, women leadership, and measurable grassroots impact.</li>
+            </ul>
+          </div>
+        </div>
+        <div className="pillars-grid">
+          {pillars.map((pillar, i) => (
+            <div key={pillar.title} className="pillar-feat-card">
+              <div className="pillar-feat-top">
+                <span className="pillar-feat-num">{String(i + 1).padStart(2, "0")}</span>
+                <div className="pillar-feat-icon">
+                  <pillar.icon size={22} />
+                </div>
+              </div>
+              <h3>{pillar.title}</h3>
+              <p>{pillar.description}</p>
+            </div>
+          ))}
         </div>
       </section>
       <Awards />
@@ -285,55 +389,78 @@ function InfoCard({ icon: Icon, title, items }) {
   );
 }
 
-function ProgramCard({ program, onOpen }) {
-  const subCategories = (program.subCategories || []).slice(0, 3);
+function ProgramCard({ program, index, onOpen }) {
   const [imageError, setImageError] = useState(false);
+  const kpiMetric = (program.metrics || [])[0];
+
   return (
-    <div className="program-card">
-      <div className="program-image-wrap" aria-hidden={imageError}>
+    <div className="work-card" onClick={() => onOpen(program.slug)}>
+      <div className="work-card-image-wrap">
         {!imageError ? (
-          <img
-            src={program.defaultImage}
-            alt={program.title}
-            onError={() => setImageError(true)}
-          />
+          <img src={program.defaultImage} alt={program.title} onError={() => setImageError(true)} />
         ) : (
-          <div className="program-image-fallback" role="img" aria-label={`${program.title} image placeholder`}>
-            <span>{program.shortTitle || program.title}</span>
-          </div>
+          <div className="work-card-image-fallback">{program.shortTitle || program.title}</div>
         )}
+        <div className="work-card-overlay">
+          <button
+            className="work-card-overlay-btn"
+            onClick={(e) => { e.stopPropagation(); onOpen(program.slug); }}
+          >
+            Explore Programme
+          </button>
+        </div>
       </div>
-      <div className="program-body">
-        <h3 className="program-title">{program.title}</h3>
-        <p className="program-description">{program.overview}</p>
-        <p className="subcat-title">Sub-categories of work</p>
-        <ul className="subcat-list">
-          {subCategories.map((item) => (
-            <li key={item.title}>{item.title}</li>
-          ))}
-        </ul>
-        <button className="text-link program-button" onClick={() => onOpen(program.slug)}>
-          Know More <ArrowRight size={15} />
+      <div className="work-card-body">
+        <h3 className="work-card-title">{program.title}</h3>
+        <p className="work-card-desc">{program.overview}</p>
+        {kpiMetric && <span className="work-card-kpi">{kpiMetric}</span>}
+        <button
+          className="text-link work-card-link"
+          onClick={(e) => { e.stopPropagation(); onOpen(program.slug); }}
+        >
+          Know More <ArrowRight size={14} />
         </button>
       </div>
     </div>
   );
 }
 
+const VISIBLE_COUNT = 6;
+
 function Work({ onOpenProgram }) {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? programs : programs.slice(0, VISIBLE_COUNT);
+  const hidden = programs.length - VISIBLE_COUNT;
+
   return (
-    <section id="work" className="gray-section">
-      <div className="section-heading">
-        <p className="eyebrow">OUR WORK</p>
-        <h2>
-          Core areas designed for dignity, access, resilience, and opportunity.
-        </h2>
+    <section id="work" className="work-section">
+      <div className="work-section-head">
+        <div>
+          <p className="eyebrow">OUR WORK</p>
+          <h2>Core areas designed for dignity, access, resilience, and opportunity.</h2>
+        </div>
+        <span className="work-count-badge">{programs.length} Core Programme Areas</span>
       </div>
-      <div className="program-grid">
-        {programs.map((p) => (
-          <ProgramCard key={p.slug} program={p} onOpen={onOpenProgram} />
+      <div className="work-grid">
+        {visible.map((p, i) => (
+          <ProgramCard key={p.slug} program={p} index={i} onOpen={onOpenProgram} />
         ))}
       </div>
+      {!showAll && hidden > 0 && (
+        <div className="work-show-more">
+          <button className="work-show-more-btn" onClick={() => setShowAll(true)}>
+            View All Programmes
+            <span className="work-show-more-count">+{hidden} more</span>
+          </button>
+        </div>
+      )}
+      {showAll && (
+        <div className="work-show-more">
+          <button className="work-show-more-btn work-show-more-btn--collapse" onClick={() => setShowAll(false)}>
+            Show Less
+          </button>
+        </div>
+      )}
     </section>
   );
 }
@@ -343,25 +470,18 @@ function SubCategorySection({ program }) {
     <section className="content-section">
       <div className="section-heading">
         <p className="eyebrow">SUB-CATEGORIES</p>
-        <h2>{program.shortTitle} programs and projects</h2>
+        <h2>{program.shortTitle} programmes and projects</h2>
       </div>
-      <div className="subcat-grid">
+      <div className="subcat-grid-new">
         {(program.subCategories || []).map((item) => (
-          <article key={item.title} className="subcat-tile">
-            <div className="subcat-image-wrap">
+          <article key={item.title} className="subcat-card">
+            <div className="subcat-card-image">
               <img src={item.image} alt={item.title} />
             </div>
-            <div className="subcat-tile-body">
+            <div className="subcat-card-body">
               <h3>{item.title}</h3>
               <p>{item.description}</p>
-              {item.kpiTag && (
-                <span className="subcat-kpi-tag">{item.kpiTag}</span>
-              )}
-              {item.knowMoreLink && (
-                <a className="text-link" href={item.knowMoreLink}>
-                  Know More <ArrowRight size={14} />
-                </a>
-              )}
+              {item.kpi && <span className="subcat-kpi-badge">{item.kpi}</span>}
             </div>
           </article>
         ))}
@@ -370,71 +490,67 @@ function SubCategorySection({ program }) {
   );
 }
 
-function ProgramDetail({ program, onBack }) {
+function ProgramDetail({ program, onBack, onOpenProgram }) {
   return (
     <div>
-      <SiteHeader onOpenProgram={() => {}} onGoHome={onBack} />
-      <section className="detail-hero">
-        <div className="detail-grid">
-          <div>
-            <button className="back-link" onClick={onBack}>
-              ← Back to Our Work
-            </button>
+      <SiteHeader onOpenProgram={onOpenProgram} onGoHome={onBack} />
+
+      <section className="prog-hero">
+        <div className="prog-hero-inner">
+          <div className="prog-hero-text">
+            <button className="prog-back-link" onClick={onBack}>← All Programmes</button>
             <p className="eyebrow orange">OUR WORK / CORE AREA</p>
-            <h1>{program.title}</h1>
-            <p>{program.overview}</p>
+            <h1 className="prog-hero-h1">{program.title}</h1>
+            <p className="prog-hero-overview">{program.overview}</p>
+            <Link to="/support-a-cause" className="btn btn-primary">Donate to This Programme</Link>
           </div>
-          <div className="hero-card">
-            <h3>Program Snapshot</h3>
-            <p>
-              {program.shortTitle} at a glance with one featured image and key
-              workstreams.
-            </p>
-            <img
-              className="detail-featured-image"
-              src={program.defaultImage}
-              alt={`${program.title} featured`}
-            />
+          <div className="prog-hero-image">
+            <img src={program.defaultImage} alt={program.title} />
           </div>
         </div>
       </section>
+
+      {(program.metrics || []).length > 0 && (
+        <div className="prog-kpi-strip">
+          {(program.metrics || []).slice(0, 4).map((metric) => (
+            <div key={metric} className="prog-kpi-item">
+              <span className="prog-kpi-text">{metric}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <SubCategorySection program={program} />
+
       <section className="gray-section">
-        <div className="three-col">
-          <InfoCard
-            icon={Target}
-            title="Target Beneficiaries"
-            items={program.beneficiaries}
-          />
-          <InfoCard
-            icon={BarChart3}
-            title="Impact Metrics"
-            items={program.metrics}
-          />
-          <InfoCard icon={ClipboardCheck} title="KPIs" items={program.kpis} />
+        <div className="prog-details-grid">
+          <div>
+            <InfoCard icon={Target} title="Target Beneficiaries" items={program.beneficiaries} />
+            <InfoCard icon={BarChart3} title="Impact Metrics" items={program.metrics} />
+          </div>
+          <div>
+            <InfoCard icon={FileText} title="Key Activities" items={program.activities} />
+            <InfoCard icon={ShieldCheck} title="Monitoring &amp; Evaluation" items={program.monitoring} />
+          </div>
         </div>
       </section>
-      <section className="content-section two-card-grid">
-        <InfoCard
-          icon={FileText}
-          title="Key Activities"
-          items={program.activities}
-        />
-        <InfoCard
-          icon={ShieldCheck}
-          title="Monitoring & Evaluation"
-          items={program.monitoring}
-        />
-      </section>
-      <section className="sdg-section">
+
+      <section className="prog-sdg-section content-section">
         <p className="eyebrow">SDG ALIGNMENT</p>
         <h2>Aligned Sustainable Development Goals</h2>
-        <div className="big-sdgs">
+        <div className="prog-sdg-row">
           {program.sdgs.map((s) => (
             <img key={s} src={getSdgImagePath(s)} alt={`SDG ${s}`} />
           ))}
         </div>
       </section>
+
+      <section className="prog-donate-cta">
+        <h2>Make a difference today</h2>
+        <p>Support the {program.title} programme and help us create lasting change in rural communities.</p>
+        <Link to="/support-a-cause" className="btn btn-primary">Donate Now</Link>
+      </section>
+
       <Footer />
     </div>
   );
@@ -806,17 +922,64 @@ function Contact() {
   );
 }
 
+function SvgFacebook() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+function SvgTwitterX() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+function SvgInstagram() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+function SvgLinkedIn() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7H10v-7a6 6 0 0 1 6-6z" />
+      <rect x="2" y="9" width="4" height="12" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+function SvgYouTube() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.97A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.97A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" />
+    </svg>
+  );
+}
+
+const socialLinks = [
+  { label: "Facebook", Icon: SvgFacebook, href: "https://www.facebook.com/NgoGive" },
+  { label: "Twitter / X", Icon: SvgTwitterX, href: "https://x.com/Give4Society" },
+  { label: "Instagram", Icon: SvgInstagram, href: "https://www.instagram.com/ngogive/" },
+  { label: "LinkedIn", Icon: SvgLinkedIn, href: "https://www.linkedin.com/company/ngogive/" },
+  { label: "YouTube", Icon: SvgYouTube, href: "https://www.youtube.com/@ngoGIVE" },
+];
+
 function Footer() {
-  const footerOurWork = programs;
   return (
     <footer className="footer">
       <div className="footer-grid">
         <div>
           <div className="footer-brand">
-            <img src={NGO_LOGO} />
+            <img src={NGO_LOGO} alt="Give For Society" className="footer-logo" />
             <div>
               <h3>Give For Society</h3>
-              <small>NGOGIVE</small>
             </div>
           </div>
           <p>
@@ -824,18 +987,33 @@ function Footer() {
             education, health, hygiene, women empowerment, youth skilling,
             disaster relief, and community development.
           </p>
+          <div className="footer-social">
+            {socialLinks.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                aria-label={s.label}
+                className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <s.Icon />
+              </a>
+            ))}
+          </div>
         </div>
         <div>
-          <h4>About Us</h4>
-          <a href="#about">About</a>
-          <a href="#impact">Impact</a>
-          <a href="#awards">Awards & Accreditations</a>
-          <a href="#institutional-recognition">MoUs & Recognition</a>
+          <h4>Quick Links</h4>
+          <a href="#about">About Us</a>
+          <a href="#impact">Our Impact</a>
+          <a href="#success-stories">Success Stories</a>
+          <a href="#awards">Awards &amp; Recognition</a>
           <a href="#partners">CSR Partnerships</a>
+          <a href="#contact">Contact Us</a>
         </div>
         <div>
-          <h4>Our Work</h4>
-          {footerOurWork.map((p) => (
+          <h4>Our Projects</h4>
+          {programs.map((p) => (
             <a key={p.slug} href="#work">
               {p.shortTitle}
             </a>
@@ -843,26 +1021,28 @@ function Footer() {
         </div>
         <div>
           <h4>Get Involved</h4>
-          <a>Corporate CSR</a>
-          <a>Donate</a>
-          <a>Volunteer</a>
-          <a>Request Proposal</a>
+          <a href="#partners">Corporate CSR</a>
+          <Link to="/support-a-cause">Donate Now</Link>
+          <a href="#contact">Volunteer</a>
+          <a href="#contact">Request Proposal</a>
+          <a href="#contact">Partner With Us</a>
         </div>
         <div>
           <h4>Contact</h4>
-          <p>A31 Flat 307, Samskruthi Township, Pocharam, Hyderabad - 500088</p>
-          <p>Phone: +91 98854 23560</p>
+          <p>Flat 307, A31-Block, Samskruthi Township, Pocharam, Hyderabad – 500088</p>
+          <p>Phone: +91 80089 81069</p>
           <p>Email: contact@give4society.org</p>
           <p>Website: www.give4society.org</p>
         </div>
       </div>
       <div className="footer-bottom">
-        © 2026 Give For Society. All rights reserved.{" "}
+        © 2026 Give For Society. All rights reserved.
         <span>Privacy Policy • Terms of Use • Annual Reports</span>
       </div>
     </footer>
   );
 }
+
 
 function Home({ onOpenProgram, onOpenDonations }) {
   return (
@@ -872,10 +1052,9 @@ function Home({ onOpenProgram, onOpenDonations }) {
       <ImpactStats />
       <About />
       <Work onOpenProgram={onOpenProgram} />
-      <InstitutionalRecognition />
+      <FiveYearVision />
       <SDGSection />
-      <Partners />
-            <Contact />
+      <Contact />
       <Footer />
     </>
   );
@@ -891,7 +1070,13 @@ function ProgramDetailRoute() {
   const navigate = useNavigate();
   const program = useMemo(() => programs.find((p) => p.slug === slug), [slug]);
   if (!program) return <HomePageRoute />;
-  return <ProgramDetail program={program} onBack={() => navigate("/")} />;
+  return (
+    <ProgramDetail
+      program={program}
+      onBack={() => navigate("/")}
+      onOpenProgram={(s) => navigate(`/programs/${s}`)}
+    />
+  );
 }
 
 function SupportCausePage() {
