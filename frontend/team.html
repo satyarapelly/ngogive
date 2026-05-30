@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title> Volunteers || GIVE NGO </title>
+    <title>Our Team || GIVE NGO</title>
     <!-- favicons Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicons/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicons/favicon-16x16.png" />
     <link rel="manifest" href="assets/images/favicons/site.webmanifest" />
-    <meta name="description" content="GIVE NGO volunteers " />
+    <meta name="description" content="Meet the GIVE NGO leadership, operations, and CDLC project team." />
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -50,6 +50,119 @@
     <!-- template styles -->
     <link rel="stylesheet" href="assets/css/oxpins.css" />
     <link rel="stylesheet" href="assets/css/oxpins-responsive.css" />
+
+    <style>
+        .team-page-intro {
+            padding-bottom: 34px;
+        }
+
+        .team-page-intro__tagline {
+            color: var(--oxpins-primary);
+            font-family: var(--oxpins-font-three);
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .team-page-intro__title {
+            color: var(--oxpins-black);
+            font-size: 46px;
+            font-weight: 800;
+            line-height: 1.12;
+            margin-bottom: 16px;
+        }
+
+        .team-page-intro__text {
+            color: var(--oxpins-gray);
+            font-size: 17px;
+            line-height: 1.75;
+            margin: 0 auto;
+            max-width: 900px;
+        }
+
+        .team-one {
+            background: #f7f4ee;
+        }
+
+        .team-one__single {
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            overflow: hidden;
+            transition: transform 300ms ease, box-shadow 300ms ease;
+        }
+
+        .team-one__single:hover {
+            box-shadow: 0 24px 55px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+        }
+
+        .team-one__img {
+            background: #ece6da;
+            height: 330px;
+            overflow: hidden;
+        }
+
+        .team-one__img img {
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            width: 100%;
+        }
+
+        .team-one__content {
+            padding: 28px 26px 30px;
+            text-align: left;
+        }
+
+        .team-one__name {
+            font-size: 22px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .team-one__sub-title {
+            color: var(--oxpins-primary);
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .02em;
+            line-height: 1.45;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .team-one__bio {
+            color: var(--oxpins-gray);
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .team-one__category {
+            align-items: center;
+            background: rgba(242, 117, 34, 0.1);
+            border-radius: 999px;
+            color: var(--oxpins-primary);
+            display: inline-flex;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            margin-bottom: 14px;
+            padding: 7px 13px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 767px) {
+            .team-page-intro__title {
+                font-size: 34px;
+            }
+
+            .team-one__img {
+                height: 300px;
+            }
+        }
+    </style>
 </head>
 
 <body class="custom-cursor">
@@ -142,8 +255,8 @@
                                         <li>
                                             <a href="index.html">Home</a>
                                         </li>
-                                        <li class="dropdown current megamenu scrollToLink">
-                                            <a href="#">Work </a>
+                                        <li class="dropdown megamenu scrollToLink">
+                                            <a href="index.html#donations">Work </a>
                                             <ul>
 											
                                                 <li>
@@ -158,7 +271,7 @@
                                                                                     alt="" style="height:300px;">
                                                                                 <div class="home-showcase__buttons">
                                                                                     
-                                                                                    <a href="#"
+                                                                                    <a href="index.html#donations"
                                                                                         class="thm-btn home-showcase__buttons__item">Overview</a>
                                                                                 </div><!-- /.home-showcase__buttons -->
                                                                             </div><!-- /.home-showcase__image -->
@@ -172,7 +285,7 @@
                                                                                     alt="" style="height:300px;">
                                                                                 <div class="home-showcase__buttons">
                                                                                     
-                                                                                    <a href="#"
+                                                                                    <a href="index.html#donations"
                                                                                         class="thm-btn home-showcase__buttons__item">Overview</a>
                                                                                 </div><!-- /.home-showcase__buttons -->
                                                                             </div><!-- /.home-showcase__image -->
@@ -186,7 +299,7 @@
                                                                                     alt="" style="height:300px;">
                                                                                 <div class="home-showcase__buttons">
 
-                                                                                    <a href="#"
+                                                                                    <a href="index.html#donations"
                                                                                         class="thm-btn home-showcase__buttons__item">Overview</a>
                                                                                 </div><!-- /.home-showcase__buttons -->
                                                                             </div><!-- /.home-showcase__image -->
@@ -199,7 +312,7 @@
                                                                                 <img src="assets/images/hp3.jpg"
                                                                                     alt="" style="height:300px;">
                                                                                 <div class="home-showcase__buttons">
-                                                                                    <a href="#"
+                                                                                    <a href="index.html#donations"
                                                                                         class="thm-btn home-showcase__buttons__item">Overview</a>
                                                                                 </div><!-- /.home-showcase__buttons -->
                                                                             </div><!-- /.home-showcase__image -->
@@ -216,19 +329,19 @@
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href="#">News</a>
+                                            <a href="news.html">News</a>
+                                        </li>
+
+                                        <li class="current">
+                                            <a href="team.html">Team</a>
                                         </li>
 
                                         <li>
-                                            <a href="#">Team</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="#">About</a>
+                                            <a href="about.html">About</a>
                                         </li>
                                         
                                         <li>
-                                            <a href="#">Contact</a>
+                                            <a href="contact.html">Contact</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -268,7 +381,7 @@
                         <li><span>/</span></li>
                         <li class="active">Pages</li>
                     </ul> -->
-                    <h2>Team</h2>
+                    <h2>Our Team</h2>
                 </div>
             </div>
         </section>
@@ -277,350 +390,246 @@
         <!--Team One Start-->
         <section class="team-one">
             <div class="container">
-                <div class="row">
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
-                        <div class="team-one__single">
+                <div class="team-page-intro text-center wow fadeInUp" data-wow-delay="100ms">
+                    <p class="team-page-intro__tagline">People behind the purpose</p>
+                    <h2 class="team-page-intro__title">Meet the GIVE NGO leadership and program team</h2>
+                    <p class="team-page-intro__text">Our team brings together technology professionals, educators, finance leaders, field coordinators, and rural-development practitioners. Together, they drive GIVE NGO programs across education, women empowerment, CDLC, youth upskilling, and community development.</p>
+                </div>
+                <div class="row gutter-y-30">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamsatya.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamsatya.jpeg" alt="Satya Rapelly">
                             </div>
                             <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
                                 <h3 class="team-one__name"><a href="#">Satya Rapelly</a></h3>
-                                <p class="team-one__sub-title">President</p>
+                                <p class="team-one__sub-title">Founder & President</p>
+                                <p class="team-one__bio">Satya brings 25 years of software-industry experience to initiatives that empower rural youth and women through technology-led education and a grounded understanding of rural socio-economic needs.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                     <!--Team One Single Start-->
-                     <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamvenu.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamsajesh.jpeg" alt="Sajesh Rao Erabelli">
                             </div>
                             <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Venu Madhav M</a></h3>
-                                <p class="team-one__sub-title">Director of Onshore Operations, USA</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teamarun.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Arun Kumar P</a></h3>
-                                <p class="team-one__sub-title">General Secretary, Give NGO</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teamabhi.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Abhishek Ganta</a></h3>
-                                <p class="team-one__sub-title">Project Lead</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teamvalentina.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Valentina</a></h3>
-                                <p class="team-one__sub-title">Women Wing - Operations</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teamsajesh.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Sajesh Rao E</a></h3>
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Sajesh Rao Erabelli</a></h3>
                                 <p class="team-one__sub-title">Project Lead – Financial Operations</p>
+                                <p class="team-one__bio">Sajesh combines banking-sector experience in India with business and data-science expertise to support child education, upskilling, and financial operations for Give For Society.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                   
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="500ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamrrk.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamvalentina.jpeg" alt="Sunitha Madhav">
                             </div>
                             <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Rajanish Reddy K</a></h3>
-                                <p class="team-one__sub-title">Director, GIVE NGO, USA</p>
+                                <span class="team-one__category">Operations</span>
+                                <h3 class="team-one__name"><a href="#">Sunitha Madhav</a></h3>
+                                <p class="team-one__sub-title">Women Wing – Operations and Coordinator</p>
+                                <p class="team-one__bio">Sunitha supports women-focused programs with an education-first approach to socio-economic growth, community participation, and stronger local coordination.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="500ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teambalu.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teambalu.jpeg" alt="Balu Chedurupally">
                             </div>
                             <div class="team-one__content">
+                                <span class="team-one__category">Operations</span>
                                 <h3 class="team-one__name"><a href="#">Balu Chedurupally</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Balu uses his computer-science background and software experience to advance technology-enabled education and CDLC programs for rural communities.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamvenu.jpeg" alt="Venu Madhav Mamidoju">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Venu Madhav Mamidoju</a></h3>
+                                <p class="team-one__sub-title">Director of Onshore Operations, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Venu blends IT software-development experience with insight into rural education and livelihood challenges to guide youth empowerment and CDLC innovation.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamrrk.jpg" alt="Rajanish Reddy Karla">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Rajanish Reddy Karla</a></h3>
                                 <p class="team-one__sub-title">Director, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Rajanish brings project-management and technical ideation experience to strategies that improve educational access and growth opportunities in rural communities.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="600ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamsaikrishna.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamabhi.jpeg" alt="Abhishek Ganta">
                             </div>
                             <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Saikrishna CH</a></h3>
-                                <p class="team-one__sub-title">Director - Operations, Give NGO</p>
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Abhishek Ganta</a></h3>
+                                <p class="team-one__sub-title">Project Lead for CDLC</p>
+                                <p class="team-one__bio">Abhishek applies his technology background, software-industry exposure, and understanding of rural issues to design practical empowerment solutions.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="700ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamchandu.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamchandu.jpeg" alt="Chandrashekar Reddy">
                             </div>
                             <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
                                 <h3 class="team-one__name"><a href="#">Chandrashekar Reddy</a></h3>
-                                <p class="team-one__sub-title">Project Engineer – CDLC, Give NGO</p>
+                                <p class="team-one__sub-title">Project Engineer – CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Chandrashekar supports farming communities and CDLC delivery with practical solutions rooted in rural agricultural needs and sustainability.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamsai.jpeg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamarun.jpg" alt="Arun Kumar Pillalamarri">
                             </div>
                             <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Arun Kumar Pillalamarri</a></h3>
+                                <p class="team-one__sub-title">General Secretary, GIVE NGO</p>
+                                <p class="team-one__bio">Arun leads offshore operations with strong administrative capability and long-standing involvement in education, health, hygiene, and ground-level execution.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamsaikrishna.jpeg" alt="Sai Krishna Chilukuri">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Sai Krishna Chilukuri</a></h3>
+                                <p class="team-one__sub-title">Director, Operation Lead for CDLC, Telangana</p>
+                                <p class="team-one__bio">Sai Krishna leads education programs for rural and tribal communities in Telangana, including Back to School efforts that support underprivileged students.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamparshu.jpg" alt="Parshu Ram Goud">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Parshu Ram Goud</a></h3>
+                                <p class="team-one__sub-title">Project Engineer for CDLC</p>
+                                <p class="team-one__bio">Parshu Ram leverages software-engineering experience and a commitment to rural development to address social backwardness through technology-enabled initiatives.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamsai.jpeg" alt="Sai Eshwar Reddy">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
                                 <h3 class="team-one__name"><a href="#">Sai Eshwar Reddy</a></h3>
-                                <p class="team-one__sub-title">Project Engineer - CDLC, Give NGO</p>
+                                <p class="team-one__sub-title">Project Engineer, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Sai Eshwar focuses on reducing the rural-urban technology gap through CDLC upskilling and pathways for opportunity among rural youth.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamparshu.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamakhilesh.jpeg" alt="Akhilesh Reddy Kasani">
                             </div>
                             <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Parshu Ram</a></h3>
-                                <p class="team-one__sub-title">Project Engineer - CDLC, Give NGO</p>
+                                <span class="team-one__category">Finance</span>
+                                <h3 class="team-one__name"><a href="#">Akhilesh Reddy Kasani</a></h3>
+                                <p class="team-one__sub-title">Treasurer, GIVE NGO, Telangana</p>
+                                <p class="team-one__bio">Akhilesh helps bring education projects to life from the ground up and supports Back to School programs for underprivileged students.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamakhilesh.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teammahipal.jpg" alt="Mahipal Reddy">
                             </div>
                             <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Akhilesh Reddy</a></h3>
-                                <p class="team-one__sub-title">Treasurer, Give NGO</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                    <!--Team One Single Start-->
-                        <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                            <div class="team-one__single">
-                                <div class="team-one__img">
-                                    <img src="assets/images/teamraju.jpg" alt="" style="height: 400px;">
-                                    <div class="team-one__social">
-                                        <a href="#"><i class="fab fa-facebook"></i></a>
-                                        <a href="#"><i class="fab fa-twitter"></i></a>
-                                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                        <a href="#"><i class="fab fa-instagram"></i></a>
-                                    </div>
-                                </div>
-                                <div class="team-one__content">
-                                    <h3 class="team-one__name"><a href="#">Raju Mokide</a></h3>
-                                    <p class="team-one__sub-title">Project Engineer - CDLC, Give NGO</p>
-                                </div>
-                            </div>
-                        </div>
-                    <!--Team One Single End-->
-                     <!--Team One Single Start-->
-                     <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teamBhanu.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Bhanu Goud</a></h3>
-                                <p class="team-one__sub-title">Project Engineer - CDLC, Give NGO</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                     <!--Team One Single Start-->
-                     <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teamHakim.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Hakim</a></h3>
-                                <p class="team-one__sub-title">Financial Operations Lead, Give NGO</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Team One Single End-->
-                     <!--Team One Single Start-->
-                     <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
-                            <div class="team-one__img">
-                                <img src="assets/images/teammahipal.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
                                 <h3 class="team-one__name"><a href="#">Mahipal Reddy</a></h3>
-                                <p class="team-one__sub-title">Project Engineer - CDLC, Give NGO</p>
+                                <p class="team-one__sub-title">Project Engineer for CDLC</p>
+                                <p class="team-one__bio">Mahipal contributes grassroots knowledge of farmer issues and introduces practical techniques that support rural farming communities.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
-                     <!--Team One Single Start-->
-                     <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="800ms">
-                        <div class="team-one__single">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
                             <div class="team-one__img">
-                                <img src="assets/images/teamaltaf.jpg" alt="" style="height: 400px;">
-                                <div class="team-one__social">
-                                    <a href="#"><i class="fab fa-facebook"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
+                                <img src="assets/images/teamBhanu.jpg" alt="Bhanu Goud Bathini">
                             </div>
                             <div class="team-one__content">
-                                <h3 class="team-one__name"><a href="#">Altaf</a></h3>
-                                <p class="team-one__sub-title">Project Engineer - CDLC, Give NGO</p>
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Bhanu Goud Bathini</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Bhanu pairs software-engineering expertise with rural community insight to design applications for empowerment and development.</p>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                    <!--Team One Single End-->
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamraju.jpeg" alt="Raju Mokide">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Raju Mokide</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Raju combines software engineering with knowledge of rural socio-political landscapes to build applications and awareness initiatives for communities.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamaltaf.jpg" alt="Mohd Altaf Ur Rahman">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Mohd Altaf Ur Rahman</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Altaf brings IT and project-management experience to educational challenges in rural areas, creating practical solutions with a community-development focus.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamHakim.jpg" alt="Mohammed Abdul Hakim">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Finance</span>
+                                <h3 class="team-one__name"><a href="#">Mohammed Abdul Hakim</a></h3>
+                                <p class="team-one__sub-title">Financial Operations Lead, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Hakim brings MBA training and 15 years of social-activity experience in rural development to financial operations and youth-empowerment initiatives.</p>
+                            </div>
+                        </article>
+                    </div>
                 </div>
             </div>
         </section>
