@@ -258,18 +258,21 @@ const pillars = [
   {
     icon: Heart,
     title: "Empowerment",
+    image: "/images/programs/women-youth-empowerment/youth-employability1.jpg",
     description:
       "Enabling women, youth, and communities to lead their own development through skills, awareness, and economic opportunity at the grassroots level.",
   },
   {
     icon: BookOpen,
     title: "Education & Scholarships",
+    image: "/images/programs/empowering-rural-learning/classroom-infrastructure.JPG",
     description:
       "Investing in school infrastructure, learning resources, and direct scholarship support to keep rural children in school and thriving.",
   },
   {
     icon: ShieldCheck,
     title: "Holistic Approach",
+    image: "/images/programs/sthree-swabhiman/photo-distribution-group.jpg",
     description:
       "Addressing education, health, hygiene, livelihood, and disaster resilience together for sustained and measurable community transformation.",
   },
@@ -334,18 +337,23 @@ function About() {
             </ul>
           </div>
         </div>
-        <div className="pillars-grid">
+        <div className="pillars-grid" aria-label="Give For Society focus tiles">
           {pillars.map((pillar, i) => (
-            <div key={pillar.title} className="pillar-feat-card">
-              <div className="pillar-feat-top">
+            <article key={pillar.title} className="pillar-feat-card">
+              <div className="pillar-feat-image">
+                <img src={pillar.image} alt={`${pillar.title} programme`} />
                 <span className="pillar-feat-num">{String(i + 1).padStart(2, "0")}</span>
-                <div className="pillar-feat-icon">
-                  <pillar.icon size={22} />
-                </div>
               </div>
-              <h3>{pillar.title}</h3>
-              <p>{pillar.description}</p>
-            </div>
+              <div className="pillar-feat-body">
+                <div className="pillar-feat-top">
+                  <div className="pillar-feat-icon">
+                    <pillar.icon size={22} />
+                  </div>
+                  <h3>{pillar.title}</h3>
+                </div>
+                <p>{pillar.description}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
