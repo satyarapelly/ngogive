@@ -3,10 +3,923 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Our Team | Give For Society</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <title>Our Team || GIVE NGO</title>
+    <!-- favicons Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicons/favicon-16x16.png" />
+    <link rel="manifest" href="assets/images/favicons/site.webmanifest" />
+    <meta name="description" content="Meet the GIVE NGO leadership, operations, and CDLC project team." />
+
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="assets/vendors/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/vendors/animate/animate.min.css" />
+    <link rel="stylesheet" href="assets/vendors/animate/custom-animate.css" />
+    <link rel="stylesheet" href="assets/vendors/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="assets/vendors/jarallax/jarallax.css" />
+    <link rel="stylesheet" href="assets/vendors/jquery-magnific-popup/jquery.magnific-popup.css" />
+    <link rel="stylesheet" href="assets/vendors/nouislider/nouislider.min.css" />
+    <link rel="stylesheet" href="assets/vendors/nouislider/nouislider.pips.css" />
+    <link rel="stylesheet" href="assets/vendors/odometer/odometer.min.css" />
+    <link rel="stylesheet" href="assets/vendors/swiper/swiper.min.css" />
+    <link rel="stylesheet" href="assets/vendors/oxpins-icons/style.css">
+    <link rel="stylesheet" href="assets/vendors/tiny-slider/tiny-slider.min.css" />
+    <link rel="stylesheet" href="assets/vendors/reey-font/stylesheet.css" />
+    <link rel="stylesheet" href="assets/vendors/owl-carousel/owl.carousel.min.css" />
+    <link rel="stylesheet" href="assets/vendors/owl-carousel/owl.theme.default.min.css" />
+    <link rel="stylesheet" href="assets/vendors/bxslider/jquery.bxslider.css" />
+    <link rel="stylesheet" href="assets/vendors/bootstrap-select/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="assets/vendors/vegas/vegas.min.css" />
+    <link rel="stylesheet" href="assets/vendors/jquery-ui/jquery-ui.css" />
+    <link rel="stylesheet" href="assets/vendors/timepicker/timePicker.css" />
+
+    <!-- template styles -->
+    <link rel="stylesheet" href="assets/css/oxpins.css" />
+    <link rel="stylesheet" href="assets/css/oxpins-responsive.css" />
+
+    <style>
+        :root {
+            --brand-primary: #1e3560;
+            --brand-primary-dark: #152748;
+            --brand-orange: #f97316;
+            --brand-slate: #0f172a;
+            --brand-muted: #64748b;
+            --brand-soft: #f8fafc;
+        }
+
+        body {
+            color: var(--brand-slate);
+            font-family: Inter, Manrope, Arial, sans-serif;
+            background: #fff;
+        }
+
+        .team-site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #ffffff;
+            box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+        }
+
+        .nav-wrap {
+            max-width: 1280px;
+            margin: auto;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .brand:hover {
+            color: inherit;
+        }
+
+        .brand-logo {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .brand strong {
+            display: block;
+            color: var(--brand-slate);
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .brand small {
+            display: block;
+            color: var(--brand-muted);
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 1;
+            min-width: 0;
+        }
+
+        .desktop-nav a {
+            color: #334155;
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .desktop-nav a:hover,
+        .desktop-nav a.active {
+            background: #f1f5f9;
+            color: var(--brand-primary);
+        }
+
+        .desktop-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .desktop-actions .btn {
+            padding: 9px 16px;
+            font-size: 13px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--brand-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ea580c;
+            color: white;
+        }
+
+        .btn-outline {
+            border: 1px solid #cbd5e1;
+            color: var(--brand-slate);
+            background: white;
+        }
+
+        .btn-outline:hover {
+            color: var(--brand-primary);
+            border-color: var(--brand-primary);
+        }
+
+        .team-hero {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #152748, #1e3560, #0f172a);
+            color: white;
+        }
+
+        .team-hero__bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.2;
+            background:
+                radial-gradient(circle at 20% 20%, white 0, transparent 25%),
+                radial-gradient(circle at 80% 10%, orange 0, transparent 20%);
+        }
+
+        .team-hero__content {
+            position: relative;
+            max-width: 1280px;
+            margin: auto;
+            padding: 92px 24px;
+        }
+
+        .pill {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 10px 16px;
+            border-radius: 999px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .team-hero h1 {
+            max-width: 840px;
+            color: white;
+            font-size: 58px;
+            line-height: 1.05;
+            margin: 20px 0;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .team-hero__text {
+            max-width: 760px;
+            color: #eff6ff;
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .team-hero__actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 26px;
+        }
+
+        .team-hero .btn-outline {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: transparent;
+            color: white;
+        }
+
+        .team-hero .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .team-page-intro {
+            padding-bottom: 34px;
+        }
+
+        .team-page-intro__tagline {
+            color: var(--brand-orange);
+            font-family: var(--oxpins-font-three);
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .team-page-intro__title {
+            color: var(--brand-slate);
+            font-size: 46px;
+            font-weight: 800;
+            line-height: 1.12;
+            margin-bottom: 16px;
+        }
+
+        .team-page-intro__text {
+            color: var(--brand-muted);
+            font-size: 17px;
+            line-height: 1.75;
+            margin: 0 auto;
+            max-width: 900px;
+        }
+
+        .team-one {
+            background: var(--brand-soft);
+        }
+
+        .team-one__single {
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            overflow: hidden;
+            transition: transform 300ms ease, box-shadow 300ms ease;
+        }
+
+        .team-one__single:hover {
+            box-shadow: 0 24px 55px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+        }
+
+        .team-one__img {
+            background: #ece6da;
+            height: 330px;
+            overflow: hidden;
+        }
+
+        .team-one__img img {
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            width: 100%;
+        }
+
+        .team-one__content {
+            padding: 28px 26px 30px;
+            text-align: left;
+        }
+
+        .team-one__name {
+            font-size: 22px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .team-one__sub-title {
+            color: var(--brand-orange);
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .02em;
+            line-height: 1.45;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .team-one__bio {
+            color: var(--brand-muted);
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .team-one__category {
+            align-items: center;
+            background: rgba(249, 115, 22, 0.1);
+            border-radius: 999px;
+            color: var(--brand-orange);
+            display: inline-flex;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            margin-bottom: 14px;
+            padding: 7px 13px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 1100px) {
+            .nav-wrap {
+                flex-wrap: wrap;
+            }
+
+            .desktop-nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .nav-wrap {
+                align-items: flex-start;
+                padding: 12px 18px;
+            }
+
+            .brand small {
+                max-width: 220px;
+            }
+
+            .desktop-actions {
+                width: 100%;
+            }
+
+            .desktop-actions .btn {
+                flex: 1;
+            }
+
+            .team-hero__content {
+                padding: 70px 20px;
+            }
+
+            .team-hero h1 {
+                font-size: 40px;
+            }
+
+            .team-page-intro__title {
+                font-size: 34px;
+            }
+
+            .team-one__img {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body class="custom-cursor">
+
+    <div class="custom-cursor__cursor"></div>
+    <div class="custom-cursor__cursor-two"></div>
+
+
+
+
+
+    <div class="preloader">
+        <div class="preloader__image"></div>
+    </div>
+    <!-- /.preloader -->
+
+
+    <div class="page-wrapper">
+        <header class="site-header team-site-header">
+            <div class="nav-wrap">
+                <a href="index.html" class="brand" aria-label="Give For Society home">
+                    <img src="assets/images/give-logo.png" alt="Give For Society" class="brand-logo">
+                    <span class="brand-copy">
+                        <strong>Give For Society</strong>
+                        <small>Education, Health &amp; Dignity for Every Community</small>
+                    </span>
+                </a>
+
+                <nav class="desktop-nav" aria-label="Primary navigation">
+                    <a href="index.html">Home</a>
+                    <a href="index.html#about">About Us</a>
+                    <a href="index.html#work">Our Projects</a>
+                    <a href="index.html#donations">Support Us</a>
+                    <a href="team.html" class="active">Our Team</a>
+                    <a href="index.html#contact">Contact Us</a>
+                </nav>
+
+                <div class="desktop-actions">
+                    <a href="index.html#contact" class="btn btn-outline">Partner With Us</a>
+                    <a href="index.html#donations" class="btn btn-primary">Donate Now</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Team Hero Start -->
+        <section class="team-hero">
+            <div class="team-hero__bg"></div>
+            <div class="team-hero__content">
+                <p class="pill">Registered NGO • Hyderabad, Telangana</p>
+                <h1>Meet the people building dignity and opportunity.</h1>
+                <p class="team-hero__text">Our leadership, operations, and program teams bring technology, education, finance, and field experience together for rural communities across Telangana.</p>
+                <div class="team-hero__actions">
+                    <a class="btn btn-primary" href="index.html#donations">Support a Cause</a>
+                    <a class="btn btn-outline" href="index.html#work">Explore Projects</a>
+                </div>
+            </div>
+        </section>
+        <!-- Team Hero End -->
+
+        <!--Team One Start-->
+        <section class="team-one">
+            <div class="container">
+                <div class="team-page-intro text-center wow fadeInUp" data-wow-delay="100ms">
+                    <p class="team-page-intro__tagline">People behind the purpose</p>
+                    <h2 class="team-page-intro__title">Meet the GIVE NGO leadership and program team</h2>
+                    <p class="team-page-intro__text">Our team brings together technology professionals, educators, finance leaders, field coordinators, and rural-development practitioners. Together, they drive GIVE NGO programs across education, women empowerment, CDLC, youth upskilling, and community development.</p>
+                </div>
+                <div class="row gutter-y-30">
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamsatya.jpeg" alt="Satya Rapelly">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="team/ceo/">Satya Rapelly</a></h3>
+                                <p class="team-one__sub-title">Founder & President</p>
+                                <p class="team-one__bio">Satya brings 25 years of software-industry experience to initiatives that empower rural youth and women through technology-led education and a grounded understanding of rural socio-economic needs.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamsajesh.jpeg" alt="Sajesh Rao Erabelli">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Sajesh Rao Erabelli</a></h3>
+                                <p class="team-one__sub-title">Project Lead – Financial Operations</p>
+                                <p class="team-one__bio">Sajesh combines banking-sector experience in India with business and data-science expertise to support child education, upskilling, and financial operations for Give For Society.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamvalentina.jpeg" alt="Sunitha Madhav">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Operations</span>
+                                <h3 class="team-one__name"><a href="#">Sunitha Madhav</a></h3>
+                                <p class="team-one__sub-title">Women Wing – Operations and Coordinator</p>
+                                <p class="team-one__bio">Sunitha supports women-focused programs with an education-first approach to socio-economic growth, community participation, and stronger local coordination.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teambalu.jpeg" alt="Balu Chedurupally">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Operations</span>
+                                <h3 class="team-one__name"><a href="#">Balu Chedurupally</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Balu uses his computer-science background and software experience to advance technology-enabled education and CDLC programs for rural communities.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamvenu.jpeg" alt="Venu Madhav Mamidoju">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Venu Madhav Mamidoju</a></h3>
+                                <p class="team-one__sub-title">Director of Onshore Operations, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Venu blends IT software-development experience with insight into rural education and livelihood challenges to guide youth empowerment and CDLC innovation.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamrrk.jpg" alt="Rajanish Reddy Karla">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Rajanish Reddy Karla</a></h3>
+                                <p class="team-one__sub-title">Director, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Rajanish brings project-management and technical ideation experience to strategies that improve educational access and growth opportunities in rural communities.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamabhi.jpeg" alt="Abhishek Ganta">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Abhishek Ganta</a></h3>
+                                <p class="team-one__sub-title">Project Lead for CDLC</p>
+                                <p class="team-one__bio">Abhishek applies his technology background, software-industry exposure, and understanding of rural issues to design practical empowerment solutions.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamchandu.jpeg" alt="Chandrashekar Reddy">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Chandrashekar Reddy</a></h3>
+                                <p class="team-one__sub-title">Project Engineer – CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Chandrashekar supports farming communities and CDLC delivery with practical solutions rooted in rural agricultural needs and sustainability.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamarun.jpg" alt="Arun Kumar Pillalamarri">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Leadership</span>
+                                <h3 class="team-one__name"><a href="#">Arun Kumar Pillalamarri</a></h3>
+                                <p class="team-one__sub-title">General Secretary, GIVE NGO</p>
+                                <p class="team-one__bio">Arun leads offshore operations with strong administrative capability and long-standing involvement in education, health, hygiene, and ground-level execution.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamsaikrishna.jpeg" alt="Sai Krishna Chilukuri">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Sai Krishna Chilukuri</a></h3>
+                                <p class="team-one__sub-title">Director, Operation Lead for CDLC, Telangana</p>
+                                <p class="team-one__bio">Sai Krishna leads education programs for rural and tribal communities in Telangana, including Back to School efforts that support underprivileged students.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamparshu.jpg" alt="Parshu Ram Goud">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Parshu Ram Goud</a></h3>
+                                <p class="team-one__sub-title">Project Engineer for CDLC</p>
+                                <p class="team-one__bio">Parshu Ram leverages software-engineering experience and a commitment to rural development to address social backwardness through technology-enabled initiatives.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamsai.jpeg" alt="Sai Eshwar Reddy">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Sai Eshwar Reddy</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Sai Eshwar focuses on reducing the rural-urban technology gap through CDLC upskilling and pathways for opportunity among rural youth.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamakhilesh.jpeg" alt="Akhilesh Reddy Kasani">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Finance</span>
+                                <h3 class="team-one__name"><a href="#">Akhilesh Reddy Kasani</a></h3>
+                                <p class="team-one__sub-title">Treasurer, GIVE NGO, Telangana</p>
+                                <p class="team-one__bio">Akhilesh helps bring education projects to life from the ground up and supports Back to School programs for underprivileged students.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teammahipal.jpg" alt="Mahipal Reddy">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Mahipal Reddy</a></h3>
+                                <p class="team-one__sub-title">Project Engineer for CDLC</p>
+                                <p class="team-one__bio">Mahipal contributes grassroots knowledge of farmer issues and introduces practical techniques that support rural farming communities.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamBhanu.jpg" alt="Bhanu Goud Bathini">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Bhanu Goud Bathini</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Bhanu pairs software-engineering expertise with rural community insight to design applications for empowerment and development.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamraju.jpeg" alt="Raju Mokide">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Raju Mokide</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Raju combines software engineering with knowledge of rural socio-political landscapes to build applications and awareness initiatives for communities.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamaltaf.jpg" alt="Mohd Altaf Ur Rahman">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">CDLC Team</span>
+                                <h3 class="team-one__name"><a href="#">Mohd Altaf Ur Rahman</a></h3>
+                                <p class="team-one__sub-title">Project Engineer, GIVE NGO, USA</p>
+                                <p class="team-one__bio">Altaf brings IT and project-management experience to educational challenges in rural areas, creating practical solutions with a community-development focus.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                        <article class="team-one__single">
+                            <div class="team-one__img">
+                                <img src="assets/images/teamHakim.jpg" alt="Mohammed Abdul Hakim">
+                            </div>
+                            <div class="team-one__content">
+                                <span class="team-one__category">Finance</span>
+                                <h3 class="team-one__name"><a href="#">Mohammed Abdul Hakim</a></h3>
+                                <p class="team-one__sub-title">Financial Operations Lead, CDLC, GIVE NGO</p>
+                                <p class="team-one__bio">Hakim brings MBA training and 15 years of social-activity experience in rural development to financial operations and youth-empowerment initiatives.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--Team One End-->
+
+         <!--Site Footer Start-->
+         <footer class="site-footer">
+            <div class="site-footer-bg" style="background-image: url(assets/images/backgrounds/site-footer-bg.jpg);">
+            </div>
+            <div class="site-footer__top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="100ms">
+                            <div class="footer-widget__column footer-widget__about">
+                                <div class="footer-widget__about-logo">
+                                    <a href="index.html"><img src="assets/images/give-logo.png" alt=" " style="width:30%"></a>
+                                </div>
+                                <div class="footer-widget__about-text-box">
+                                    <p class="footer-widget__about-text">Empower women, educate all, uplift the poor and provide emergency relief to the needy. </p>
+                                </div>
+                                <div class="footer-widget__btn">
+                                    <a href="donate-now.html"> <span class="fa fa-heart"></span>Donate now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="200ms">
+                            <div class="footer-widget__column footer-widget__links clearfix">
+                                <h3 class="footer-widget__title">Links</h3>
+                                <ul class="footer-widget__links-list list-unstyled clearfix">
+                                    <li><a href="#">About us</a></li>
+                                    <li><a href="#">Contact</a></li>
+                                    <li><a href="#">Latest News</a></li>
+                                    <li><a href="#">Recent Events</a></li>
+                                    <li><a href="donate-now.html">Donations</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="300ms">
+                            <div class="footer-widget__column footer-widget__non-profit clearfix">
+                                <h3 class="footer-widget__title">Non profit</h3>
+                                <ul class="footer-widget__non-profit-list list-unstyled clearfix">
+                                    <li><a href="#">Differently Abled Kids</a></li>
+                                    <li><a href="#">Help Child Cancer</a></li>
+                                    <li><a href="#">Clean Pure Water</a></li>
+                                    <li><a href="#">Give them Education</a></li>
+                                    <li><a href="#">Start a Fundraising</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="400ms">
+                            <div class="footer-widget__column footer-widget__contact">
+                                <h3 class="footer-widget__title">Contact</h3>
+                                <p class="footer-widget__contact-text">Pocharam, Hyderabad <br> Telangana
+                                    India
+                                </p>
+                                <ul class="list-unstyled footer-widget__contact-list">
+                                    <li>
+                                        <div class="icon">
+                                            <i class="fa fa-envelope"></i>
+                                        </div>
+                                        <div class="text">
+                                            <p><a href="mailto:contact@give4society.org">contact@give4society.org</a></p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="icon">
+                                            <i class="fas fa-phone-alt"></i>
+                                        </div>
+                                        <div class="text">
+                                            <p><a href="tel:9440727071">+ 91 9440727071</a></p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="site-footer__social">
+                                    <a href="#"><i class="fab fa-twitter"></i></a>
+                                    <a href="#"><i class="fab fa-facebook"></i></a>
+                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                                    <a href="#"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="site-footer__bottom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="site-footer__bottom-inner">
+                                <p class="site-footer__bottom-text">© All Copyright 2017-2023 by <a href="#">ngogive.org</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!--Site Footer End-->
+
+
+    </div><!-- /.page-wrapper -->
+
+
+    <div class="mobile-nav__wrapper">
+        <div class="mobile-nav__overlay mobile-nav__toggler"></div>
+        <!-- /.mobile-nav__overlay -->
+        <div class="mobile-nav__content">
+            <span class="mobile-nav__close mobile-nav__toggler"><i class="fa fa-times"></i></span>
+
+            <!-- <div class="logo-box">
+                <a href="index.html" aria-label="logo image"><img src="assets/images/resources/logo-2.png" width="143"
+                        alt="" /></a>
+            </div> -->
+            <div class="logo-box">
+                <a href="index.html" aria-label="logo image"><img src="assets/images/give-logo.png" width="143"
+                        alt="" /></a>
+            </div>
+            <!-- /.logo-box -->
+            <div class="mobile-nav__container"></div>
+            <!-- /.mobile-nav__container -->
+
+            <ul class="mobile-nav__contact list-unstyled">
+                <li>
+                    <i class="fa fa-envelope"></i>
+                    <a href="mailto:contact@give4society.org">contact@give4society.org</a>
+                </li>
+                <li>
+                    <i class="fa fa-phone-alt"></i>
+                    <a href="tel:9440727071">9440727071</a>
+                </li>
+            </ul><!-- /.mobile-nav__contact -->
+            <div class="mobile-nav__top">
+                <div class="mobile-nav__social">
+                    <a href="#" class="fab fa-twitter"></a>
+                    <a href="#" class="fab fa-facebook-square"></a>
+                    <a href="#" class="fab fa-pinterest-p"></a>
+                    <a href="#" class="fab fa-instagram"></a>
+                </div><!-- /.mobile-nav__social -->
+            </div><!-- /.mobile-nav__top -->
+
+
+
+        </div>
+        <!-- /.mobile-nav__content -->
+    </div>
+    <!-- /.mobile-nav__wrapper -->
+
+    <div class="search-popup">
+        <div class="search-popup__overlay search-toggler"></div>
+        <!-- /.search-popup__overlay -->
+        <div class="search-popup__content">
+            <form action="#">
+                <label for="search" class="sr-only">search here</label><!-- /.sr-only -->
+                <input type="text" id="search" placeholder="Search Here..." />
+                <button type="submit" aria-label="search submit" class="thm-btn">
+                    <i class="icon-magnifying-glass"></i>
+                </button>
+            </form>
+        </div>
+        <!-- /.search-popup__content -->
+    </div>
+    <!-- /.search-popup -->
+
+    <a href="#" data-target="html" class="scroll-to-target scroll-to-top"><i class="icon-up-arrow"></i></a>
+
+
+    <script src="assets/vendors/jquery/jquery-3.6.0.min.js"></script>
+    <script src="assets/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendors/jarallax/jarallax.min.js"></script>
+    <script src="assets/vendors/jquery-ajaxchimp/jquery.ajaxchimp.min.js"></script>
+    <script src="assets/vendors/jquery-appear/jquery.appear.min.js"></script>
+    <script src="assets/vendors/jquery-circle-progress/jquery.circle-progress.min.js"></script>
+    <script src="assets/vendors/jquery-magnific-popup/jquery.magnific-popup.min.js"></script>
+    <script src="assets/vendors/jquery-validate/jquery.validate.min.js"></script>
+    <script src="assets/vendors/nouislider/nouislider.min.js"></script>
+    <script src="assets/vendors/odometer/odometer.min.js"></script>
+    <script src="assets/vendors/swiper/swiper.min.js"></script>
+    <script src="assets/vendors/tiny-slider/tiny-slider.min.js"></script>
+    <script src="assets/vendors/wnumb/wNumb.min.js"></script>
+    <script src="assets/vendors/wow/wow.js"></script>
+    <script src="assets/vendors/isotope/isotope.js"></script>
+    <script src="assets/vendors/countdown/countdown.min.js"></script>
+    <script src="assets/vendors/owl-carousel/owl.carousel.min.js"></script>
+    <script src="assets/vendors/bxslider/jquery.bxslider.min.js"></script>
+    <script src="assets/vendors/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="assets/vendors/vegas/vegas.min.js"></script>
+    <script src="assets/vendors/jquery-ui/jquery-ui.js"></script>
+    <script src="assets/vendors/timepicker/timePicker.js"></script>
+    <script src="assets/vendors/circleType/jquery.circleType.js"></script>
+    <script src="assets/vendors/circleType/jquery.lettering.min.js"></script>
+
+
+
+
+    <!-- template js -->
+    <script src="assets/js/oxpins.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5C24BDZV7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Q5C24BDZV7');
+</script>
+</body>
 </html>
