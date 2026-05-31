@@ -109,7 +109,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
           </span>
 
           <Link to="/support-a-cause" onClick={closeAll}>Support Us</Link>
-          <a href="/team.html" onClick={closeAll}>Our Team</a>
+          <Link to="/team" onClick={closeAll}>Our Team</Link>
           <a href="#contact" onClick={closeAll}>Contact Us</a>
         </nav>
 
@@ -148,7 +148,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
           <Link to="/support-a-cause" className="mobile-panel-link" onClick={() => setMobileOpen(false)}>
             Support Us
           </Link>
-          <a className="mobile-panel-link" href="/team.html" onClick={() => setMobileOpen(false)}>Our Team</a>
+          <Link className="mobile-panel-link" to="/team" onClick={() => setMobileOpen(false)}>Our Team</Link>
           <button onClick={() => { setMobileOpen(false); window.location.hash = "#contact"; }}>Contact Us</button>
           <div className="mobile-panel-actions">
             <Button variant="outline">Partner With Us</Button>
@@ -967,6 +967,135 @@ function SvgYouTube() {
   );
 }
 
+const teamMembers = [
+  {
+    name: "Satya Rapelly",
+    role: "Founder & President",
+    category: "Leadership",
+    image: "assets/images/teamsatya.jpeg",
+    bio: "Satya brings 25 years of software-industry experience to initiatives that empower rural youth and women through technology-led education and a grounded understanding of rural socio-economic needs.",
+  },
+  {
+    name: "Sajesh Rao Erabelli",
+    role: "Project Lead – Financial Operations",
+    category: "Leadership",
+    image: "assets/images/teamsajesh.jpeg",
+    bio: "Sajesh combines banking-sector experience in India with business and data-science expertise to support child education, upskilling, and financial operations for Give For Society.",
+  },
+  {
+    name: "Sunitha Madhav",
+    role: "Women Wing – Operations and Coordinator",
+    category: "Operations",
+    image: "assets/images/teamvalentina.jpeg",
+    bio: "Sunitha supports women-focused programs with an education-first approach to socio-economic growth, community participation, and stronger local coordination.",
+  },
+  {
+    name: "Balu Chedurupally",
+    role: "Project Engineer, GIVE NGO, USA",
+    category: "Operations",
+    image: "assets/images/teambalu.jpeg",
+    bio: "Balu uses his computer-science background and software experience to advance technology-enabled education and CDLC programs for rural communities.",
+  },
+  {
+    name: "Venu Madhav Mamidoju",
+    role: "Director of Onshore Operations, GIVE NGO, USA",
+    category: "Leadership",
+    image: "assets/images/teamvenu.jpeg",
+    bio: "Venu blends IT software-development experience with insight into rural education and livelihood challenges to guide youth empowerment and CDLC innovation.",
+  },
+  {
+    name: "Rajanish Reddy Karla",
+    role: "Director, GIVE NGO, USA",
+    category: "Leadership",
+    image: "assets/images/teamrrk.jpg",
+    bio: "Rajanish brings project-management and technical ideation experience to strategies that improve educational access and growth opportunities in rural communities.",
+  },
+  {
+    name: "Abhishek Ganta",
+    role: "Project Lead for CDLC",
+    category: "CDLC Team",
+    image: "assets/images/teamabhi.jpeg",
+    bio: "Abhishek applies his technology background, software-industry exposure, and understanding of rural issues to design practical empowerment solutions.",
+  },
+  {
+    name: "Chandrashekar Reddy",
+    role: "Project Engineer – CDLC, GIVE NGO",
+    category: "CDLC Team",
+    image: "assets/images/teamchandu.jpeg",
+    bio: "Chandrashekar supports farming communities and CDLC delivery with practical solutions rooted in rural agricultural needs and sustainability.",
+  },
+  {
+    name: "Arun Kumar Pillalamarri",
+    role: "General Secretary, GIVE NGO",
+    category: "Leadership",
+    image: "assets/images/teamarun.jpg",
+    bio: "Arun leads offshore operations with strong administrative capability and long-standing involvement in education, health, hygiene, and ground-level execution.",
+  },
+  {
+    name: "Sai Krishna Chilukuri",
+    role: "Director, Operation Lead for CDLC, Telangana",
+    category: "CDLC Team",
+    image: "assets/images/teamsaikrishna.jpeg",
+    bio: "Sai Krishna leads education programs for rural and tribal communities in Telangana, including Back to School efforts that support underprivileged students.",
+  },
+  {
+    name: "Parshu Ram Goud",
+    role: "Project Engineer for CDLC",
+    category: "CDLC Team",
+    image: "assets/images/teamparshu.jpg",
+    bio: "Parshu Ram leverages software-engineering experience and a commitment to rural development to address social backwardness through technology-enabled initiatives.",
+  },
+  {
+    name: "Sai Eshwar Reddy",
+    role: "Project Engineer, CDLC, GIVE NGO",
+    category: "CDLC Team",
+    image: "assets/images/teamsai.jpeg",
+    bio: "Sai Eshwar focuses on reducing the rural-urban technology gap through CDLC upskilling and pathways for opportunity among rural youth.",
+  },
+  {
+    name: "Akhilesh Reddy Kasani",
+    role: "Treasurer, GIVE NGO, Telangana",
+    category: "Finance",
+    image: "assets/images/teamakhilesh.jpeg",
+    bio: "Akhilesh helps bring education projects to life from the ground up and supports Back to School programs for underprivileged students.",
+  },
+  {
+    name: "Mahipal Reddy",
+    role: "Project Engineer for CDLC",
+    category: "CDLC Team",
+    image: "assets/images/teammahipal.jpg",
+    bio: "Mahipal contributes grassroots knowledge of farmer issues and introduces practical techniques that support rural farming communities.",
+  },
+  {
+    name: "Bhanu Goud Bathini",
+    role: "Project Engineer, CDLC, GIVE NGO",
+    category: "CDLC Team",
+    image: "assets/images/teamBhanu.jpg",
+    bio: "Bhanu pairs software-engineering expertise with rural community insight to design applications for empowerment and development.",
+  },
+  {
+    name: "Raju Mokide",
+    role: "Project Engineer, CDLC, GIVE NGO",
+    category: "CDLC Team",
+    image: "assets/images/teamraju.jpeg",
+    bio: "Raju combines software engineering with knowledge of rural socio-political landscapes to build applications and awareness initiatives for communities.",
+  },
+  {
+    name: "Mohd Altaf Ur Rahman",
+    role: "Project Engineer, GIVE NGO, USA",
+    category: "CDLC Team",
+    image: "assets/images/teamaltaf.jpg",
+    bio: "Altaf brings IT and project-management experience to educational challenges in rural areas, creating practical solutions with a community-development focus.",
+  },
+  {
+    name: "Mohammed Abdul Hakim",
+    role: "Financial Operations Lead, CDLC, GIVE NGO",
+    category: "Finance",
+    image: "assets/images/teamHakim.jpg",
+    bio: "Hakim brings MBA training and 15 years of social-activity experience in rural development to financial operations and youth-empowerment initiatives.",
+  },
+];
+
 const socialLinks = [
   { label: "Facebook", Icon: SvgFacebook, href: "https://www.facebook.com/NgoGive" },
   { label: "Twitter / X", Icon: SvgTwitterX, href: "https://x.com/Give4Society" },
@@ -1010,7 +1139,7 @@ function Footer() {
           <h4>Quick Links</h4>
           <a href="#about">About Us</a>
           <a href="#impact">Our Impact</a>
-          <a href="/team.html">Our Team</a>
+          <Link to="/team">Our Team</Link>
           <a href="#awards">Awards &amp; Recognition</a>
           <a href="#partners">CSR Partnerships</a>
           <a href="#contact">Contact Us</a>
@@ -1064,6 +1193,60 @@ function Home({ onOpenProgram, onOpenDonations }) {
   );
 }
 
+function TeamPage() {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <SiteHeader onOpenProgram={(slug) => navigate(`/programs/${slug}`)} onGoHome={() => navigate("/")} />
+      <section className="team-hero">
+        <div className="team-hero-bg" />
+        <div className="team-hero-content">
+          <p className="pill">Registered NGO • Hyderabad, Telangana</p>
+          <h1>Meet the people building dignity and opportunity.</h1>
+          <p>
+            Our leadership, operations, and program teams bring technology, education,
+            finance, and field experience together for rural communities across Telangana.
+          </p>
+          <div className="team-hero-actions">
+            <Link className="btn btn-primary" to="/support-a-cause">Support a Cause</Link>
+            <Link className="btn btn-outline" to="/#work">Explore Projects</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="team-section">
+        <div className="section-heading team-intro">
+          <p className="eyebrow">People behind the purpose</p>
+          <h2>Meet the GIVE NGO leadership and program team</h2>
+          <p>
+            Our team brings together technology professionals, educators, finance leaders,
+            field coordinators, and rural-development practitioners. Together, they drive
+            GIVE NGO programs across education, women empowerment, CDLC, youth upskilling,
+            and community development.
+          </p>
+        </div>
+        <div className="team-grid">
+          {teamMembers.map((member) => (
+            <article className="team-card" key={member.name}>
+              <div className="team-card-image">
+                <img src={member.image} alt={member.name} />
+              </div>
+              <div className="team-card-content">
+                <span>{member.category}</span>
+                <h3>{member.name}</h3>
+                <h4>{member.role}</h4>
+                <p>{member.bio}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <Footer />
+    </>
+  );
+}
+
 function HomePageRoute() {
   const navigate = useNavigate();
   return <Home onOpenProgram={(slug) => navigate(`/programs/${slug}`)} onOpenDonations={() => navigate("/support-a-cause")} />;
@@ -1100,6 +1283,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePageRoute />} />
         <Route path="/support-a-cause" element={<SupportCausePage />} />
+        <Route path="/team" element={<TeamPage />} />
+        <Route path="/team.html" element={<TeamPage />} />
         <Route path="/programs/:slug" element={<ProgramDetailRoute />} />
       </Routes>
     </BrowserRouter>
