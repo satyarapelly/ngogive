@@ -108,9 +108,8 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
             )}
           </span>
 
-          <a href="#success-stories" onClick={closeAll}>Success Stories</a>
           <Link to="/support-a-cause" onClick={closeAll}>Support Us</Link>
-          <a href="#media" onClick={closeAll}>Media</a>
+          <a href="/team.html" onClick={closeAll}>Our Team</a>
           <a href="#contact" onClick={closeAll}>Contact Us</a>
         </nav>
 
@@ -146,13 +145,10 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
               {p.title}
             </button>
           ))}
-          <button onClick={() => { setMobileOpen(false); window.location.hash = "#success-stories"; }}>
-            Success Stories
-          </button>
           <Link to="/support-a-cause" className="mobile-panel-link" onClick={() => setMobileOpen(false)}>
             Support Us
           </Link>
-          <button onClick={() => { setMobileOpen(false); window.location.hash = "#media"; }}>Media</button>
+          <a className="mobile-panel-link" href="/team.html" onClick={() => setMobileOpen(false)}>Our Team</a>
           <button onClick={() => { setMobileOpen(false); window.location.hash = "#contact"; }}>Contact Us</button>
           <div className="mobile-panel-actions">
             <Button variant="outline">Partner With Us</Button>
@@ -258,18 +254,21 @@ const pillars = [
   {
     icon: Heart,
     title: "Empowerment",
+    image: "/images/programs/women-youth-empowerment/youth-employability1.jpg",
     description:
       "Enabling women, youth, and communities to lead their own development through skills, awareness, and economic opportunity at the grassroots level.",
   },
   {
     icon: BookOpen,
     title: "Education & Scholarships",
+    image: "/images/programs/empowering-rural-learning/classroom-infrastructure.JPG",
     description:
       "Investing in school infrastructure, learning resources, and direct scholarship support to keep rural children in school and thriving.",
   },
   {
     icon: ShieldCheck,
     title: "Holistic Approach",
+    image: "/images/programs/sthree-swabhiman/photo-distribution-group.jpg",
     description:
       "Addressing education, health, hygiene, livelihood, and disaster resilience together for sustained and measurable community transformation.",
   },
@@ -334,18 +333,23 @@ function About() {
             </ul>
           </div>
         </div>
-        <div className="pillars-grid">
+        <div className="pillars-grid" aria-label="Give For Society focus tiles">
           {pillars.map((pillar, i) => (
-            <div key={pillar.title} className="pillar-feat-card">
-              <div className="pillar-feat-top">
+            <article key={pillar.title} className="pillar-feat-card">
+              <div className="pillar-feat-image">
+                <img src={pillar.image} alt={`${pillar.title} programme`} />
                 <span className="pillar-feat-num">{String(i + 1).padStart(2, "0")}</span>
-                <div className="pillar-feat-icon">
-                  <pillar.icon size={22} />
-                </div>
               </div>
-              <h3>{pillar.title}</h3>
-              <p>{pillar.description}</p>
-            </div>
+              <div className="pillar-feat-body">
+                <div className="pillar-feat-top">
+                  <div className="pillar-feat-icon">
+                    <pillar.icon size={22} />
+                  </div>
+                  <h3>{pillar.title}</h3>
+                </div>
+                <p>{pillar.description}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
@@ -1006,7 +1010,7 @@ function Footer() {
           <h4>Quick Links</h4>
           <a href="#about">About Us</a>
           <a href="#impact">Our Impact</a>
-          <a href="#success-stories">Success Stories</a>
+          <a href="/team.html">Our Team</a>
           <a href="#awards">Awards &amp; Recognition</a>
           <a href="#partners">CSR Partnerships</a>
           <a href="#contact">Contact Us</a>
