@@ -24,6 +24,7 @@
         rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
 
 
     <link rel="stylesheet" href="assets/vendors/bootstrap/css/bootstrap.min.css" />
@@ -50,6 +51,314 @@
     <!-- template styles -->
     <link rel="stylesheet" href="assets/css/oxpins.css" />
     <link rel="stylesheet" href="assets/css/oxpins-responsive.css" />
+    <style>
+        :root {
+            --brand-primary: #1e3560;
+            --brand-primary-dark: #152748;
+            --brand-orange: #f97316;
+            --brand-slate: #0f172a;
+            --brand-muted: #64748b;
+            --brand-soft: #f8fafc;
+        }
+
+        body {
+            color: var(--brand-slate);
+            font-family: Inter, Manrope, Arial, sans-serif;
+            background: #fff;
+        }
+
+        .team-site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #ffffff;
+            box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+        }
+
+        .nav-wrap {
+            max-width: 1280px;
+            margin: auto;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .brand:hover {
+            color: inherit;
+        }
+
+        .brand-logo {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .brand strong {
+            display: block;
+            color: var(--brand-slate);
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .brand small {
+            display: block;
+            color: var(--brand-muted);
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 1;
+            min-width: 0;
+        }
+
+        .desktop-nav a {
+            color: #334155;
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .desktop-nav a:hover,
+        .desktop-nav a.active {
+            background: #f1f5f9;
+            color: var(--brand-primary);
+        }
+
+        .desktop-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .desktop-actions .btn {
+            padding: 9px 16px;
+            font-size: 13px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--brand-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ea580c;
+            color: white;
+        }
+
+        .btn-outline {
+            border: 1px solid #cbd5e1;
+            color: var(--brand-slate);
+            background: white;
+        }
+
+        .btn-outline:hover {
+            color: var(--brand-primary);
+            border-color: var(--brand-primary);
+        }
+
+        .team-hero {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #152748, #1e3560, #0f172a);
+            color: white;
+        }
+
+        .team-hero__bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.2;
+            background:
+                radial-gradient(circle at 20% 20%, white 0, transparent 25%),
+                radial-gradient(circle at 80% 10%, orange 0, transparent 20%);
+        }
+
+        .team-hero__content {
+            position: relative;
+            max-width: 1280px;
+            margin: auto;
+            padding: 92px 24px;
+        }
+
+        .pill {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 10px 16px;
+            border-radius: 999px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .team-hero h1 {
+            max-width: 840px;
+            color: white;
+            font-size: 58px;
+            line-height: 1.05;
+            margin: 20px 0;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        .team-hero__text {
+            max-width: 760px;
+            color: #eff6ff;
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .team-hero__actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 26px;
+        }
+
+        .team-hero .btn-outline {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: transparent;
+            color: white;
+        }
+
+        .team-hero .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .team-one {
+            background: var(--brand-soft);
+        }
+
+        .team-one__single {
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            overflow: hidden;
+            transition: transform 300ms ease, box-shadow 300ms ease;
+        }
+
+        .team-one__single:hover {
+            box-shadow: 0 24px 55px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+        }
+
+        .team-one__img {
+            background: #e2e8f0;
+            height: 330px;
+            overflow: hidden;
+        }
+
+        .team-one__img img {
+            height: 100% !important;
+            object-fit: cover;
+            object-position: top center;
+            width: 100%;
+        }
+
+        .team-one__content {
+            padding: 28px 26px 30px;
+            text-align: left;
+        }
+
+        .team-one__name {
+            font-size: 22px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .team-one__sub-title {
+            color: var(--brand-orange);
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .02em;
+            line-height: 1.45;
+            margin-bottom: 0;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 1100px) {
+            .nav-wrap {
+                flex-wrap: wrap;
+            }
+
+            .desktop-nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .nav-wrap {
+                align-items: flex-start;
+                padding: 12px 18px;
+            }
+
+            .brand small {
+                max-width: 220px;
+            }
+
+            .desktop-actions {
+                width: 100%;
+            }
+
+            .desktop-actions .btn {
+                flex: 1;
+            }
+
+            .team-hero__content {
+                padding: 70px 20px;
+            }
+
+            .team-hero h1 {
+                font-size: 40px;
+            }
+
+            .team-one__img {
+                height: 300px;
+            }
+        }
+    </style>
 </head>
 
 <body class="custom-cursor">
@@ -68,211 +377,46 @@
 
 
     <div class="page-wrapper">
-        <header class="main-header">
-            <nav class="main-menu">
-                <div class="main-menu__wrapper">
-                    <div class="main-menu__wrapper-inner">
-                        <div class="main-menu__left">
-                            <div class="main-menu__logo">
-                                <a href="index.html"><img src="assets/images/give-logo.png" alt="" style="width:100px"></a>
-                            </div>
-                            <div class="main-menu__shape-1 float-bob-x">
-                                <img src="assets/images/shapes/main-menu-shape-1.png" alt="">
-                            </div>
-                        </div>
-                        <div class="main-menu__right">
-                            <div class="main-menu__right-top">
-                                <div class="main-menu__right-top-left">
-                                    <div class="main-menu__volunteers">
-                                        <div class="main-menu__volunteers-icon">
-                                            <img src="assets/images/icon/main-menu-heart-icon.png" alt="">
-                                        </div>
-                                        <div class="main-menu__volunteers-text-box">
-                                            <p class="main-menu__volunteers-text"><a href="become-volunteer.html">Become
-                                                    a
-                                                    <span>volunteer</span></a></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="main-menu__right-top-right">
-                                    <div class="main-menu__right-top-address">
-                                        <ul class="list-unstyled main-menu__right-top-address-list">
-                                            <li>
-                                                <div class="icon">
-                                                    <span class="icon-phone-call"></span>
-                                                </div>
-                                                <div class="content">
-                                                    <p>Helpline</p>
-                                                    <h5><a href="tel:9440727071">+ 91 9440727071</a></h5>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="icon">
-                                                    <span class="icon-message"></span>
-                                                </div>
-                                                <div class="content">
-                                                    <p>Send email</p>
-                                                    <h5><a href="mailto:contact@give4society.org">contact@give4society.org</a>
-                                                    </h5>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="icon">
-                                                    <span class="icon-location"></span>
-                                                </div>
-                                                <div class="content">
-                                                    <p>Pocharam,Hyderabad</p>
-                                                    <h5>Telanagana, India</h5>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="main-menu__right-top-social">
-                                        <a href="#"><i class="fab fa-twitter"></i></a>
-                                        <a href="#"><i class="fab fa-facebook"></i></a>
-                                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                        <a href="#"><i class="fab fa-instagram"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="main-menu__right-bottom">
-                                <div class="main-menu__main-menu-box">
-                                    <a href="#" class="mobile-nav__toggler"><i class="fa fa-bars"></i></a>
-                                    <ul class="main-menu__list">
-                                        <li>
-                                            <a href="index.html">Home</a>
-                                        </li>
-                                        <li class="dropdown current megamenu scrollToLink">
-                                            <a href="#">Work </a>
-                                            <ul>
-											
-                                                <li>
-                                                    <section class="home-showcase megamenu-left">
-                                                        <div class="container">
-                                                            <div class="home-showcase__inner">
-                                                                <div class="row">
-                                                                    <div class="col-lg-3">
-                                                                        <div class="home-showcase__item">
-                                                                            <div class="home-showcase__image">
-                                                                                <img src="assets/images/hp4.jpg"
-                                                                                    alt="" style="height:300px;">
-                                                                                <div class="home-showcase__buttons">
-                                                                                    
-                                                                                    <a href="#"
-                                                                                        class="thm-btn home-showcase__buttons__item">Overview</a>
-                                                                                </div><!-- /.home-showcase__buttons -->
-                                                                            </div><!-- /.home-showcase__image -->
-                                                                            <h3 class="home-showcase__title">Education</h3><!-- /.home-showcase__title -->
-                                                                        </div><!-- /.home-showcase__item -->
-                                                                    </div><!-- /.col-lg-3 -->
-                                                                    <div class="col-lg-3">
-                                                                        <div class="home-showcase__item">
-                                                                            <div class="home-showcase__image">
-                                                                                <img src="assets/images/hp1.jpg"
-                                                                                    alt="" style="height:300px;">
-                                                                                <div class="home-showcase__buttons">
-                                                                                    
-                                                                                    <a href="#"
-                                                                                        class="thm-btn home-showcase__buttons__item">Overview</a>
-                                                                                </div><!-- /.home-showcase__buttons -->
-                                                                            </div><!-- /.home-showcase__image -->
-                                                                            <h3 class="home-showcase__title">Women Empowerment</h3><!-- /.home-showcase__title -->
-                                                                        </div><!-- /.home-showcase__item -->
-                                                                    </div><!-- /.col-lg-3 -->
-                                                                    <div class="col-lg-3">
-                                                                        <div class="home-showcase__item">
-                                                                            <div class="home-showcase__image">
-                                                                                <img src="assets/images/hp5.jpeg"
-                                                                                    alt="" style="height:300px;">
-                                                                                <div class="home-showcase__buttons">
+        <header class="site-header team-site-header">
+            <div class="nav-wrap">
+                <a href="index.html" class="brand" aria-label="Give For Society home">
+                    <img src="assets/images/give-logo.png" alt="Give For Society" class="brand-logo">
+                    <span class="brand-copy">
+                        <strong>Give For Society</strong>
+                        <small>Education, Health &amp; Dignity for Every Community</small>
+                    </span>
+                </a>
 
-                                                                                    <a href="#"
-                                                                                        class="thm-btn home-showcase__buttons__item">Overview</a>
-                                                                                </div><!-- /.home-showcase__buttons -->
-                                                                            </div><!-- /.home-showcase__image -->
-                                                                            <h3 class="home-showcase__title">Rural Empowerment</h3><!-- /.home-showcase__title -->
-                                                                        </div><!-- /.home-showcase__item -->
-                                                                    </div><!-- /.col-lg-3 -->
-                                                                    <div class="col-lg-3">
-                                                                        <div class="home-showcase__item">
-                                                                            <div class="home-showcase__image">
-                                                                                <img src="assets/images/hp3.jpg"
-                                                                                    alt="" style="height:300px;">
-                                                                                <div class="home-showcase__buttons">
-                                                                                    <a href="#"
-                                                                                        class="thm-btn home-showcase__buttons__item">Overview</a>
-                                                                                </div><!-- /.home-showcase__buttons -->
-                                                                            </div><!-- /.home-showcase__image -->
-                                                                            <h3 class="home-showcase__title">HealthCare
-                                                                            </h3><!-- /.home-showcase__title -->
-                                                                        </div><!-- /.home-showcase__item -->
-                                                                    </div><!-- /.col-lg-3 -->
-                                                                </div><!-- /.row -->
-                                                            </div><!-- /.home-showcase__inner -->
+                <nav class="desktop-nav" aria-label="Primary navigation">
+                    <a href="index.html">Home</a>
+                    <a href="index.html#about">About Us</a>
+                    <a href="index.html#work">Our Projects</a>
+                    <a href="index.html#donations">Support Us</a>
+                    <a href="team.html" class="active">Our Team</a>
+                    <a href="index.html#contact">Contact Us</a>
+                </nav>
 
-                                                        </div><!-- /.container -->
-                                                    </section>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="#">News</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="#">Team</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="#">About</a>
-                                        </li>
-                                        
-                                        <li>
-                                            <a href="#">Contact</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="main-menu__main-menu-content-box">
-                                    <div class="main-menu__search-cat-btn-box">
-                                        <div class="main-menu__search-box" style="padding-right: 50px;">
-                                            <a href="#"
-                                                class="main-menu__search search-toggler icon-magnifying-glass"></a>
-                                        </div>
-                                        
-                                        <div class="main-menu__btn-box">
-                                            <a href="donate-now.html" class="main-menu__btn"> <span
-                                                    class="fa fa-heart"></span> Donate
-                                                now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="desktop-actions">
+                    <a href="index.html#contact" class="btn btn-outline">Partner With Us</a>
+                    <a href="index.html#donations" class="btn btn-primary">Donate Now</a>
                 </div>
-            </nav>
+            </div>
         </header>
 
-        <div class="stricky-header stricked-menu main-menu">
-            <div class="sticky-header__content"></div><!-- /.sticky-header__content -->
-        </div><!-- /.stricky-header -->
-
-        <!--Page Header Start-->
-        <section class="page-header">
-            <div class="page-header-bg" style="background-image: url(assets/images/2.jpg)">
-            </div>
-            <div class="container">
-                <div class="page-header__inner">
-                    <!-- <ul class="thm-breadcrumb list-unstyled">
-                        <li><a href="index.html">Home</a></li>
-                        <li><span>/</span></li>
-                        <li class="active">Pages</li>
-                    </ul> -->
-                    <h2>Team</h2>
+        <!-- Team Hero Start -->
+        <section class="team-hero">
+            <div class="team-hero__bg"></div>
+            <div class="team-hero__content">
+                <p class="pill">Registered NGO • Hyderabad, Telangana</p>
+                <h1>Meet the people building dignity and opportunity.</h1>
+                <p class="team-hero__text">Our leadership, operations, and program teams bring technology, education, finance, and field experience together for rural communities across Telangana.</p>
+                <div class="team-hero__actions">
+                    <a class="btn btn-primary" href="index.html#donations">Support a Cause</a>
+                    <a class="btn btn-outline" href="index.html#work">Explore Projects</a>
                 </div>
             </div>
         </section>
-        <!--Page Header End-->
+        <!-- Team Hero End -->
 
         <!--Team One Start-->
         <section class="team-one">
