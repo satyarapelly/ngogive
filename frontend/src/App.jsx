@@ -1096,6 +1096,35 @@ const teamMembers = [
   },
 ];
 
+
+const teamCoreAreas = [
+  {
+    title: "Health & Hygiene",
+    focus: "Health camps, hygiene awareness, and preventive-care outreach",
+    image: "assets/images/arogyasetu.jpg",
+  },
+  {
+    title: "Education & School Infrastructure",
+    focus: "Learning materials, school improvements, and student support",
+    image: "assets/images/rural-learning.jpg",
+  },
+  {
+    title: "Integrated Learning Centers",
+    focus: "Community-based digital learning and mentoring for rural students",
+    image: "assets/images/ilc.jpg",
+  },
+  {
+    title: "Rural Youth Digital Employability",
+    focus: "Digital skills, career readiness, and employability pathways",
+    image: "assets/images/youth-employability.jpg",
+  },
+  {
+    title: "Women & Adolescent Girl Empowerment",
+    focus: "Sthree Swabhiman, menstrual hygiene, and leadership awareness",
+    image: "assets/images/sthree-swabhiman.jpg",
+  },
+];
+
 const socialLinks = [
   { label: "Facebook", Icon: SvgFacebook, href: "https://www.facebook.com/NgoGive" },
   { label: "Twitter / X", Icon: SvgTwitterX, href: "https://x.com/Give4Society" },
@@ -1202,11 +1231,12 @@ function TeamPage() {
       <section className="team-hero">
         <div className="team-hero-bg" />
         <div className="team-hero-content">
-          <p className="pill">Registered NGO • Hyderabad, Telangana</p>
-          <h1>Meet the people building dignity and opportunity.</h1>
+          <p className="pill">Core-area project teams • Hyderabad, Telangana</p>
+          <h1>Meet the people powering every core area project.</h1>
           <p>
-            Our leadership, operations, and program teams bring technology, education,
-            finance, and field experience together for rural communities across Telangana.
+            Our team is organized around GIVE NGO's core areas of work: health and hygiene,
+            education and school infrastructure, integrated learning centers, rural youth
+            digital employability, and women and adolescent girl empowerment.
           </p>
           <div className="team-hero-actions">
             <Link className="btn btn-primary" to="/support-a-cause">Support a Cause</Link>
@@ -1217,14 +1247,28 @@ function TeamPage() {
 
       <section className="team-section">
         <div className="section-heading team-intro">
-          <p className="eyebrow">People behind the purpose</p>
-          <h2>Meet the GIVE NGO leadership and program team</h2>
+          <p className="eyebrow">Project-aligned team</p>
+          <h2>Our team supports the same core-area projects shown across the site</h2>
           <p>
-            Our team brings together technology professionals, educators, finance leaders,
-            field coordinators, and rural-development practitioners. Together, they drive
-            GIVE NGO programs across education, women empowerment, CDLC, youth upskilling,
-            and community development.
+            From strategy and finance to field coordination and technology delivery, each
+            member helps move one or more core-area projects from planning to measurable
+            community impact.
           </p>
+        </div>
+        <div className="team-core-grid" aria-label="Core area project alignment">
+          {teamCoreAreas.map((area) => (
+            <article
+              className="team-core-card"
+              key={area.title}
+              style={{ backgroundImage: `url(${area.image})` }}
+            >
+              <div className="team-core-card-overlay" />
+              <div>
+                <h3>{area.title}</h3>
+                <p>{area.focus}</p>
+              </div>
+            </article>
+          ))}
         </div>
         <div className="team-grid">
           {teamMembers.map((member) => (
