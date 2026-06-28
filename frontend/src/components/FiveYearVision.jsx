@@ -74,7 +74,7 @@ export default function FiveYearVision() {
           </div>
           <div className="vision-intro-photo">
             <img
-              src="/images/programs/empowering-rural-learning/rural-learning.jpg"
+              src="/images/programs/empowering-rural-learning/vision-main.jpg"
               alt="Empowering rural education"
             />
           </div>

@@ -57,7 +57,7 @@ export const impact = [
 
 const makeSubCategory = (programSlug, slug, title, description, kpi) => ({
   title,
-  image: '/assets/images/programs/empowering-rural-learning/' + slug + ".JPG",
+  image: '/assets/images/programs/empowering-rural-learning/' + slug + ".jpg",
   description,
   kpi,
 })
@@ -70,12 +70,12 @@ export const programs = [
   {
     title: 'Education & School Infrastructure', shortTitle: 'Education', slug: 'empowering-rural-learning', icon: 'BookOpen',
     folder: '/assets/images/programs/empowering-rural-learning/',
-    defaultImage: '/assets/images/programs/empowering-rural-learning/school-infra1.jpg',
-    logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/empowering-rural-learning/IMG_4802.JPG'],
+    defaultImage: '/assets/images/programs/empowering-rural-learning/stem-1.JPEG',
+    logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/empowering-rural-learning/stem-3.JPEG'],
     sdgs: [3,4,6,10,17],
     subCategories: [
       makeSubCategory('empowering-rural-learning', 'classroom-infrastructure', 'Classroom Infrastructure', 'Upgrading school spaces with desks, repairs, and essentials for safe learning.', '20+ schools upgraded'),
-      makeSubCategory('empowering-rural-learning', 'stem-labs', 'STEM & Science Labs', 'Hands-on science and STEM lab support to improve practical learning outcomes.', 'Lab utilization improved'),
+      makeSubCategory('empowering-rural-learning', 'stem-labs-1', 'STEM & Science Labs', 'Hands-on science and STEM lab support to improve practical learning outcomes.', 'Lab utilization improved'),
       makeSubCategory('empowering-rural-learning', 'digital-learning', 'Digital Learning', 'Digital tools and computer access to build modern learning skills.', '2,000+ students supported'),
       makeSubCategory('empowering-rural-learning', 'school-wash', 'School WASH', 'Clean water, toilets, and hygiene facilities to support attendance and dignity.', 'Safe WASH facilities added'),
       makeSubCategory('empowering-rural-learning', 'back-to-school', 'Back to School', 'Learning kits and support that help vulnerable children return to school.', 'Return-to-school support delivered'),
