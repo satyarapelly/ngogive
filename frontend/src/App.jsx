@@ -642,7 +642,7 @@ function SupportCauseSection() {
       title: "Education & School Infrastructure",
       description: "Enable classrooms, school essentials, learning kits, and child-friendly spaces for government school students.",
       impact: "Impact: better learning conditions and school retention.",
-      image: "/assets/images/programs/empowering-rural-learning/back2-school-2.jpg",
+      image: "/assets/images/programs/empowering-rural-learning/stem-labs-2.jpg",
     },
     {
       title: "Health & Community Well-being",
@@ -662,8 +662,8 @@ function SupportCauseSection() {
       impact: "Impact: enhanced livelihoods and self-reliance.",
       image: "/assets/images/programs/sthree-swabhiman/photo-workshop-speaker.jpg",
     },
-    { title: "Integrated Learning Centers", description: "Strengthen rural learning hubs that combine libraries, digital support, guidance, and local development services.", impact: "Impact: inclusive access to knowledge and opportunities.", image: "/assets/images/programs/empowering-rural-learning/IMG_4753.JPG" },
-    { title: "Farmer Empowerment & Sustainable Agriculture", description: "Support training, farmer groups, and livelihood recovery for small and marginal farmers.", impact: "Impact: climate-resilient agriculture and income stability.", image: "/assets/images/programs/empowering-rural-learning/IMG_4732.JPG" },
+    { title: "Integrated Learning Centers", description: "Strengthen rural learning hubs that combine libraries, digital support, guidance, and local development services.", impact: "Impact: inclusive access to knowledge and opportunities.", image: "/assets/images/programs/empowering-rural-learning/IMG_4753.jpg" },
+    { title: "Farmer Empowerment & Sustainable Agriculture", description: "Support training, farmer groups, and livelihood recovery for small and marginal farmers.", impact: "Impact: climate-resilient agriculture and income stability.", image: "/assets/images/programs/empowering-rural-learning/give4-farmers.jpg" },
     { title: "Community Awareness & Social Action", description: "Fuel blood donation drives, social campaigns, and civic participation across Telangana communities.", impact: "Impact: stronger social responsibility and local action.", image: "/assets/images/programs/sthree-swabhiman/photo-marathon-awareness.jpg" },
   ];
 
