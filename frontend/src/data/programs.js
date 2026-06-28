@@ -70,7 +70,7 @@ export const programs = [
   {
     title: 'Education & School Infrastructure', shortTitle: 'Education', slug: 'empowering-rural-learning', icon: 'BookOpen',
     folder: '/assets/images/programs/empowering-rural-learning/',
-    defaultImage: '/assets/images/programs/empowering-rural-learning/stem-1.JPEG',
+    defaultImage: '/assets/images/programs/empowering-rural-learning/stem-labs-2.jpg',
     logos: ['/images/GiveForSociety_logo.jpg', '/assets/images/programs/empowering-rural-learning/stem-3.JPEG'],
     sdgs: [3,4,6,10,17],
     subCategories: [
