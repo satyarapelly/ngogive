@@ -57,7 +57,7 @@ export const impact = [
 
 const makeSubCategory = (programSlug, slug, title, description, kpi) => ({
   title,
-  image: '/assets/images/programs/empowering-rural-learning/' + slug + ".jpg",
+  image: '/assets/images/programs/' + programSlug + '/' + slug + ".jpg",
   description,
   kpi,
 })
@@ -105,7 +105,7 @@ export const programs = [
   {
     title: 'Menstrual Hygiene & Girls Dignity', shortTitle: 'Sthree Swabhiman', slug: 'sthree-swabhiman', icon: 'Heart',
     folder: '/assets/images/programs/sthree-swabhiman/',
-    defaultImage: '/assets/images/programs/sthree-swabhiman/sthree-swabhiman-main.jpeg',
+    defaultImage: '/assets/images/programs/sthree-swabhiman/sthree-swabhiman-main.jpg',
     logos: ['/images/GiveForSociety_logo.jpg','/assets/images/programs/sthree-swabhiman/sthree-swabhiman-logo.png','/assets/images/programs/sthree-swabhiman/MJPTBCWREIS_logo.webp'],
     sdgs: [3,4,5,6,10],
     subCategories: [

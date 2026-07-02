@@ -241,7 +241,7 @@ function ImpactStats() {
           </div>
           <div className="impact-photo-side">
             <img
-              src="/images/programs/sthree-swabhiman/photo-distribution-group.jpg"
+              src="/images/programs/sthree-swabhiman/impact-main.jpg"
               alt="Community welfare programme"
             />
           </div>
