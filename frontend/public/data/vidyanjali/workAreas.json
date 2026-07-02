@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "workAreaName": "Basic Civil",
+    "description": "Imported from Basic Civil",
+    "sortOrder": 1,
+    "isActive": true,
+    "sourceSheet": "Basic Civil"
+  },
+  {
+    "id": 2,
+    "workAreaName": "Classroom Needs",
+    "description": "Imported from Classroom Needs",
+    "sortOrder": 2,
+    "isActive": true,
+    "sourceSheet": "Classroom Needs"
+  },
+  {
+    "id": 3,
+    "workAreaName": "Electrical",
+    "description": "Imported from Electrical",
+    "sortOrder": 3,
+    "isActive": true,
+    "sourceSheet": "Electrical"
+  },
+  {
+    "id": 4,
+    "workAreaName": "Sports",
+    "description": "Imported from Sports",
+    "sortOrder": 4,
+    "isActive": true,
+    "sourceSheet": "Sports"
+  },
+  {
+    "id": 5,
+    "workAreaName": "Health Safety",
+    "description": "Imported from Health Safety",
+    "sortOrder": 5,
+    "isActive": true,
+    "sourceSheet": "Health Safety"
+  },
+  {
+    "id": 6,
+    "workAreaName": "TLM",
+    "description": "Imported from TLM",
+    "sortOrder": 6,
+    "isActive": true,
+    "sourceSheet": "TLM"
+  },
+  {
+    "id": 7,
+    "workAreaName": "Tool Kits",
+    "description": "Imported from Tool Kits",
+    "sortOrder": 7,
+    "isActive": true,
+    "sourceSheet": "Tool Kits"
+  },
+  {
+    "id": 8,
+    "workAreaName": "Residential",
+    "description": "Imported from Residential",
+    "sortOrder": 8,
+    "isActive": true,
+    "sourceSheet": "Residential"
+  },
+  {
+    "id": 9,
+    "workAreaName": "Maintenance",
+    "description": "Imported from Maintenance",
+    "sortOrder": 9,
+    "isActive": true,
+    "sourceSheet": "Maintenance"
+  },
+  {
+    "id": 10,
+    "workAreaName": "Office Needs",
+    "description": "Imported from Office Needs",
+    "sortOrder": 10,
+    "isActive": true,
+    "sourceSheet": "Office Needs"
+  }
+]
