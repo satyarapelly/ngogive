@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-07-02T01:05:51.673473Z",
+  "sourceWorkbooks": [
+    "KaghazNagar-Schools-list.xlsx",
+    "Vidyanjali_School_Adoption_Budget_Tool_v1.xlsx"
+  ],
+  "schoolSheets": [
+    "Sirpur T",
+    "PENCHIKALPET",
+    "KOUTHALA",
+    "BEJJUR",
+    "CHINTALAMANEPALLY",
+    "DAHEGAON",
+    "KAGAZNAGAR"
+  ],
+  "budgetSheets": [
+    "School_Profile",
+    "Lists",
+    "Basic Civil",
+    "Classroom Needs",
+    "Electrical",
+    "Sports",
+    "Health Safety",
+    "TLM",
+    "Tool Kits",
+    "Residential",
+    "Maintenance",
+    "Office Needs",
+    "Dashboard",
+    "Proposal_Text",
+    "How_to_Use"
+  ]
+}

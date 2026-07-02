@@ -6,7 +6,7 @@ const navLinks = [
   { label: "Mission", href: "#mission" },
   { label: "Vision", href: "#vision" },
   { label: "SDG", href: "#sdg" },
-  { label: "CSR Partnership", href: "#csr" },
+  { label: "Vidya Jyothi", to: "/vidyanjali-requirements.html" },
 ];
 
 export default function SiteHeader() {
@@ -49,11 +49,17 @@ export default function SiteHeader() {
         </button>
 
         <nav id="primary-navigation" className={`site-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
-          {navLinks.map((link) => (
-            <a key={link.href} href={link.href} onClick={closeMenu}>
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.to ? (
+              <Link key={link.to} to={link.to} onClick={closeMenu}>
+                {link.label}
+              </Link>
+            ) : (
+              <a key={link.href} href={link.href} onClick={closeMenu}>
+                {link.label}
+              </a>
+            ),
+          )}
 
           <div className="nav-programs" aria-label="Our work programs">
             <p>Our Work</p>

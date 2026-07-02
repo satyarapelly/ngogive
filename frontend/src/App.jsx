@@ -22,6 +22,7 @@ import HeroCarousel from "./components/HeroCarousel";
 import FiveYearVision from "./components/FiveYearVision";
 import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import loadRazorpayScript from "./utils/loadRazorpayScript";
+import VidyanjaliRequirementsPage from "./pages/VidyanjaliRequirementsPage";
 
 function Button({ children, variant = "primary", onClick, disabled = false }) {
   return (
@@ -109,12 +110,12 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
           </span>
 
           <Link to="/support-a-cause" onClick={closeAll}>Support Us</Link>
+          <Link to="/vidyanjali-requirements.html" onClick={closeAll}>Vidya Jyothi</Link>
           <Link to="/team" onClick={closeAll}>Our Team</Link>
           <a href="#contact" onClick={closeAll}>Contact Us</a>
         </nav>
 
         <div className="desktop-actions">
-          <Button variant="outline">Partner With Us</Button>
           <Link to="/support-a-cause" className="btn btn-primary" onClick={closeAll}>
             Donate Now
           </Link>
@@ -148,10 +149,10 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
           <Link to="/support-a-cause" className="mobile-panel-link" onClick={() => setMobileOpen(false)}>
             Support Us
           </Link>
+          <Link className="mobile-panel-link" to="/vidyanjali-requirements.html" onClick={() => setMobileOpen(false)}>Vidya Jyothi</Link>
           <Link className="mobile-panel-link" to="/team" onClick={() => setMobileOpen(false)}>Our Team</Link>
           <button onClick={() => { setMobileOpen(false); window.location.hash = "#contact"; }}>Contact Us</button>
           <div className="mobile-panel-actions">
-            <Button variant="outline">Partner With Us</Button>
             <Link to="/support-a-cause" className="btn btn-primary" onClick={() => setMobileOpen(false)}>
               Donate Now
             </Link>
@@ -1329,6 +1330,8 @@ export default function App() {
         <Route path="/support-a-cause" element={<SupportCausePage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team.html" element={<TeamPage />} />
+        <Route path="/vidyanjali-requirements.html" element={<VidyanjaliRequirementsPage />} />
+        <Route path="/vidya-jyothi/vidyanjali-requirements" element={<VidyanjaliRequirementsPage />} />
         <Route path="/programs/:slug" element={<ProgramDetailRoute />} />
       </Routes>
     </BrowserRouter>
