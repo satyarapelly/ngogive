@@ -1,204 +1,141 @@
-Update the NGO web application to add a new **Vidya Jyothi** menu item and implement a **Vidyanjali Education Requirement Generation** module.
-
-## Objective
-
+Update the NGO web application to add a new Vidya Jyothi menu item and implement a Vidyanjali Education Requirement Generation module.
+Objective
 Create a web page that automates the existing Excel-based workflow from:
-
-1. `Vidyanjali_School_Adoption_Budget_Tool_v1.xlsx`
-2. `KaghazNagar-Schools-list.xlsx`
-
+Vidyanjali_School_Adoption_Budget_Tool_v1.xlsx
+KaghazNagar-Schools-list.xlsx
 The feature should allow NGO staff or school staff to select a district, mandal/block, and school, review school details, select required work areas and components, enter units/quantities, automatically calculate estimated budget, and generate a school requirement/proposal planning output.
-
-## Navigation
-
+Navigation
 Add a new main menu item:
-
-**Vidya Jyothi**
-
+Vidya Jyothi
 When clicked, it should open:
-
-**Vidyanjali – Education Requirement Generation**
-
+Vidyanjali – Education Requirement Generation
 Suggested route:
-
-`/vidya-jyothi/vidyanjali-requirements`
-
-## Data Source Requirements
-
+/vidya-jyothi/vidyanjali-requirements
+Data Source Requirements
 Use the Excel data as the master input.
-
-### School Data
-
+School Data
 Load school data from:
-
-`KaghazNagar-Schools-list.xlsx`
-
+KaghazNagar-Schools-list.xlsx
 The application should support filtering schools by:
-
-* State
-* District
-* Mandal / Block
-* UDISE Code
-* School Name
-* Address
-* Status
-
+State
+District
+Mandal / Block
+UDISE Code
+School Name
+Address
+Status
 Example school record to support:
-
-* UDISE Code: `36021100201`
-* Active Status: `Operational`
-* Academic Year: `2026-27`
-* State: `TELANGANA`
-* District: `KUMURAM BHEEM ASIFABAD`
-* Block: `KOUTHALA`
-* School Name: `MPPS SANDGAON`
-* Address: `sandgaon, KOUTHALA, KOMARAM BHEEM`
-
+UDISE Code: 36021100201
+Active Status: Operational
+Academic Year: 2026-27
+State: TELANGANA
+District: KUMURAM BHEEM ASIFABAD
+Block: KOUTHALA
+School Name: MPPS SANDGAON
+Address: sandgaon, KOUTHALA, KOMARAM BHEEM
 Show active/operational status in green.
-
-### Budget Tool Data
-
+Budget Tool Data
 Load work areas, sub-components, items, unit types, estimated costs, and any available remarks from:
-
-`Vidyanjali_School_Adoption_Budget_Tool_v1.xlsx`
-
+Vidyanjali_School_Adoption_Budget_Tool_v1.xlsx
 All Excel sheet columns should be represented in the application wherever applicable.
-
 Do not hard-code only one school or one block. Build the import logic so the page dynamically loads available data from the Excel-derived dataset.
-
-## Recommended Data Model
-
+Recommended Data Model
 Create or update database/schema/data structures for:
-
-### Schools
-
+Schools
 Fields:
-
-* id
-* udiseCode
-* academicYear
-* state
-* district
-* block
-* schoolName
-* address
-* status
-* createdAt
-* updatedAt
-
-### Work Areas
-
+id
+udiseCode
+academicYear
+state
+district
+block
+schoolName
+address
+status
+createdAt
+updatedAt
+Work Areas
 Fields:
-
-* id
-* workAreaName
-* description
-* sortOrder
-* isActive
-
-### Components / Items
-
+id
+workAreaName
+description
+sortOrder
+isActive
+Components / Items
 Fields:
-
-* id
-* workAreaId
-* componentName
-* subComponentName
-* itemName
-* unitType
-* unitCost
-* defaultQuantity
-* remarks
-* sortOrder
-* isActive
-
-### Requirement / Proposal Header
-
+id
+workAreaId
+componentName
+subComponentName
+itemName
+unitType
+unitCost
+defaultQuantity
+remarks
+sortOrder
+isActive
+Requirement / Proposal Header
 Fields:
-
-* id
-* schoolId
-* academicYear
-* title
-* estimatedStartDate
-* preparedBy
-* preparedFor
-* notes
-* totalEstimatedBudget
-* status
-* createdAt
-* updatedAt
-
-### Requirement / Proposal Line Items
-
+id
+schoolId
+academicYear
+title
+estimatedStartDate
+preparedBy
+preparedFor
+notes
+totalEstimatedBudget
+status
+createdAt
+updatedAt
+Requirement / Proposal Line Items
 Fields:
-
-* id
-* requirementId
-* workAreaId
-* componentId
-* itemName
-* unitType
-* quantity
-* unitCost
-* estimatedAmount
-* remarks
-
+id
+requirementId
+workAreaId
+componentId
+itemName
+unitType
+quantity
+unitCost
+estimatedAmount
+remarks
 Estimated amount should be calculated as:
-
-`quantity × unitCost`
-
+quantity × unitCost
 Total proposal amount should be calculated as the sum of all selected line items.
-
-## Page Layout
-
+Page Layout
 Create the page with the following sections.
-
-### 1. Selection Panel
-
+1. Selection Panel
 Fields:
-
-* Academic Year dropdown, default `2026-27`
-* State dropdown
-* District dropdown
-* Mandal / Block dropdown
-* School search or school grid
-
+Academic Year dropdown, default 2026-27
+State dropdown
+District dropdown
+Mandal / Block dropdown
+School search or school grid
 When district is selected, mandal/block list should update dynamically.
-
 When mandal/block is selected, schools should populate dynamically in a grid.
-
-### 2. School Grid
-
+2. School Grid
 Display matching schools in a grid with:
-
-* UDISE Code
-* School Name
-* Address
-* State
-* District
-* Block
-* Status
-
+UDISE Code
+School Name
+Address
+State
+District
+Block
+Status
 Allow user to select one school from the grid.
-
 Operational/active schools should show green status.
-
-### 3. Selected School Summary
-
+3. Selected School Summary
 After selecting a school, show a summary card:
-
-* UDISE Code
-* School Name
-* Address
-* Academic Year
-* State
-* District
-* Block
-* Active Status
-
+UDISE Code
+School Name
+Address
+Academic Year
+State
+District
+Block
+Active Status
 Example display:
-
 UDISE Code: 36021100201
 Status: Operational
 Academic Year: 2026-27
@@ -207,162 +144,123 @@ District: KUMURAM BHEEM ASIFABAD
 Block: KOUTHALA
 School: MPPS SANDGAON
 Address: sandgaon, KOUTHALA, KOMARAM BHEEM
-
-### 4. Work Area Selection
-
+4. Work Area Selection
 Display pre-populated work areas from the budget Excel file.
-
 Each work area should be expandable/collapsible.
-
 Inside each work area, show sub-components/items in a grid.
-
 Each item row should include:
-
-* Checkbox/select option
-* Work Area
-* Component
-* Sub-component
-* Item Name
-* Unit Type
-* Unit Cost
-* Quantity / Units input
-* Estimated Amount
-* Remarks
-
+Checkbox/select option
+Work Area
+Component
+Sub-component
+Item Name
+Unit Type
+Unit Cost
+Quantity / Units input
+Estimated Amount
+Remarks
 When user selects an item and enters quantity, calculate estimated amount automatically.
-
-### 5. Budget Summary
-
+5. Budget Summary
 Show live summary:
-
-* Selected work areas count
-* Selected items count
-* Total estimated budget
-* Work-area-wise subtotal
-* Grand total
-
-### 6. Requirement / Proposal Output
-
+Selected work areas count
+Selected items count
+Total estimated budget
+Work-area-wise subtotal
+Grand total
+6. Requirement / Proposal Output
 Generate a structured output based on selected school and selected items.
-
 Output should include:
-
-* School details
-* Academic year
-* Selected work areas
-* Selected components/items
-* Quantity
-* Unit cost
-* Estimated amount
-* Work-area subtotal
-* Grand total budget
-* Estimated start date
-* Notes / remarks
-
+School details
+Academic year
+Selected work areas
+Selected components/items
+Quantity
+Unit cost
+Estimated amount
+Work-area subtotal
+Grand total budget
+Estimated start date
+Notes / remarks
 Add buttons:
-
-* Save Requirement
-* Preview Proposal
-* Export to Excel
-* Export to PDF, if PDF export already exists in the app
-* Print
-
-## Functional Requirements
-
-1. Add **Vidya Jyothi** menu item.
-2. Create Vidyanjali requirement generation page.
-3. Load school data from Excel-derived data source.
-4. Load work areas and budget items from Excel-derived data source.
-5. District selection should filter mandals/blocks.
-6. Mandal/block selection should filter schools.
-7. School grid should show UDISE, school name, address, district, block, and status.
-8. User should be able to select a school.
-9. User should be able to select work areas and budget items.
-10. User should be able to enter quantity/units for each selected item.
-11. Estimated amount should calculate automatically.
-12. Total budget should update dynamically.
-13. Generate final school requirement/proposal output.
-14. Save generated requirement/proposal.
-15. Support export or print output if existing app has export framework.
-16. Keep UI simple and staff-friendly.
-
-## Import / Seed Requirement
-
+Save Requirement
+Preview Proposal
+Export to Excel
+Export to PDF, if PDF export already exists in the app
+Print
+Functional Requirements
+Add Vidya Jyothi menu item.
+Create Vidyanjali requirement generation page.
+Load school data from Excel-derived data source.
+Load work areas and budget items from Excel-derived data source.
+District selection should filter mandals/blocks.
+Mandal/block selection should filter schools.
+School grid should show UDISE, school name, address, district, block, and status.
+User should be able to select a school.
+User should be able to select work areas and budget items.
+User should be able to enter quantity/units for each selected item.
+Estimated amount should calculate automatically.
+Total budget should update dynamically.
+Generate final school requirement/proposal output.
+Save generated requirement/proposal.
+Support export or print output if existing app has export framework.
+Keep UI simple and staff-friendly.
+Import / Seed Requirement
 Add a script or service to import the Excel files into the application database or JSON data store.
-
 The importer should:
-
-* Read all sheets from the budget tool workbook.
-* Preserve column names as much as possible.
-* Normalize work areas, components, sub-components, item names, unit types, and costs.
-* Read all schools from the school list workbook.
-* Normalize district, block/mandal, UDISE code, school name, address, and status.
-* Avoid duplicate school records by UDISE code.
-* Avoid duplicate budget items by work area + component + item name.
-
+Read all sheets from the budget tool workbook.
+Preserve column names as much as possible.
+Normalize work areas, components, sub-components, item names, unit types, and costs.
+Read all schools from the school list workbook.
+Normalize district, block/mandal, UDISE code, school name, address, and status.
+Avoid duplicate school records by UDISE code.
+Avoid duplicate budget items by work area + component + item name.
 If the current application does not have database support, create structured JSON files under a data folder such as:
-
-`/data/vidyanjali/schools.json`
-`/data/vidyanjali/workAreas.json`
-`/data/vidyanjali/components.json`
-
-## Validation Rules
-
-* School selection is required before proposal generation.
-* Quantity must be a positive number for selected items.
-* Unit cost must be numeric.
-* Estimated start date is optional but should be included in final output if entered.
-* Do not allow proposal generation with zero selected items.
-* Show clear error messages for missing school, missing quantity, or invalid cost.
-
-## Suggested UI Labels
-
+/data/vidyanjali/schools.json
+/data/vidyanjali/workAreas.json
+/data/vidyanjali/components.json
+Validation Rules
+School selection is required before proposal generation.
+Quantity must be a positive number for selected items.
+Unit cost must be numeric.
+Estimated start date is optional but should be included in final output if entered.
+Do not allow proposal generation with zero selected items.
+Show clear error messages for missing school, missing quantity, or invalid cost.
+Suggested UI Labels
 Menu:
-
-`Vidya Jyothi`
-
+Vidya Jyothi
 Page Title:
-
-`Vidyanjali – Education Requirement Generation`
-
+Vidyanjali – Education Requirement Generation
 Section Titles:
-
-* Select School
-* School Details
-* Select Work Areas & Components
-* Estimated Budget Summary
-* Requirement / Proposal Preview
-
+Select School
+School Details
+Select Work Areas & Components
+Estimated Budget Summary
+Requirement / Proposal Preview
 Buttons:
-
-* Load Schools
-* Select School
-* Add Selected Items
-* Save Requirement
-* Preview Proposal
-* Export Excel
-* Print
-
-## Acceptance Criteria
-
+Load Schools
+Select School
+Add Selected Items
+Save Requirement
+Preview Proposal
+Export Excel
+Print
+Acceptance Criteria
 The task is complete when:
-
-1. User can open the new module from the **Vidya Jyothi** menu.
-2. User can select Academic Year `2026-27`.
-3. User can select State, District, and Mandal/Block.
-4. Selecting `KUMURAM BHEEM ASIFABAD` and `KOUTHALA` shows relevant schools.
-5. School grid includes UDISE code, school name, address, and status.
-6. `MPPS SANDGAON` with UDISE `36021100201` can be selected.
-7. Operational status displays in green.
-8. Work areas and sub-components from the budget Excel are displayed.
-9. User can select items and enter units/quantity.
-10. Estimated amount is calculated for each item.
-11. Work-area-wise subtotal is calculated.
-12. Grand total estimated budget is calculated.
-13. Final output includes school details, selected items, quantities, costs, budget total, estimated start date, and remarks.
-14. Requirement/proposal can be saved or exported depending on existing app capabilities.
-15. No Excel-specific logic is hard-coded into the UI; data should come from imported Excel-derived records.
-
-## Important Implementation Note
-
+User can open the new module from the Vidya Jyothi menu.
+User can select Academic Year 2026-27.
+User can select State, District, and Mandal/Block.
+Selecting KUMURAM BHEEM ASIFABAD and KOUTHALA shows relevant schools.
+School grid includes UDISE code, school name, address, and status.
+MPPS SANDGAON with UDISE 36021100201 can be selected.
+Operational status displays in green.
+Work areas and sub-components from the budget Excel are displayed.
+User can select items and enter units/quantity.
+Estimated amount is calculated for each item.
+Work-area-wise subtotal is calculated.
+Grand total estimated budget is calculated.
+Final output includes school details, selected items, quantities, costs, budget total, estimated start date, and remarks.
+Requirement/proposal can be saved or exported depending on existing app capabilities.
+No Excel-specific logic is hard-coded into the UI; data should come from imported Excel-derived records.
+Important Implementation Note
 Represent all available Excel columns on the page or in the proposal output where applicable. Do not drop useful fields from the uploaded sheets. If column names differ from the assumed names above, map them dynamically and preserve the original column labels where possible.
+
