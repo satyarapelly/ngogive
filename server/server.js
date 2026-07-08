@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const Razorpay = require("razorpay");
@@ -35,6 +37,7 @@ app.use(express.json());
 
 const VIDYANJALI_BASE_URL = "https://vidyanjali.education.gov.in";
 const VIDYANJALI_SEARCH_URL = process.env.VIDYANJALI_SEARCH_URL || "";
+const VIDYANJALI_LOCAL_SCHOOLS_PATH = path.join(__dirname, "..", "frontend", "public", "data", "vidyanjali", "schools.json");
 
 const normalizeSchool = (row = {}) => {
   const pick = (...keys) => keys.map((key) => row[key]).find((value) => value !== undefined && value !== null && String(value).trim() !== "") || "";
@@ -59,14 +62,40 @@ const asArray = (payload) => {
   return [];
 };
 
+const matchesSchoolFilters = (school, { state, district, block }) =>
+  (!state || school.state === String(state).toUpperCase()) &&
+  (!district || school.district === String(district).toUpperCase()) &&
+  (!block || school.block === block);
+
+const getLocalVidyanjaliSchools = ({ state, district, block, pageSize }) => {
+  const rows = JSON.parse(fs.readFileSync(VIDYANJALI_LOCAL_SCHOOLS_PATH, "utf8"));
+  const limit = Number(pageSize) || 5000;
+  return rows
+    .map(normalizeSchool)
+    .filter((school) => (school.udiseCode || school.schoolName) && matchesSchoolFilters(school, { state, district, block }))
+    .slice(0, limit);
+};
+
 app.get("/api/vidyanjali/schools", async (req, res) => {
   const { state = "TELANGANA", district = "", block = "", pageSize = "5000" } = req.query;
 
   if (!VIDYANJALI_SEARCH_URL) {
-    return res.status(503).json({
-      error: "Live Vidyanjali search API is not configured on the server.",
-      setup: "Set VIDYANJALI_SEARCH_URL to the official Vidyanjali school-search JSON endpoint, then restart the API server.",
-    });
+    try {
+      const rows = getLocalVidyanjaliSchools({ state, district, block, pageSize });
+      return res.json({
+        source: "bundled Vidyanjali school data",
+        mode: "local-fallback",
+        count: rows.length,
+        schools: rows,
+        setup: "Configure VIDYANJALI_SEARCH_URL to query the official Vidyanjali endpoint instead of the bundled fallback data.",
+      });
+    } catch (error) {
+      console.error("Vidyanjali local fallback failed", error);
+      return res.status(503).json({
+        error: "Live Vidyanjali search API is not configured and bundled fallback data could not be loaded.",
+        setup: "Set VIDYANJALI_SEARCH_URL to the official Vidyanjali school-search JSON endpoint, then restart the API server.",
+      });
+    }
   }
 
   const target = new URL(VIDYANJALI_SEARCH_URL, VIDYANJALI_BASE_URL);
