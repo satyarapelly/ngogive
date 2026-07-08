@@ -21,15 +21,79 @@ const ORG_CITY_STATE_PIN = process.env.ORG_CITY_STATE_PIN;
 const ORG_EMAIL = process.env.ORG_EMAIL;
 const ORG_PHONE = process.env.ORG_PHONE;
 
-if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-  console.error("Missing Razorpay credentials. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.");
-  process.exit(1);
-}
+const razorpay = RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET
+  ? new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET })
+  : null;
 
-const razorpay = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
+if (!razorpay) {
+  console.warn("Razorpay credentials are not configured. Donation routes will return a setup error, but non-payment APIs can still run.");
+}
 
 app.use(cors());
 app.use(express.json());
+
+
+const VIDYANJALI_BASE_URL = "https://vidyanjali.education.gov.in";
+const VIDYANJALI_SEARCH_URL = process.env.VIDYANJALI_SEARCH_URL || "";
+
+const normalizeSchool = (row = {}) => {
+  const pick = (...keys) => keys.map((key) => row[key]).find((value) => value !== undefined && value !== null && String(value).trim() !== "") || "";
+  return {
+    udiseCode: String(pick("UDISE Code", "udiseCode", "udise_code", "udise", "school_code", "schoolCode")).trim(),
+    schoolName: String(pick("School Name", "schoolName", "school_name", "name", "school")).trim().toUpperCase(),
+    address: String(pick("Address", "address", "schoolAddress", "school_address", "location")).trim(),
+    state: String(pick("State", "state", "state_name", "stateName") || "TELANGANA").trim().toUpperCase(),
+    district: String(pick("District", "district", "district_name", "districtName")).trim().toUpperCase(),
+    block: String(pick("Block", "block", "Mandal", "mandal", "block_name", "blockName")).trim(),
+    status: String(pick("Status", "status") || "Listed").trim(),
+    action: String(pick("Action", "action") || "").trim(),
+  };
+};
+
+const asArray = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.results)) return payload.results;
+  if (Array.isArray(payload?.schools)) return payload.schools;
+  if (Array.isArray(payload?.aaData)) return payload.aaData;
+  return [];
+};
+
+app.get("/api/vidyanjali/schools", async (req, res) => {
+  const { state = "TELANGANA", district = "", block = "", pageSize = "5000" } = req.query;
+
+  if (!VIDYANJALI_SEARCH_URL) {
+    return res.status(503).json({
+      error: "Live Vidyanjali search API is not configured on the server.",
+      setup: "Set VIDYANJALI_SEARCH_URL to the official Vidyanjali school-search JSON endpoint, then restart the API server.",
+    });
+  }
+
+  const target = new URL(VIDYANJALI_SEARCH_URL, VIDYANJALI_BASE_URL);
+  target.searchParams.set("state", state);
+  if (district) target.searchParams.set("district", district);
+  if (block) target.searchParams.set("block", block);
+  target.searchParams.set("length", pageSize);
+  target.searchParams.set("pageSize", pageSize);
+
+  try {
+    const response = await fetch(target, {
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "User-Agent": "Mozilla/5.0 Vidyanjali live school exporter",
+        Referer: `${VIDYANJALI_BASE_URL}/all-schools`,
+      },
+    });
+    const contentType = response.headers.get("content-type") || "";
+    const payload = contentType.includes("application/json") ? await response.json() : JSON.parse(await response.text());
+    if (!response.ok) return res.status(response.status).json({ error: payload?.error || "Vidyanjali live search failed." });
+    const rows = asArray(payload).map(normalizeSchool).filter((school) => school.udiseCode || school.schoolName);
+    return res.json({ source: target.toString(), count: rows.length, schools: rows });
+  } catch (error) {
+    console.error("Vidyanjali live search failed", error);
+    return res.status(502).json({ error: "Unable to complete live Vidyanjali search.", details: error.message });
+  }
+});
 
 app.get("/org-details", (req, res) => {
   res.json({
@@ -47,6 +111,7 @@ app.get("/org-details", (req, res) => {
 });
 
 app.post("/api/donations/create-order", async (req, res) => {
+  if (!razorpay) return res.status(503).json({ error: "Razorpay credentials are not configured." });
   try {
     const { selectedCause, donorName, email, phone, amount, message } = req.body || {};
     const parsedAmount = Number(amount);
@@ -77,6 +142,7 @@ app.post("/api/donations/create-order", async (req, res) => {
 });
 
 app.post("/api/donations/verify-payment", (req, res) => {
+  if (!razorpay) return res.status(503).json({ error: "Razorpay credentials are not configured." });
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, donationPayload = {} } = req.body || {};
 
   if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {

@@ -104,6 +104,8 @@ export default function VidyanjaliRequirementsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [portalImport, setPortalImport] = useState("");
   const [importStatus, setImportStatus] = useState("");
+  const [liveSearchStatus, setLiveSearchStatus] = useState("");
+  const [isLiveSearching, setIsLiveSearching] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -283,6 +285,45 @@ export default function VidyanjaliRequirementsPage() {
     downloadFile("vidyanjali-schools-by-mandal.xls", workbookXml(groups));
   };
 
+
+  const mergeLiveSchools = (incoming) => {
+    const existingKeys = new Set(schools.map((school) => normalize(school.udiseCode || `${school.schoolName}-${school.district}-${school.block}`)));
+    const imported = incoming
+      .map((school, index) => ({ ...school, id: schools.length + index + 1, academicYear: filters.academicYear, sourceSheet: "Vidyanjali Live Search" }))
+      .filter((school) => (school.udiseCode || school.schoolName) && !existingKeys.has(normalize(school.udiseCode || `${school.schoolName}-${school.district}-${school.block}`)));
+    setSchools((current) => [...current, ...imported]);
+    return imported;
+  };
+
+  const liveSearchAndDownload = async () => {
+    if (isLiveSearching) return;
+    setIsLiveSearching(true);
+    setError("");
+    setLiveSearchStatus("Searching the live Vidyanjali portal...");
+    try {
+      const configuredApiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+      const params = new URLSearchParams({ state: filters.state || "TELANGANA", district: filters.district, block: filters.block });
+      const response = await fetch(`${configuredApiBaseUrl}/api/vidyanjali/schools?${params.toString()}`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || data.setup || "Live Vidyanjali search failed.");
+      const imported = mergeLiveSchools(data.schools || []);
+      setLiveSearchStatus(`${data.count || 0} live rows received; ${imported.length} new rows added. Downloading Excel...`);
+      const headers = ["UDISE Code", "School Name", "Address", "State", "District", "Block", "Status", "Action"];
+      const groups = {};
+      (data.schools || []).forEach((school) => {
+        const key = school.block || filters.block || "All Schools";
+        groups[key] = groups[key] || [headers];
+        groups[key].push([school.udiseCode, school.schoolName, school.address, school.state, school.district, school.block, school.status, school.action || ""]);
+      });
+      if (Object.keys(groups).length) downloadFile("vidyanjali-live-schools-by-mandal.xls", workbookXml(groups));
+    } catch (liveError) {
+      setError(`${liveError.message} To run live search locally, start the API server with VIDYANJALI_SEARCH_URL configured and set VITE_API_BASE_URL=http://localhost:5000 for the frontend.`);
+      setLiveSearchStatus("");
+    } finally {
+      setIsLiveSearching(false);
+    }
+  };
+
   const saveRequirement = () => {
     const nextProposal = previewProposal();
     if (!nextProposal) return;
@@ -337,15 +378,17 @@ export default function VidyanjaliRequirementsPage() {
           <section className="vj-card no-print">
             <h2>2. Vidyanjali Portal Search Integration</h2>
             <div className="vj-help">
-              <p><strong>Use this panel with the official Vidyanjali school search.</strong> Select Telangana plus a district/block, open the portal, copy the result rows with columns <em>UDISE Code, School Name, Address, State, District, Block, Status, Action</em>, then paste CSV or JSON here.</p>
-              <p>District/mandal options come from <code>Constituency_Mandals_Data.xlsx</code>. Browser-side scraping may be blocked by portal CORS, CAPTCHA, or session rules, so this page supports operator-assisted import and Excel generation from verified results.</p>
+              <p><strong>Use Live Search & Download Schools for the real portal workflow.</strong> Select Telangana plus a district/block, then the app asks the backend to query the live Vidyanjali school search and immediately downloads the matching schools as an Excel workbook.</p>
+              <p>District/mandal options come from <code>Constituency_Mandals_Data.xlsx</code>. The paste box remains only as a fallback if the official portal blocks automated access or changes its API.</p>
             </div>
             <div className="vj-actions">
               <a className="vj-button" href="https://vidyanjali.education.gov.in/all-schools" target="_blank" rel="noopener noreferrer">Open Vidyanjali Portal</a>
               <button type="button" onClick={downloadSearchPlan}>Download Mandal Search Plan</button>
-              <button type="button" onClick={downloadSchoolsByMandal}>Download Schools Excel by Mandal</button>
+              <button type="button" onClick={liveSearchAndDownload} disabled={isLiveSearching}>{isLiveSearching ? "Searching Live..." : "Live Search & Download Schools"}</button>
+              <button type="button" onClick={downloadSchoolsByMandal}>Download Loaded Schools Excel by Mandal</button>
             </div>
-            <label className="vj-full">Paste Vidyanjali results as CSV or JSON<textarea className="vj-import" rows="5" value={portalImport} onChange={(event) => setPortalImport(event.target.value)} placeholder="UDISE Code,School Name,Address,State,District,Block,Status,Action" /></label>
+            {liveSearchStatus && <p className="vj-muted">{liveSearchStatus}</p>}
+            <label className="vj-full">Optional fallback: paste Vidyanjali results as CSV or JSON<textarea className="vj-import" rows="5" value={portalImport} onChange={(event) => setPortalImport(event.target.value)} placeholder="UDISE Code,School Name,Address,State,District,Block,Status,Action" /></label>
             <div className="vj-actions"><button type="button" onClick={importPortalResults}>Import Pasted Results</button>{importStatus && <span className="vj-muted">{importStatus}</span>}</div>
           </section>
 
