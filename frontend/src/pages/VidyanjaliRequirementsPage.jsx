@@ -313,7 +313,8 @@ export default function VidyanjaliRequirementsPage() {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || data.setup || "Live Vidyanjali search failed.");
       const imported = mergeLiveSchools(data.schools || []);
-      setLiveSearchStatus(`${data.count || 0} ${data.mode === "local-fallback" ? "bundled" : "live"} rows received; ${imported.length} new rows added. Downloading Excel...${data.setup ? ` ${data.setup}` : ""}`);
+      const sourceNote = data.warning || data.setup || "";
+      setLiveSearchStatus(`${data.count || 0} ${data.mode === "local-fallback" ? "bundled" : "live"} rows received; ${imported.length} new rows added. Downloading Excel...${sourceNote ? ` ${sourceNote}` : ""}`);
       const headers = ["UDISE Code", "School Name", "Address", "State", "District", "Block", "Status", "Action"];
       const groups = {};
       (data.schools || []).forEach((school) => {
