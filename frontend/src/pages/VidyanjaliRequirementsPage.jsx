@@ -324,7 +324,7 @@ export default function VidyanjaliRequirementsPage() {
       });
       if (Object.keys(groups).length) downloadFile("vidyanjali-live-schools-by-mandal.xls", workbookXml(groups));
     } catch (liveError) {
-      setError(`${liveError.message} Start the API server on http://localhost:5000, or use Download Loaded Schools Excel by Mandal to export the bundled school data.`);
+      setError(`${liveError.message} Start the API server on http://localhost:5000. If it runs elsewhere, set VITE_API_BASE_URL in frontend/.env and restart npm run dev. You can also use Download Loaded Schools Excel by Mandal to export the bundled school data.`);
       setLiveSearchStatus("");
     } finally {
       setIsLiveSearching(false);
