@@ -93,6 +93,7 @@ export default function VidyanjaliRequirementsPage() {
   const [schools, setSchools] = useState([]);
   const [workAreas, setWorkAreas] = useState([]);
   const [components, setComponents] = useState([]);
+  const [constituencyMandals, setConstituencyMandals] = useState([]);
   const [filters, setFilters] = useState({ academicYear: "2026-27", state: "TELANGANA", district: "", block: "", search: "" });
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [selectedItems, setSelectedItems] = useState({});
@@ -101,24 +102,36 @@ export default function VidyanjaliRequirementsPage() {
   const [form, setForm] = useState({ preparedBy: "", preparedFor: "", startDate: "", notes: "" });
   const [pageSize, setPageSize] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
+  const [portalImport, setPortalImport] = useState("");
+  const [importStatus, setImportStatus] = useState("");
 
   useEffect(() => {
     Promise.all([
       fetch("/data/vidyanjali/schools.json").then((response) => response.json()),
       fetch("/data/vidyanjali/workAreas.json").then((response) => response.json()),
       fetch("/data/vidyanjali/components.json").then((response) => response.json()),
+      fetch("/data/vidyanjali/constituencyMandals.json").then((response) => response.json()).catch(() => []),
     ])
-      .then(([schoolData, workAreaData, componentData]) => {
+      .then(([schoolData, workAreaData, componentData, mandalData]) => {
         setSchools(schoolData);
         setWorkAreas(workAreaData);
         setComponents(componentData);
+        setConstituencyMandals(mandalData);
       })
       .catch(() => setError("Unable to load Vidyanjali Excel-derived JSON data."));
   }, []);
 
   const states = useMemo(() => unique(schools.map((school) => school.state)), [schools]);
-  const districts = useMemo(() => unique(schools.filter((school) => !filters.state || school.state === filters.state).map((school) => school.district)), [schools, filters.state]);
-  const blocks = useMemo(() => unique(schools.filter((school) => (!filters.state || school.state === filters.state) && (!filters.district || school.district === filters.district)).map((school) => school.block)), [schools, filters.state, filters.district]);
+  const districts = useMemo(() => {
+    const schoolDistricts = schools.filter((school) => !filters.state || school.state === filters.state).map((school) => school.district);
+    const mandalDistricts = filters.state === "TELANGANA" ? constituencyMandals.map((row) => normalize(row.District)) : [];
+    return unique([...schoolDistricts, ...mandalDistricts]);
+  }, [schools, filters.state, constituencyMandals]);
+  const blocks = useMemo(() => {
+    const schoolBlocks = schools.filter((school) => (!filters.state || school.state === filters.state) && (!filters.district || school.district === filters.district)).map((school) => school.block);
+    const mandalBlocks = filters.state === "TELANGANA" ? constituencyMandals.filter((row) => !filters.district || normalize(row.District) === filters.district).map((row) => row.Mandal) : [];
+    return unique([...schoolBlocks, ...mandalBlocks]);
+  }, [schools, filters.state, filters.district, constituencyMandals]);
   const filteredSchools = useMemo(() => {
     const query = normalize(filters.search);
     return schools.filter((school) =>
@@ -176,6 +189,100 @@ export default function VidyanjaliRequirementsPage() {
     return nextProposal;
   };
 
+
+  const csvEscape = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+
+  const downloadFile = (filename, content, type = "application/vnd.ms-excel") => {
+    const blob = new Blob([content], { type });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const parseCsv = (text) => {
+    const rows = [];
+    let row = [];
+    let value = "";
+    let quoted = false;
+    for (let index = 0; index < text.length; index += 1) {
+      const char = text[index];
+      const next = text[index + 1];
+      if (quoted && char === '"' && next === '"') { value += '"'; index += 1; }
+      else if (char === '"') quoted = !quoted;
+      else if (!quoted && char === ",") { row.push(value.trim()); value = ""; }
+      else if (!quoted && /\r|\n/.test(char)) { if (char === "\r" && next === "\n") index += 1; row.push(value.trim()); if (row.some(Boolean)) rows.push(row); row = []; value = ""; }
+      else value += char;
+    }
+    row.push(value.trim());
+    if (row.some(Boolean)) rows.push(row);
+    return rows;
+  };
+
+  const normalizePortalRow = (row, id) => {
+    const get = (...keys) => keys.map((key) => row[key]).find(Boolean) || "";
+    return {
+      id,
+      udiseCode: get("UDISE Code", "UDISE", "udiseCode"),
+      schoolName: get("School Name", "schoolName").toUpperCase(),
+      address: get("Address", "address"),
+      state: normalize(get("State", "state") || "TELANGANA"),
+      district: normalize(get("District", "district")),
+      block: get("Block", "Mandal", "block", "mandal"),
+      status: get("Status", "status") || "Listed",
+      action: get("Action", "action"),
+      academicYear: filters.academicYear,
+      sourceSheet: "Vidyanjali Portal Import",
+    };
+  };
+
+  const importPortalResults = () => {
+    const text = portalImport.trim();
+    if (!text) { setError("Paste CSV or JSON rows from Vidyanjali before importing."); return; }
+    try {
+      const parsedRows = /^[\[{]/.test(text)
+        ? JSON.parse(text)
+        : (() => {
+          const rows = parseCsv(text);
+          const headers = rows.shift() || [];
+          return rows.map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] || ""])));
+        })();
+      const existingKeys = new Set(schools.map((school) => normalize(school.udiseCode || `${school.schoolName}-${school.district}-${school.block}`)));
+      const imported = parsedRows
+        .map((row, index) => normalizePortalRow(row, schools.length + index + 1))
+        .filter((school) => school.udiseCode && !existingKeys.has(normalize(school.udiseCode || `${school.schoolName}-${school.district}-${school.block}`)));
+      setSchools((current) => [...current, ...imported]);
+      setImportStatus(`${imported.length} new schools imported.`);
+      setError("");
+    } catch {
+      setError("Could not parse pasted results. Use CSV with headers or a JSON array of objects.");
+    }
+  };
+
+  const workbookXml = (sheets) => {
+    const escapeXml = (value) => String(value ?? "").replace(/[<>&"]/g, (char) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[char]));
+    const worksheets = Object.entries(sheets).map(([name, rows]) => `<Worksheet ss:Name="${escapeXml(name).slice(0, 31)}"><Table>${rows.map((row) => `<Row>${row.map((cell) => `<Cell><Data ss:Type="String">${escapeXml(cell)}</Data></Cell>`).join("")}</Row>`).join("")}</Table></Worksheet>`).join("");
+    return `<?xml version="1.0"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">${worksheets}</Workbook>`;
+  };
+
+  const downloadSearchPlan = () => {
+    const rows = [["State", "District", "Constituency", "Mandal", "Portal URL"], ...constituencyMandals.map((row) => ["Telangana", row.District, row.Constituency, row.Mandal, "https://vidyanjali.education.gov.in/all-schools"] )];
+    downloadFile("vidyanjali-mandal-search-plan.csv", rows.map((row) => row.map(csvEscape).join(",")).join("\n"), "text/csv");
+  };
+
+  const downloadSchoolsByMandal = () => {
+    const headers = ["UDISE Code", "School Name", "Address", "State", "District", "Block", "Status", "Action"];
+    const groups = {};
+    filteredSchools.forEach((school) => {
+      const key = school.block || "All Schools";
+      groups[key] = groups[key] || [headers];
+      groups[key].push([school.udiseCode, school.schoolName, school.address, school.state, school.district, school.block, school.status, school.action || ""]);
+    });
+    if (!Object.keys(groups).length) { setError("No schools are available for the current selection/export."); return; }
+    downloadFile("vidyanjali-schools-by-mandal.xls", workbookXml(groups));
+  };
+
   const saveRequirement = () => {
     const nextProposal = previewProposal();
     if (!nextProposal) return;
@@ -226,9 +333,25 @@ export default function VidyanjaliRequirementsPage() {
             <label className="vj-full">Search by UDISE, school name, address, status<input value={filters.search} onChange={(event) => updateFilter("search", event.target.value)} placeholder="Try 36021100201 or MPPS SANDGAON" /></label>
           </section>
 
+
+          <section className="vj-card no-print">
+            <h2>2. Vidyanjali Portal Search Integration</h2>
+            <div className="vj-help">
+              <p><strong>Use this panel with the official Vidyanjali school search.</strong> Select Telangana plus a district/block, open the portal, copy the result rows with columns <em>UDISE Code, School Name, Address, State, District, Block, Status, Action</em>, then paste CSV or JSON here.</p>
+              <p>District/mandal options come from <code>Constituency_Mandals_Data.xlsx</code>. Browser-side scraping may be blocked by portal CORS, CAPTCHA, or session rules, so this page supports operator-assisted import and Excel generation from verified results.</p>
+            </div>
+            <div className="vj-actions">
+              <a className="vj-button" href="https://vidyanjali.education.gov.in/all-schools" target="_blank" rel="noopener noreferrer">Open Vidyanjali Portal</a>
+              <button type="button" onClick={downloadSearchPlan}>Download Mandal Search Plan</button>
+              <button type="button" onClick={downloadSchoolsByMandal}>Download Schools Excel by Mandal</button>
+            </div>
+            <label className="vj-full">Paste Vidyanjali results as CSV or JSON<textarea className="vj-import" rows="5" value={portalImport} onChange={(event) => setPortalImport(event.target.value)} placeholder="UDISE Code,School Name,Address,State,District,Block,Status,Action" /></label>
+            <div className="vj-actions"><button type="button" onClick={importPortalResults}>Import Pasted Results</button>{importStatus && <span className="vj-muted">{importStatus}</span>}</div>
+          </section>
+
           <section className="vj-card no-print">
             <div className="vj-section-head">
-              <div><h2>2. School Grid</h2><p>{filteredSchools.length} matching schools. Select one school for this planning document.</p></div>
+              <div><h2>3. School Grid</h2><p>{filteredSchools.length} matching schools. Select one school for this planning document.</p></div>
               <label>Rows per page<select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setCurrentPage(1); }}>{pageSizes.map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
             </div>
             <div className="vj-table-wrap"><table><thead><tr><th>UDISE Code</th><th>School Name</th><th>Address</th><th>State</th><th>District</th><th>Block</th><th>Status</th><th>Action</th></tr></thead><tbody>{pagedSchools.map((school) => <tr key={school.id} className={selectedSchool?.id === school.id ? "vj-selected-row" : ""}><td>{school.udiseCode}</td><td>{school.schoolName}</td><td>{school.address}</td><td>{school.state}</td><td>{school.district}</td><td>{school.block}</td><td><span className={`vj-status ${/operational|active/i.test(school.status) ? "vj-status-ok" : ""}`}>{school.status}</span></td><td><button type="button" onClick={() => { setSelectedSchool(school); setProposal(null); }}>Select School</button></td></tr>)}</tbody></table></div>
@@ -237,18 +360,18 @@ export default function VidyanjaliRequirementsPage() {
 
           <div className="vj-layout no-print">
             <div>
-              <section className="vj-card"><h2>3. School Details</h2>{selectedSchool ? <div className="vj-school-detail"><p><strong>UDISE Code:</strong> {selectedSchool.udiseCode}</p><p><strong>Status:</strong> <span className="vj-status vj-status-ok">{selectedSchool.status}</span></p><p><strong>Academic Year:</strong> {selectedSchool.academicYear}</p><p><strong>State:</strong> {selectedSchool.state}</p><p><strong>District:</strong> {selectedSchool.district}</p><p><strong>Block:</strong> {selectedSchool.block}</p><p><strong>School:</strong> {selectedSchool.schoolName}</p><p><strong>Address:</strong> {selectedSchool.address}</p></div> : <p>Select a school to review details.</p>}</section>
+              <section className="vj-card"><h2>4. School Details</h2>{selectedSchool ? <div className="vj-school-detail"><p><strong>UDISE Code:</strong> {selectedSchool.udiseCode}</p><p><strong>Status:</strong> <span className="vj-status vj-status-ok">{selectedSchool.status}</span></p><p><strong>Academic Year:</strong> {selectedSchool.academicYear}</p><p><strong>State:</strong> {selectedSchool.state}</p><p><strong>District:</strong> {selectedSchool.district}</p><p><strong>Block:</strong> {selectedSchool.block}</p><p><strong>School:</strong> {selectedSchool.schoolName}</p><p><strong>Address:</strong> {selectedSchool.address}</p></div> : <p>Select a school to review details.</p>}</section>
 
-              <section className="vj-card"><h2>4. Select Work Areas & Components</h2>{workAreas.map((workArea) => <details key={workArea.id}><summary>{workArea.workAreaName} ({components.filter((component) => component.workAreaId === workArea.id).length} items)</summary><div className="vj-table-wrap"><table><thead><tr><th>Select</th><th>Work Area</th><th>Component</th><th>Sub-component</th><th>Item Name</th><th>Unit Type</th><th>Unit Cost</th><th>Quantity / Units</th><th>Estimated Amount</th><th>Remarks & Excel Columns</th></tr></thead><tbody>{components.filter((component) => component.workAreaId === workArea.id).map((component) => { const selected = selectedItems[component.id] || { checked: false, quantity: component.defaultQuantity || 1, unitCost: Number(component.unitCost) || 0 }; return <tr key={component.id}><td><input type="checkbox" checked={selected.checked} onChange={(event) => updateItem(component, workArea.workAreaName, { checked: event.target.checked })} /></td><td>{workArea.workAreaName}</td><td>{component.componentName}</td><td>{component.subComponentName || "-"}</td><td>{component.itemName}</td><td>{component.unitType || "-"}</td><td><input type="number" min="0" value={selected.unitCost} onChange={(event) => updateItem(component, workArea.workAreaName, { unitCost: Number(event.target.value) })} /></td><td><input type="number" min="0" step="0.01" value={selected.quantity} onChange={(event) => updateItem(component, workArea.workAreaName, { quantity: Number(event.target.value) })} /></td><td>{formatMoney(selected.quantity * selected.unitCost)}</td><td>{component.remarks}<div className="vj-original">{Object.entries(component.original || {}).filter(([, value]) => value).map(([key, value]) => `${key}: ${value}`).join(" | ")}</div></td></tr>; })}</tbody></table></div></details>)}</section>
+              <section className="vj-card"><h2>5. Select Work Areas & Components</h2>{workAreas.map((workArea) => <details key={workArea.id}><summary>{workArea.workAreaName} ({components.filter((component) => component.workAreaId === workArea.id).length} items)</summary><div className="vj-table-wrap"><table><thead><tr><th>Select</th><th>Work Area</th><th>Component</th><th>Sub-component</th><th>Item Name</th><th>Unit Type</th><th>Unit Cost</th><th>Quantity / Units</th><th>Estimated Amount</th><th>Remarks & Excel Columns</th></tr></thead><tbody>{components.filter((component) => component.workAreaId === workArea.id).map((component) => { const selected = selectedItems[component.id] || { checked: false, quantity: component.defaultQuantity || 1, unitCost: Number(component.unitCost) || 0 }; return <tr key={component.id}><td><input type="checkbox" checked={selected.checked} onChange={(event) => updateItem(component, workArea.workAreaName, { checked: event.target.checked })} /></td><td>{workArea.workAreaName}</td><td>{component.componentName}</td><td>{component.subComponentName || "-"}</td><td>{component.itemName}</td><td>{component.unitType || "-"}</td><td><input type="number" min="0" value={selected.unitCost} onChange={(event) => updateItem(component, workArea.workAreaName, { unitCost: Number(event.target.value) })} /></td><td><input type="number" min="0" step="0.01" value={selected.quantity} onChange={(event) => updateItem(component, workArea.workAreaName, { quantity: Number(event.target.value) })} /></td><td>{formatMoney(selected.quantity * selected.unitCost)}</td><td>{component.remarks}<div className="vj-original">{Object.entries(component.original || {}).filter(([, value]) => value).map(([key, value]) => `${key}: ${value}`).join(" | ")}</div></td></tr>; })}</tbody></table></div></details>)}</section>
 
-              <section className="vj-card"><h2>5. Proposal Notes</h2><div className="vj-grid vj-grid-3"><label>Prepared By<input value={form.preparedBy} onChange={(event) => setForm({ ...form, preparedBy: event.target.value })} /></label><label>Prepared For<input value={form.preparedFor} onChange={(event) => setForm({ ...form, preparedFor: event.target.value })} /></label><label>Estimated Start Date<input type="date" value={form.startDate} onChange={(event) => setForm({ ...form, startDate: event.target.value })} /></label></div><label className="vj-full">Notes / Remarks<textarea rows="4" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} placeholder="Add planning assumptions, school visit notes, donor remarks, or Vidyanjali portal entry notes." /></label></section>
+              <section className="vj-card"><h2>6. Proposal Notes</h2><div className="vj-grid vj-grid-3"><label>Prepared By<input value={form.preparedBy} onChange={(event) => setForm({ ...form, preparedBy: event.target.value })} /></label><label>Prepared For<input value={form.preparedFor} onChange={(event) => setForm({ ...form, preparedFor: event.target.value })} /></label><label>Estimated Start Date<input type="date" value={form.startDate} onChange={(event) => setForm({ ...form, startDate: event.target.value })} /></label></div><label className="vj-full">Notes / Remarks<textarea rows="4" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} placeholder="Add planning assumptions, school visit notes, donor remarks, or Vidyanjali portal entry notes." /></label></section>
             </div>
 
             <aside className="vj-card vj-summary"><h2>Estimated Budget Summary</h2><p>Selected work areas: <strong>{Object.keys(totals.byArea).length}</strong></p><p>Selected items: <strong>{selectedLines.length}</strong></p><div className="vj-total">{formatMoney(totals.grandTotal)}</div>{Object.entries(totals.byArea).map(([area, amount]) => <p key={area}><strong>{area}:</strong> {formatMoney(amount)}</p>)}</aside>
           </div>
 
           <section className="vj-card vj-final-actions no-print">
-            <div><h2>6. Generate Final Planning Document</h2><p>Use this final preview to review the complete school requirement plan before printing or re-entering the selections in the official Vidyanjali portal.</p></div>
+            <div><h2>7. Generate Final Planning Document</h2><p>Use this final preview to review the complete school requirement plan before printing or re-entering the selections in the official Vidyanjali portal.</p></div>
             <div className="vj-actions"><button type="button" onClick={previewProposal}>Final Preview</button><button type="button" onClick={saveRequirement}>Save Requirement</button><button type="button" onClick={exportExcel}>Export Excel</button><button type="button" onClick={printProposal}>Print Planning Document</button></div>
           </section>
 

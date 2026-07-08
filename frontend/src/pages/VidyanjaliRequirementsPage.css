@@ -38,3 +38,9 @@
 .vj-doc-grid strong, .vj-doc-summary strong { display: block; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
 @media (max-width: 1000px) { .vj-grid-4, .vj-grid-3, .vj-layout, .vj-doc-grid, .vj-doc-summary { grid-template-columns: 1fr; } .vj-summary { position: static; } .vj-section-head, .vj-final-actions { align-items: stretch; flex-direction: column; } }
 @media print { .no-print, .site-header, footer { display: none !important; } .vidyanjali-page, .vj-card, .vj-document { background: #fff; box-shadow: none; } .vj-content { padding: 0; } .vj-proposal-print { border: 0; margin: 0; padding: 0; } .vj-document table { font-size: 11px; min-width: 0; } }
+.vj-help { background: #eef8f6; border-left: 4px solid #00715d; border-radius: .9rem; color: #39534d; margin-bottom: 1rem; padding: 1rem; }
+.vj-help p { margin: 0 0 .5rem; }
+.vj-help p:last-child { margin-bottom: 0; }
+.vj-import { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; min-height: 8rem; }
+.vj-button { align-items: center; background: #00715d; border-radius: 999px; color: #fff; display: inline-flex; font-weight: 900; padding: .7rem 1rem; text-decoration: none; }
+.vj-button:hover { color: #fff; background: #005f4f; }
