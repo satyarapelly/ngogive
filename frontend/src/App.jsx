@@ -1458,17 +1458,30 @@ function findPankhudiCentres(project) {
   return [];
 }
 
-function getPankhudiLineItemSummary(item, index) {
+function extractPankhudiAmountFromText(value) {
+  if (typeof value !== "string") return 0;
+  const amountNearInr = value.match(/(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)/i) || value.match(/([\d,]+(?:\.\d+)?)\s*(?:₹|rs\.?|inr)/i);
+  return amountNearInr ? toPankhudiNumber(amountNearInr[1]) : 0;
+}
+
+function getPankhudiLineItemSummary(item, index, centreCount = 1) {
   const name = getProjectValue(item, ["itemName", "lineItemName", "activityName", "name", "componentName", "workName", "requirementName", "description", "projectName"], `Line item ${index + 1}`);
-  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "noOfUnits", "requiredQuantity", "approvedQuantity", "totalQuantity"], 1));
-  const unitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "unitcost", "unit_cost", "rate", "cost", "unitRate", "estimatedRate", "estimatedUnitCost"], 0));
+  const expectedOutcome = getProjectValue(item, ["expectedOutcome", "outcome", "expectedResult", "benefit"], "");
+  const otherDetails = getProjectValue(item, ["anyOtherDetails", "otherDetails", "remarks", "notes"], "");
+  const approvalStatus = getProjectValue(item, ["approvalStatus", "approvalStatusName"], "");
+  const projectStatus = getProjectValue(item, ["projectStatus", "projectStatusName", "status", "statusName"], "");
+  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "noOfUnits", "requiredQuantity", "approvedQuantity", "totalQuantity"], centreCount || 1));
+  const directUnitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "unitcost", "unit_cost", "rate", "cost", "unitRate", "estimatedRate", "estimatedUnitCost"], 0));
+  const unitCostFromOutcome = extractPankhudiAmountFromText(expectedOutcome);
+  const unitCost = directUnitCost || unitCostFromOutcome;
   const explicitAmount = toPankhudiNumber(getProjectValue(item, ["estimatedAmount", "estimatedAmt", "amount", "totalAmount", "lineTotal", "projectCost", "budget", "totalCost"], 0));
   const calculatedAmount = explicitAmount || quantity * unitCost;
-  return { name, quantity, unitCost, estimatedAmount: explicitAmount, amount: calculatedAmount, raw: item };
+  return { name, quantity, unitCost, estimatedAmount: explicitAmount, amount: calculatedAmount, expectedOutcome, otherDetails, approvalStatus, projectStatus, raw: item };
 }
 
 function getPankhudiBudgetSummary(project) {
-  const lineItems = findPankhudiLineItems(project).map(getPankhudiLineItemSummary);
+  const centreCount = Math.max(findPankhudiCentres(project).length, 1);
+  const lineItems = findPankhudiLineItems(project).map((item, index) => getPankhudiLineItemSummary(item, index, centreCount));
   const lineItemTotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
   const projectAmount = toPankhudiNumber(getProjectValue(project, ["amount", "estimatedAmount", "projectCost", "totalAmount", "budget", "estimatedBudget"], 0));
   return { lineItems, total: lineItemTotal || projectAmount, projectAmount, lineItemTotal };
@@ -1684,9 +1697,22 @@ function PankhudiProjectsPage() {
                   <article><span>Centre</span><strong>{selectedCentres.length ? getProjectValue(selectedCentres[0], ["name", "centreName", "centerName", "anganwadiName", "awcName"]) : getProjectValue(selectedProject, ["anganwadiName", "centerName", "centreName", "awcName"])}</strong></article>
                   <article><span>Mandal / Block</span><strong>{getProjectValue(selectedProject, ["mandalName", "mandal", "blockName"])}</strong></article>
                   <article><span>Village</span><strong>{getProjectValue(selectedProject, ["villageName", "village", "habitationName"])}</strong></article>
-                  <article><span>Category</span><strong>{getProjectValue(selectedProject, ["categoryName", "category", "projectCategory"])}</strong></article>
+                  <article><span>Theme</span><strong>{getProjectValue(selectedProject, ["themeName", "theme", "categoryName", "category", "projectCategory"])}</strong></article>
+                  <article><span>Sub-theme</span><strong>{getProjectValue(selectedProject, ["subThemeName", "subTheme", "subCategoryName", "subCategory"])}</strong></article>
                   <article><span>Status</span><strong>{getProjectValue(selectedProject, ["statusName", "status", "projectStatus"])}</strong></article>
+                  <article><span>Approval Status</span><strong>{getProjectValue(selectedProject, ["approvalStatusName", "approvalStatus"])}</strong></article>
                   <article><span>Estimated Budget Required</span><strong>{formatPankhudiMoney(selectedBudget.total)}</strong></article>
+                </div>
+
+                <div className="pankhudi-project-narrative-card">
+                  <article>
+                    <span>Expected outcome</span>
+                    <p>{getProjectValue(selectedProject, ["expectedOutcome", "outcome", "expectedResult"], "Not listed")}</p>
+                  </article>
+                  <article>
+                    <span>Any other details</span>
+                    <p>{getProjectValue(selectedProject, ["anyOtherDetails", "otherDetails", "remarks", "notes"], "Not listed")}</p>
+                  </article>
                 </div>
 
                 <div className="pankhudi-centres-card">
@@ -1727,10 +1753,13 @@ function PankhudiProjectsPage() {
                   {selectedBudget.lineItems.length ? (
                     <div className="pankhudi-table-wrap">
                       <table>
-                        <thead><tr><th>Line item</th><th>Quantity</th><th>Unit cost</th><th>Estimated amount</th></tr></thead>
+                        <thead><tr><th>Line item / activity</th><th>Expected outcome</th><th>Other details</th><th>Status</th><th>Quantity</th><th>Unit cost</th><th>Estimated amount</th></tr></thead>
                         <tbody>{selectedBudget.lineItems.map((item, index) => (
                           <tr key={`${item.name}-${index}`}>
                             <td>{item.name}</td>
+                            <td>{item.expectedOutcome || "—"}</td>
+                            <td>{item.otherDetails || "—"}</td>
+                            <td>{[item.approvalStatus && `Approval: ${item.approvalStatus}`, item.projectStatus && `Project: ${item.projectStatus}`].filter(Boolean).join(" · ") || "—"}</td>
                             <td>{item.quantity || "—"}</td>
                             <td>{formatPankhudiMoney(item.unitCost)}</td>
                             <td>{formatPankhudiMoney(item.amount)}</td>
