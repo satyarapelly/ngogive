@@ -1400,7 +1400,7 @@ function formatPankhudiLabel(key) {
 function toPankhudiNumber(value) {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return 0;
-  const normalized = value.replace(/,/g, "").replace(/₹/g, "").replace(/rs\.?/gi, "").replace(/[^0-9.-]/g, "").trim();
+  const normalized = value.replace(/,/g, "").replace(/₹/g, "").trim();
   const parsed = Number(normalized);
   return Number.isFinite(parsed) ? parsed : 0;
 }
@@ -1414,70 +1414,37 @@ function isPlainPankhudiValue(value) {
   return value === null || ["string", "number", "boolean"].includes(typeof value);
 }
 
-function scorePankhudiLineItemArray(rows) {
-  if (!Array.isArray(rows) || !rows.length) return 0;
-  const itemHints = ["item", "component", "work", "requirement", "description", "quantity", "qty", "amount", "rate", "cost", "budget", "estimate"];
-  return rows.reduce((score, row) => {
-    if (!row || typeof row !== "object" || Array.isArray(row)) return score;
-    const flattened = flattenPankhudiObject(row);
-    return score + flattened.reduce((rowScore, [key, value]) => {
-      const normalized = normalizePankhudiKey(key);
-      const hintScore = itemHints.some((hint) => normalized.includes(hint)) ? 2 : 0;
-      const valueScore = toPankhudiNumber(value) ? 1 : 0;
-      return rowScore + hintScore + valueScore;
-    }, 1);
-  }, 0);
-}
-
-function collectPankhudiArrays(value, rows = []) {
-  if (!value || typeof value !== "object") return rows;
-  Object.values(value).forEach((child) => {
-    if (Array.isArray(child)) {
-      if (child.some((row) => row && typeof row === "object" && !Array.isArray(row))) rows.push(child);
-      child.forEach((row) => collectPankhudiArrays(row, rows));
-      return;
-    }
-    if (child && typeof child === "object") collectPankhudiArrays(child, rows);
-  });
-  return rows;
-}
-
 function findPankhudiLineItems(project) {
   const candidates = [
     "lineItems", "lineItemDetails", "items", "itemDetails", "components", "requirements",
-    "projectItems", "projectDetails", "estimateItems", "budgetItems", "works", "workDetails",
-    "projectItemDetails", "awcProjectDetails", "details",
+    "projectItems", "projectDetails", "estimateItems", "budgetItems", "works",
   ];
-  const namedArrays = candidates.map((key) => project?.[key]).filter((value) => Array.isArray(value) && value.length);
-  const allArrays = [...namedArrays, ...collectPankhudiArrays(project)];
-  const best = allArrays
-    .map((rows) => ({ rows, score: scorePankhudiLineItemArray(rows) }))
-    .sort((a, b) => b.score - a.score)[0];
-  return best?.score ? best.rows : [];
+  for (const key of candidates) {
+    if (Array.isArray(project?.[key]) && project[key].length) return project[key];
+  }
+  const nestedArray = Object.values(project || {}).find((value) => Array.isArray(value) && value.some((row) => row && typeof row === "object" && !Array.isArray(row)));
+  return nestedArray || [];
 }
 
 function getPankhudiDetailRows(project) {
-  return flattenPankhudiObject(project)
-    .filter(([key]) => !key.split(".").some((part) => /^\d+$/.test(part)))
+  return Object.entries(project || {})
+    .filter(([, value]) => isPlainPankhudiValue(value))
     .map(([key, value]) => [formatPankhudiLabel(key), value === null || value === "" ? "—" : `${value}`]);
 }
 
 function getPankhudiLineItemSummary(item, index) {
-  const name = getProjectValue(item, ["itemName", "item", "name", "componentName", "component", "workName", "work", "requirementName", "description", "projectName"], `Line item ${index + 1}`);
-  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "unit", "noOfUnits", "requiredQuantity", "noOfItems"], 1));
-  const unitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "rate", "cost", "unitRate", "estimatedRate", "unitAmount", "price"], 0));
-  const explicitAmount = toPankhudiNumber(getProjectValue(item, ["amount", "estimatedAmount", "totalAmount", "lineTotal", "projectCost", "budget", "estimatedBudget", "requiredAmount"], 0));
+  const name = getProjectValue(item, ["itemName", "name", "componentName", "workName", "requirementName", "description", "projectName"], `Line item ${index + 1}`);
+  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "noOfUnits", "requiredQuantity"], 1));
+  const unitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "rate", "cost", "unitRate", "estimatedRate"], 0));
+  const explicitAmount = toPankhudiNumber(getProjectValue(item, ["amount", "estimatedAmount", "totalAmount", "lineTotal", "projectCost", "budget"], 0));
   const calculatedAmount = explicitAmount || quantity * unitCost;
-  const detailText = flattenPankhudiObject(item)
-    .map(([key, value]) => `${formatPankhudiLabel(key)}: ${value}`)
-    .join(" | ");
-  return { name, quantity, unitCost, amount: calculatedAmount, detailText, raw: item };
+  return { name, quantity, unitCost, amount: calculatedAmount, raw: item };
 }
 
 function getPankhudiBudgetSummary(project) {
   const lineItems = findPankhudiLineItems(project).map(getPankhudiLineItemSummary);
   const lineItemTotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
-  const projectAmount = toPankhudiNumber(getProjectValue(project, ["amount", "estimatedAmount", "projectCost", "totalAmount", "budget", "estimatedBudget", "requiredAmount", "estimatedCost"], 0));
+  const projectAmount = toPankhudiNumber(getProjectValue(project, ["amount", "estimatedAmount", "projectCost", "totalAmount", "budget", "estimatedBudget"], 0));
   return { lineItems, total: lineItemTotal || projectAmount, projectAmount, lineItemTotal };
 }
 
@@ -1713,14 +1680,13 @@ function PankhudiProjectsPage() {
                   {selectedBudget.lineItems.length ? (
                     <div className="pankhudi-table-wrap">
                       <table>
-                        <thead><tr><th>Line item</th><th>Quantity</th><th>Unit cost</th><th>Estimated amount</th><th>Payload details</th></tr></thead>
+                        <thead><tr><th>Line item</th><th>Quantity</th><th>Unit cost</th><th>Estimated amount</th></tr></thead>
                         <tbody>{selectedBudget.lineItems.map((item, index) => (
                           <tr key={`${item.name}-${index}`}>
                             <td>{item.name}</td>
                             <td>{item.quantity || "—"}</td>
                             <td>{formatPankhudiMoney(item.unitCost)}</td>
                             <td>{formatPankhudiMoney(item.amount)}</td>
-                            <td><small>{item.detailText || "—"}</small></td>
                           </tr>
                         ))}</tbody>
                       </table>
