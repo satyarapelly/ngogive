@@ -50,3 +50,47 @@ Set-ExecutionPolicy -Scope Process Bypass
 ```
 
 The full implementation task in `PANKHUDI_AUTOMATION_CODEX_TASK.md` has not completed in this container because the required external `codex` executable is unavailable.
+
+## 2026-07-12 source-data path and launcher re-run
+
+The user indicated source workbooks are under `src/docs/source-data/`. In this container, no files were visible under that path at the time of verification, but the launchers now detect populated `../src/docs/source-data/` automatically when run from `public_html/`. They also accept an explicit override:
+
+```bash
+PANKHUDI_SOURCE_DATA_DIR=/path/to/source-data ./run_pankhudi_codex.sh .
+```
+
+```powershell
+$env:PANKHUDI_SOURCE_DATA_DIR="C:\path\to\source-data"
+.\run_pankhudi_codex.ps1 -RepoPath .
+```
+
+Re-run attempted:
+
+```bash
+cd /workspace/ngogive/public_html
+./run_pankhudi_codex.sh .
+```
+
+Result: the launcher failed at the explicit preflight because the external Codex CLI is not installed in this container.
+
+```text
+Missing codex CLI. Install/sign in to Codex CLI, then rerun this launcher.
+```
+
+PowerShell re-run status: neither `pwsh` nor Windows `powershell` is installed in this Linux container, so `run_pankhudi_codex.ps1` could not be executed here. The script has been updated with the same source-data detection logic as the shell launcher.
+
+Follow-up re-run after moving the source-data detection before the Codex CLI preflight:
+
+```bash
+cd /workspace/ngogive/public_html
+./run_pankhudi_codex.sh .
+```
+
+Observed output:
+
+```text
+Using source data directory: /workspace/ngogive/public_html/docs/source-data
+Missing codex CLI. Install/sign in to Codex CLI, then rerun this launcher.
+```
+
+The launcher selected `public_html/docs/source-data` because `src/docs/source-data` was not visible with files in this container. If the workbook files are present on the deployment machine under `src/docs/source-data`, the launcher will select that path automatically; otherwise set `PANKHUDI_SOURCE_DATA_DIR` explicitly.
