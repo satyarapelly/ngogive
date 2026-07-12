@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const Razorpay = require("razorpay");
@@ -34,7 +36,11 @@ app.use(express.json());
 
 
 const VIDYANJALI_BASE_URL = "https://vidyanjali.education.gov.in";
-const VIDYANJALI_SEARCH_URL = process.env.VIDYANJALI_SEARCH_URL || "";
+const DEFAULT_VIDYANJALI_SEARCH_PATH = "/apividya/web/schools/onboard-schools";
+const VIDYANJALI_SEARCH_URL = process.env.VIDYANJALI_SEARCH_URL || DEFAULT_VIDYANJALI_SEARCH_PATH;
+const VIDYANJALI_TOKEN = process.env.VIDYANJALI_TOKEN || "";
+const VIDYANJALI_SECURE_PAYLOAD = process.env.VIDYANJALI_SECURE_PAYLOAD || "";
+const VIDYANJALI_LOCAL_SCHOOLS_PATH = path.join(__dirname, "..", "frontend", "public", "data", "vidyanjali", "schools.json");
 
 const normalizeSchool = (row = {}) => {
   const pick = (...keys) => keys.map((key) => row[key]).find((value) => value !== undefined && value !== null && String(value).trim() !== "") || "";
@@ -50,48 +56,99 @@ const normalizeSchool = (row = {}) => {
   };
 };
 
-const asArray = (payload) => {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.data)) return payload.data;
-  if (Array.isArray(payload?.results)) return payload.results;
-  if (Array.isArray(payload?.schools)) return payload.schools;
-  if (Array.isArray(payload?.aaData)) return payload.aaData;
+const looksLikeSchoolRows = (value) =>
+  Array.isArray(value) && value.some((row) => row && typeof row === "object" && Object.keys(row).some((key) => /school|udise|district|block|mandal/i.test(key)));
+
+const findSchoolRows = (payload) => {
+  if (looksLikeSchoolRows(payload)) return payload;
+  if (!payload || typeof payload !== "object") return [];
+  const preferredKeys = ["data", "results", "schools", "aaData", "records", "rows"];
+  for (const key of preferredKeys) {
+    if (looksLikeSchoolRows(payload[key])) return payload[key];
+  }
+  for (const value of Object.values(payload)) {
+    const rows = findSchoolRows(value);
+    if (rows.length) return rows;
+  }
   return [];
+};
+
+const matchesSchoolFilters = (school, { state, district, block }) =>
+  (!state || school.state === String(state).toUpperCase()) &&
+  (!district || school.district === String(district).toUpperCase()) &&
+  (!block || school.block === block);
+
+const getLocalVidyanjaliSchools = ({ state, district, block, pageSize }) => {
+  const rows = JSON.parse(fs.readFileSync(VIDYANJALI_LOCAL_SCHOOLS_PATH, "utf8"));
+  const limit = Number(pageSize) || 5000;
+  return rows
+    .map(normalizeSchool)
+    .filter((school) => (school.udiseCode || school.schoolName) && matchesSchoolFilters(school, { state, district, block }))
+    .slice(0, limit);
+};
+
+const getVidyanjaliPostConfig = () => {
+  if (!VIDYANJALI_TOKEN || !VIDYANJALI_SECURE_PAYLOAD) return null;
+  return {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Origin: VIDYANJALI_BASE_URL,
+      Referer: `${VIDYANJALI_BASE_URL}/all-schools`,
+      token: VIDYANJALI_TOKEN,
+      "User-Agent": "Mozilla/5.0 Vidyanjali live school exporter",
+    },
+    body: JSON.stringify({ secure: VIDYANJALI_SECURE_PAYLOAD }),
+  };
+};
+
+const sendLocalVidyanjaliFallback = (res, filters, warning = "") => {
+  try {
+    const rows = getLocalVidyanjaliSchools(filters);
+    return res.json({
+      source: "bundled Vidyanjali school data",
+      mode: "local-fallback",
+      count: rows.length,
+      schools: rows,
+      warning,
+    });
+  } catch (error) {
+    console.error("Vidyanjali local fallback failed", error);
+    return res.status(503).json({
+      error: "Vidyanjali search failed and bundled fallback data could not be loaded.",
+      details: error.message,
+    });
+  }
 };
 
 app.get("/api/vidyanjali/schools", async (req, res) => {
   const { state = "TELANGANA", district = "", block = "", pageSize = "5000" } = req.query;
+  const filters = { state, district, block, pageSize };
+  const target = new URL(VIDYANJALI_SEARCH_URL, VIDYANJALI_BASE_URL);
+  const requestConfig = getVidyanjaliPostConfig();
 
-  if (!VIDYANJALI_SEARCH_URL) {
-    return res.status(503).json({
-      error: "Live Vidyanjali search API is not configured on the server.",
-      setup: "Set VIDYANJALI_SEARCH_URL to the official Vidyanjali school-search JSON endpoint, then restart the API server.",
-    });
+  if (!requestConfig) {
+    return sendLocalVidyanjaliFallback(
+      res,
+      filters,
+      "Live Vidyanjali POST search requires VIDYANJALI_TOKEN and VIDYANJALI_SECURE_PAYLOAD from the browser network trace.",
+    );
   }
 
-  const target = new URL(VIDYANJALI_SEARCH_URL, VIDYANJALI_BASE_URL);
-  target.searchParams.set("state", state);
-  if (district) target.searchParams.set("district", district);
-  if (block) target.searchParams.set("block", block);
-  target.searchParams.set("length", pageSize);
-  target.searchParams.set("pageSize", pageSize);
-
   try {
-    const response = await fetch(target, {
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        "User-Agent": "Mozilla/5.0 Vidyanjali live school exporter",
-        Referer: `${VIDYANJALI_BASE_URL}/all-schools`,
-      },
-    });
+    const response = await fetch(target, requestConfig);
     const contentType = response.headers.get("content-type") || "";
     const payload = contentType.includes("application/json") ? await response.json() : JSON.parse(await response.text());
     if (!response.ok) return res.status(response.status).json({ error: payload?.error || "Vidyanjali live search failed." });
-    const rows = asArray(payload).map(normalizeSchool).filter((school) => school.udiseCode || school.schoolName);
-    return res.json({ source: target.toString(), count: rows.length, schools: rows });
+    const rows = findSchoolRows(payload)
+      .map(normalizeSchool)
+      .filter((school) => (school.udiseCode || school.schoolName) && matchesSchoolFilters(school, filters))
+      .slice(0, Number(pageSize) || 5000);
+    return res.json({ source: target.toString(), mode: "live", count: rows.length, schools: rows });
   } catch (error) {
     console.error("Vidyanjali live search failed", error);
-    return res.status(502).json({ error: "Unable to complete live Vidyanjali search.", details: error.message });
+    return sendLocalVidyanjaliFallback(res, filters, `Unable to complete live Vidyanjali POST search from ${target.toString()}: ${error.message}`);
   }
 });
 

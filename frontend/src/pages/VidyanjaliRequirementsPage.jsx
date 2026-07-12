@@ -8,6 +8,12 @@ const pageSizes = [20, 40, 60, 100];
 const formatMoney = (value) => currency.format(Number(value) || 0);
 const unique = (values) => [...new Set(values.filter(Boolean))].sort();
 const normalize = (value) => String(value || "").toUpperCase();
+const getApiBaseUrl = () => {
+  const configured = (import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+  if (configured) return configured;
+  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") return "http://localhost:5000";
+  return "";
+};
 
 function PlanningDocument({ proposal }) {
   if (!proposal) return <p className="vj-muted">Click Final Preview after selecting a school and requirement items to generate the planning document.</p>;
@@ -301,13 +307,14 @@ export default function VidyanjaliRequirementsPage() {
     setError("");
     setLiveSearchStatus("Searching the live Vidyanjali portal...");
     try {
-      const configuredApiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+      const configuredApiBaseUrl = getApiBaseUrl();
       const params = new URLSearchParams({ state: filters.state || "TELANGANA", district: filters.district, block: filters.block });
       const response = await fetch(`${configuredApiBaseUrl}/api/vidyanjali/schools?${params.toString()}`);
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || data.setup || "Live Vidyanjali search failed.");
       const imported = mergeLiveSchools(data.schools || []);
-      setLiveSearchStatus(`${data.count || 0} live rows received; ${imported.length} new rows added. Downloading Excel...`);
+      const sourceNote = data.warning || data.setup || "";
+      setLiveSearchStatus(`${data.count || 0} ${data.mode === "local-fallback" ? "bundled" : "live"} rows received; ${imported.length} new rows added. Downloading Excel...${sourceNote ? ` ${sourceNote}` : ""}`);
       const headers = ["UDISE Code", "School Name", "Address", "State", "District", "Block", "Status", "Action"];
       const groups = {};
       (data.schools || []).forEach((school) => {
@@ -317,7 +324,7 @@ export default function VidyanjaliRequirementsPage() {
       });
       if (Object.keys(groups).length) downloadFile("vidyanjali-live-schools-by-mandal.xls", workbookXml(groups));
     } catch (liveError) {
-      setError(`${liveError.message} To run live search locally, start the API server with VIDYANJALI_SEARCH_URL configured and set VITE_API_BASE_URL=http://localhost:5000 for the frontend.`);
+      setError(`${liveError.message} Start the API server on http://localhost:5000. If it runs elsewhere, set VITE_API_BASE_URL in frontend/.env and restart npm run dev. You can also use Download Loaded Schools Excel by Mandal to export the bundled school data.`);
       setLiveSearchStatus("");
     } finally {
       setIsLiveSearching(false);
