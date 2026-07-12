@@ -3210,3 +3210,79 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
     grid-template-columns: 1fr;
   }
 }
+.pankhudi-budget-card,
+.pankhudi-line-items-card,
+.pankhudi-all-details-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #fff;
+  margin-top: 18px;
+  padding: 18px;
+}
+.pankhudi-budget-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.6fr);
+  gap: 18px;
+  background: linear-gradient(135deg, #fff7ed, #ffffff);
+}
+.pankhudi-budget-card h3 {
+  color: #c2410c;
+  font-size: clamp(30px, 5vw, 48px);
+  margin: 6px 0 8px;
+}
+.pankhudi-budget-card dl,
+.pankhudi-all-details-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.pankhudi-budget-card dl div,
+.pankhudi-all-details-card dl div {
+  border-bottom: 1px solid #e2e8f0;
+  display: grid;
+  gap: 4px;
+  padding-bottom: 10px;
+}
+.pankhudi-budget-card dt,
+.pankhudi-all-details-card dt {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.pankhudi-budget-card dd,
+.pankhudi-all-details-card dd {
+  color: #0f172a;
+  font-weight: 800;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.pankhudi-table-wrap {
+  overflow: auto;
+}
+.pankhudi-line-items-card table {
+  border-collapse: collapse;
+  min-width: 720px;
+  width: 100%;
+}
+.pankhudi-line-items-card th,
+.pankhudi-line-items-card td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.pankhudi-line-items-card th {
+  color: #475569;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.pankhudi-all-details-card dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 980px) {
+  .pankhudi-budget-card,
+  .pankhudi-all-details-card dl {
+    grid-template-columns: 1fr;
+  }
+}

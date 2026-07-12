@@ -1323,7 +1323,6 @@ const PANKHUDI_SOURCE_URL = "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projec
 const PANKHUDI_STORAGE_KEY = "giveForSociety:pankhudi:savedProjects";
 
 const PANKHUDI_IMPLEMENTATION_MODULES = [
-  { title: "Excel import & reconciliation", detail: "Previewable, versioned, repeat-safe imports for ~250 projects and ~1,134 line items from source workbooks, covering centres, categories, quantities, timelines, rates, allocations, and data-quality flags." },
   { title: "Planning, batching & assignments", detail: "Select execution projects, group by district/mandal/route, create batches, assign field officers and installation teams, set dates, compare planned versus completed work, and flag blocked or overdue projects." },
   { title: "Detailed estimates & BoQs", detail: "Generate low/planning/high estimates with freight, installation, taxes, contingency, warranty/AMC, funding gaps, and full/partial/deferred/convergence decisions while preserving the approved RO/UV/UF provision." },
   { title: "Procurement automation", detail: "Manage requisitions, RFQs, vendor invitations, three-quotation comparison, compliance, landed cost, PO/WO, challan, GRN, commissioning, defects, retention, warranty, and final payment with segregation of duties." },
@@ -1332,32 +1331,6 @@ const PANKHUDI_IMPLEMENTATION_MODULES = [
   { title: "Documents & project dossier", detail: "Generate branded operational documents, never manufacture vendor GST invoices, and assemble one downloadable ZIP dossier per project UID." },
   { title: "PANKHUDI status tracking", detail: "Keep manual portal-status updates, CSV/XLSX imports, last sync/source history, difference reports, and a disabled future official-API adapter." },
   { title: "Mobile field app", detail: "Provide mobile-friendly assigned-centre routes, checklists, photos, geolocation, timestamps, serial numbers, defects, acknowledgments, offline capture, and later sync." },
-];
-
-const PANKHUDI_CAPACITY_ASSUMPTIONS = [
-  ["Purifier/simple asset projects", "10–15 per week"],
-  ["Mixed equipment", "8–12 per week"],
-  ["Solar/electrical", "4–6 per week"],
-  ["Painting/BALA/site-specific work", "2–4 per week"],
-];
-
-const PANKHUDI_FINANCE_SNAPSHOT = [
-  ["Facility requested", "₹25,00,000"],
-  ["Tranche 1", "₹8,00,000 for minor projects"],
-  ["Tranche 2", "₹17,00,000 for medium projects"],
-  ["Selected portfolio", "33 minor + 37 medium projects"],
-  ["Complex projects", "Excluded unless separately approved"],
-  ["Repayment waterfall", "CSR/project receipt → bank interest → outstanding principal → remaining project balance"],
-];
-
-const PANKHUDI_PURIFIER_EVIDENCE = [
-  "Water-source assessment",
-  "TDS/site assessment",
-  "RO/UV/UF selection",
-  "Inlet, outlet, electricity and drainage readiness",
-  "Serial number, filter/storage capacity and pre-filter details",
-  "Installation checklist, commissioning test and user demonstration",
-  "Warranty, service contact and first-service due date",
 ];
 
 function extractPankhudiRows(payload) {
@@ -1385,6 +1358,67 @@ function getProjectValue(project, keys, fallback = "—") {
 
 function getProjectId(project, index) {
   return `${getProjectValue(project, ["projectUid", "projectUID", "projectId", "projectID", "id", "uid"], `row-${index + 1}`)}`;
+}
+
+
+function formatPankhudiLabel(key) {
+  return `${key}`
+    .replace(/[_-]+/g, " ")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function toPankhudiNumber(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string") return 0;
+  const normalized = value.replace(/,/g, "").replace(/₹/g, "").trim();
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatPankhudiMoney(value) {
+  const amount = toPankhudiNumber(value);
+  return amount ? amount.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }) : "—";
+}
+
+function isPlainPankhudiValue(value) {
+  return value === null || ["string", "number", "boolean"].includes(typeof value);
+}
+
+function findPankhudiLineItems(project) {
+  const candidates = [
+    "lineItems", "lineItemDetails", "items", "itemDetails", "components", "requirements",
+    "projectItems", "projectDetails", "estimateItems", "budgetItems", "works",
+  ];
+  for (const key of candidates) {
+    if (Array.isArray(project?.[key]) && project[key].length) return project[key];
+  }
+  const nestedArray = Object.values(project || {}).find((value) => Array.isArray(value) && value.some((row) => row && typeof row === "object" && !Array.isArray(row)));
+  return nestedArray || [];
+}
+
+function getPankhudiDetailRows(project) {
+  return Object.entries(project || {})
+    .filter(([, value]) => isPlainPankhudiValue(value))
+    .map(([key, value]) => [formatPankhudiLabel(key), value === null || value === "" ? "—" : `${value}`]);
+}
+
+function getPankhudiLineItemSummary(item, index) {
+  const name = getProjectValue(item, ["itemName", "name", "componentName", "workName", "requirementName", "description", "projectName"], `Line item ${index + 1}`);
+  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "noOfUnits", "requiredQuantity"], 1));
+  const unitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "rate", "cost", "unitRate", "estimatedRate"], 0));
+  const explicitAmount = toPankhudiNumber(getProjectValue(item, ["amount", "estimatedAmount", "totalAmount", "lineTotal", "projectCost", "budget"], 0));
+  const calculatedAmount = explicitAmount || quantity * unitCost;
+  return { name, quantity, unitCost, amount: calculatedAmount, raw: item };
+}
+
+function getPankhudiBudgetSummary(project) {
+  const lineItems = findPankhudiLineItems(project).map(getPankhudiLineItemSummary);
+  const lineItemTotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
+  const projectAmount = toPankhudiNumber(getProjectValue(project, ["amount", "estimatedAmount", "projectCost", "totalAmount", "budget", "estimatedBudget"], 0));
+  return { lineItems, total: lineItemTotal || projectAmount, projectAmount, lineItemTotal };
 }
 
 function loadSavedPankhudiProjects() {
@@ -1493,6 +1527,8 @@ function PankhudiProjectsPage() {
 
   const selectedId = selectedProject ? getProjectId(selectedProject, projects.indexOf(selectedProject)) : "";
   const selectedSaved = selectedId ? savedProjects[selectedId] : null;
+  const selectedDetailRows = selectedProject ? getPankhudiDetailRows(selectedProject) : [];
+  const selectedBudget = selectedProject ? getPankhudiBudgetSummary(selectedProject) : { lineItems: [], total: 0, projectAmount: 0, lineItemTotal: 0 };
 
   return (
     <>
@@ -1526,7 +1562,7 @@ function PankhudiProjectsPage() {
           <div className="pankhudi-section-head">
             <p className="eyebrow orange">IMPLEMENTATION OPERATING SYSTEM</p>
             <h2>What this workspace is being built to manage</h2>
-            <p>These modules translate the source-data workbooks and field process into a repeatable implementation, procurement, finance, evidence, and dossier workflow for Anganwadi projects.</p>
+            <p>These modules turn the live project feed and field process into a repeatable implementation, procurement, finance, evidence, and dossier workflow for Anganwadi projects.</p>
           </div>
           <div className="pankhudi-module-grid">
             {PANKHUDI_IMPLEMENTATION_MODULES.map((module) => (
@@ -1539,26 +1575,6 @@ function PankhudiProjectsPage() {
           </div>
         </section>
 
-        <section className="pankhudi-planning-grid" aria-label="Planning, finance and evidence guardrails">
-          <article className="pankhudi-info-card">
-            <h2>Editable team capacity assumptions</h2>
-            <p>Defaults for a 10–12 person implementation team; planners can tune these before creating weekly schedules.</p>
-            <dl>{PANKHUDI_CAPACITY_ASSUMPTIONS.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-          </article>
-          <article className="pankhudi-info-card highlight">
-            <h2>Approved purifier planning provision</h2>
-            <strong>₹6,81,000</strong>
-            <p>30 RO/UV/UF packages at an average of ₹22,700 per centre. The estimate engine must preserve this amount and must not fall back to the earlier ₹1,400 gravity-filter assumption.</p>
-          </article>
-          <article className="pankhudi-info-card">
-            <h2>₹25 lakh bank facility controls</h2>
-            <dl>{PANKHUDI_FINANCE_SNAPSHOT.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-          </article>
-          <article className="pankhudi-info-card">
-            <h2>Water-purifier hard evidence</h2>
-            <ul>{PANKHUDI_PURIFIER_EVIDENCE.map((item) => <li key={item}>{item}</li>)}</ul>
-          </article>
-        </section>
 
         <section className="pankhudi-workspace">
           <aside className="pankhudi-list-panel">
@@ -1616,7 +1632,44 @@ function PankhudiProjectsPage() {
                   <article><span>Village</span><strong>{getProjectValue(selectedProject, ["villageName", "village", "habitationName"])}</strong></article>
                   <article><span>Category</span><strong>{getProjectValue(selectedProject, ["categoryName", "category", "projectCategory"])}</strong></article>
                   <article><span>Status</span><strong>{getProjectValue(selectedProject, ["statusName", "status", "projectStatus"])}</strong></article>
-                  <article><span>Estimated Amount</span><strong>{getProjectValue(selectedProject, ["amount", "estimatedAmount", "projectCost", "totalAmount"])}</strong></article>
+                  <article><span>Estimated Budget Required</span><strong>{formatPankhudiMoney(selectedBudget.total)}</strong></article>
+                </div>
+
+                <div className="pankhudi-budget-card">
+                  <div>
+                    <p className="eyebrow">BUDGET CALCULATION</p>
+                    <h3>{formatPankhudiMoney(selectedBudget.total)}</h3>
+                    <p>Calculated from live line items when available; otherwise the project-level estimated amount is shown.</p>
+                  </div>
+                  <dl>
+                    <div><dt>Project amount in feed</dt><dd>{formatPankhudiMoney(selectedBudget.projectAmount)}</dd></div>
+                    <div><dt>Line items detected</dt><dd>{selectedBudget.lineItems.length}</dd></div>
+                    <div><dt>Line-item total</dt><dd>{formatPankhudiMoney(selectedBudget.lineItemTotal)}</dd></div>
+                  </dl>
+                </div>
+
+                <div className="pankhudi-line-items-card">
+                  <h3>Line items and estimated amounts</h3>
+                  {selectedBudget.lineItems.length ? (
+                    <div className="pankhudi-table-wrap">
+                      <table>
+                        <thead><tr><th>Line item</th><th>Quantity</th><th>Unit cost</th><th>Estimated amount</th></tr></thead>
+                        <tbody>{selectedBudget.lineItems.map((item, index) => (
+                          <tr key={`${item.name}-${index}`}>
+                            <td>{item.name}</td>
+                            <td>{item.quantity || "—"}</td>
+                            <td>{formatPankhudiMoney(item.unitCost)}</td>
+                            <td>{formatPankhudiMoney(item.amount)}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                  ) : <p>No separate line-item array was found in this project payload. The estimated budget above uses the project-level amount from the live feed.</p>}
+                </div>
+
+                <div className="pankhudi-all-details-card">
+                  <h3>All project details from live payload</h3>
+                  <dl>{selectedDetailRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
                 </div>
 
                 <div className="pankhudi-save-card">
