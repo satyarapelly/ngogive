@@ -1417,28 +1417,54 @@ function isPlainPankhudiValue(value) {
 function findPankhudiLineItems(project) {
   const candidates = [
     "lineItems", "lineItemDetails", "items", "itemDetails", "components", "requirements",
-    "projectItems", "projectDetails", "estimateItems", "budgetItems", "works",
+    "projectItems", "projectLineItems", "projectLineItem", "projectActivities", "projectActivity",
+    "activityDetails", "activities", "estimateItems", "estimateLines", "budgetItems", "works",
   ];
   for (const key of candidates) {
     if (Array.isArray(project?.[key]) && project[key].length) return project[key];
   }
-  const nestedArray = Object.values(project || {}).find((value) => Array.isArray(value) && value.some((row) => row && typeof row === "object" && !Array.isArray(row)));
-  return nestedArray || [];
+
+  const nestedMatches = [];
+  const visit = (value, path = []) => {
+    if (!value || typeof value !== "object") return;
+    if (Array.isArray(value)) {
+      const pathKey = path.join(".").toLowerCase();
+      const looksLikeLineItemPath = /(line|item|activity|estimate|budget|component|requirement|work)/.test(pathKey)
+        && !/(centre|center|anganwadi|status|history|evidence|photo|document)/.test(pathKey);
+      const objectRows = value.filter((row) => row && typeof row === "object" && !Array.isArray(row));
+      const looksLikeLineItemRows = objectRows.some((row) => {
+        const keys = Object.keys(row).map(normalizePankhudiKey);
+        return keys.some((key) => /(item|activity|component|requirement|work|description|quantity|qty|unitcost|estimatedamount|amount|rate)/.test(key));
+      });
+      if (objectRows.length && looksLikeLineItemPath && looksLikeLineItemRows) nestedMatches.push(value);
+      return;
+    }
+    Object.entries(value).forEach(([key, child]) => visit(child, [...path, key]));
+  };
+  visit(project);
+  return nestedMatches.sort((a, b) => b.length - a.length)[0] || [];
 }
 
 function getPankhudiDetailRows(project) {
-  return Object.entries(project || {})
-    .filter(([, value]) => isPlainPankhudiValue(value))
+  return flattenPankhudiObject(project)
     .map(([key, value]) => [formatPankhudiLabel(key), value === null || value === "" ? "—" : `${value}`]);
 }
 
+function findPankhudiCentres(project) {
+  const candidates = ["projectCentre", "projectCentres", "projectCenters", "centres", "centers", "anganwadiCentres", "anganwadiCenters"];
+  for (const key of candidates) {
+    if (Array.isArray(project?.[key]) && project[key].length) return project[key];
+  }
+  return [];
+}
+
 function getPankhudiLineItemSummary(item, index) {
-  const name = getProjectValue(item, ["itemName", "name", "componentName", "workName", "requirementName", "description", "projectName"], `Line item ${index + 1}`);
-  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "noOfUnits", "requiredQuantity"], 1));
-  const unitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "rate", "cost", "unitRate", "estimatedRate"], 0));
-  const explicitAmount = toPankhudiNumber(getProjectValue(item, ["amount", "estimatedAmount", "totalAmount", "lineTotal", "projectCost", "budget"], 0));
+  const name = getProjectValue(item, ["itemName", "lineItemName", "activityName", "name", "componentName", "workName", "requirementName", "description", "projectName"], `Line item ${index + 1}`);
+  const quantity = toPankhudiNumber(getProjectValue(item, ["quantity", "qty", "units", "noOfUnits", "requiredQuantity", "approvedQuantity", "totalQuantity"], 1));
+  const unitCost = toPankhudiNumber(getProjectValue(item, ["unitCost", "unitcost", "unit_cost", "rate", "cost", "unitRate", "estimatedRate", "estimatedUnitCost"], 0));
+  const explicitAmount = toPankhudiNumber(getProjectValue(item, ["estimatedAmount", "estimatedAmt", "amount", "totalAmount", "lineTotal", "projectCost", "budget", "totalCost"], 0));
   const calculatedAmount = explicitAmount || quantity * unitCost;
-  return { name, quantity, unitCost, amount: calculatedAmount, raw: item };
+  return { name, quantity, unitCost, estimatedAmount: explicitAmount, amount: calculatedAmount, raw: item };
 }
 
 function getPankhudiBudgetSummary(project) {
@@ -1555,6 +1581,7 @@ function PankhudiProjectsPage() {
   const selectedId = selectedProject ? getProjectId(selectedProject, projects.indexOf(selectedProject)) : "";
   const selectedSaved = selectedId ? savedProjects[selectedId] : null;
   const selectedDetailRows = selectedProject ? getPankhudiDetailRows(selectedProject) : [];
+  const selectedCentres = selectedProject ? findPankhudiCentres(selectedProject) : [];
   const selectedBudget = selectedProject ? getPankhudiBudgetSummary(selectedProject) : { lineItems: [], total: 0, projectAmount: 0, lineItemTotal: 0 };
 
   return (
@@ -1654,12 +1681,32 @@ function PankhudiProjectsPage() {
                 </div>
 
                 <div className="pankhudi-detail-grid">
-                  <article><span>Centre</span><strong>{getProjectValue(selectedProject, ["anganwadiName", "centerName", "centreName", "awcName"])}</strong></article>
+                  <article><span>Centre</span><strong>{selectedCentres.length ? getProjectValue(selectedCentres[0], ["name", "centreName", "centerName", "anganwadiName", "awcName"]) : getProjectValue(selectedProject, ["anganwadiName", "centerName", "centreName", "awcName"])}</strong></article>
                   <article><span>Mandal / Block</span><strong>{getProjectValue(selectedProject, ["mandalName", "mandal", "blockName"])}</strong></article>
                   <article><span>Village</span><strong>{getProjectValue(selectedProject, ["villageName", "village", "habitationName"])}</strong></article>
                   <article><span>Category</span><strong>{getProjectValue(selectedProject, ["categoryName", "category", "projectCategory"])}</strong></article>
                   <article><span>Status</span><strong>{getProjectValue(selectedProject, ["statusName", "status", "projectStatus"])}</strong></article>
                   <article><span>Estimated Budget Required</span><strong>{formatPankhudiMoney(selectedBudget.total)}</strong></article>
+                </div>
+
+                <div className="pankhudi-centres-card">
+                  <h3>Centre details</h3>
+                  {selectedCentres.length ? (
+                    <div className="pankhudi-table-wrap">
+                      <table>
+                        <thead><tr><th>Centre</th><th>Type</th><th>Anganwadi ID</th><th>Code</th><th>Project centre ID</th></tr></thead>
+                        <tbody>{selectedCentres.map((centre, index) => (
+                          <tr key={`${getProjectValue(centre, ["id"], index)}-${index}`}>
+                            <td>{getProjectValue(centre, ["name", "centreName", "centerName", "anganwadiName", "awcName"], `Centre ${index + 1}`)}</td>
+                            <td>{getProjectValue(centre, ["centreTypeName", "centerTypeName", "typeName", "centreType", "centerType"])}</td>
+                            <td>{getProjectValue(centre, ["anganwadiId", "anganwadiID", "awcId"])}</td>
+                            <td>{getProjectValue(centre, ["code", "centreCode", "centerCode", "awcCode"])}</td>
+                            <td>{getProjectValue(centre, ["id", "projectCentreId", "projectCenterId"])}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                  ) : <p>No separate projectCentre array was found in this project payload.</p>}
                 </div>
 
                 <div className="pankhudi-budget-card">

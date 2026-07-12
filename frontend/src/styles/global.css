@@ -3211,6 +3211,7 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
   }
 }
 .pankhudi-budget-card,
+.pankhudi-centres-card,
 .pankhudi-line-items-card,
 .pankhudi-all-details-card {
   border: 1px solid #e2e8f0;
@@ -3260,11 +3261,14 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
 .pankhudi-table-wrap {
   overflow: auto;
 }
+.pankhudi-centres-card table,
 .pankhudi-line-items-card table {
   border-collapse: collapse;
   min-width: 720px;
   width: 100%;
 }
+.pankhudi-centres-card th,
+.pankhudi-centres-card td,
 .pankhudi-line-items-card th,
 .pankhudi-line-items-card td {
   border-bottom: 1px solid #e2e8f0;
@@ -3272,6 +3276,7 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
   text-align: left;
   vertical-align: top;
 }
+.pankhudi-centres-card th,
 .pankhudi-line-items-card th {
   color: #475569;
   font-size: 12px;
