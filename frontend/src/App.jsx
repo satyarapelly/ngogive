@@ -1322,6 +1322,44 @@ const PANKHUDI_PROJECTS_URL = "/api/pankhudi/projects";
 const PANKHUDI_SOURCE_URL = "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
 const PANKHUDI_STORAGE_KEY = "giveForSociety:pankhudi:savedProjects";
 
+const PANKHUDI_IMPLEMENTATION_MODULES = [
+  { title: "Excel import & reconciliation", detail: "Previewable, versioned, repeat-safe imports for ~250 projects and ~1,134 line items from source workbooks, covering centres, categories, quantities, timelines, rates, allocations, and data-quality flags." },
+  { title: "Planning, batching & assignments", detail: "Select execution projects, group by district/mandal/route, create batches, assign field officers and installation teams, set dates, compare planned versus completed work, and flag blocked or overdue projects." },
+  { title: "Detailed estimates & BoQs", detail: "Generate low/planning/high estimates with freight, installation, taxes, contingency, warranty/AMC, funding gaps, and full/partial/deferred/convergence decisions while preserving the approved RO/UV/UF provision." },
+  { title: "Procurement automation", detail: "Manage requisitions, RFQs, vendor invitations, three-quotation comparison, compliance, landed cost, PO/WO, challan, GRN, commissioning, defects, retention, warranty, and final payment with segregation of duties." },
+  { title: "Evidence by line item", detail: "Automatically generate universal and water-purifier evidence checklists; hard-blocking evidence must be reviewed and approved before completion." },
+  { title: "Finance & bank facility", detail: "Track the ₹25,00,000 facility, tranche drawdowns, allocations, invoices, payments, CSR receipts, bank charges, repayment waterfall, and outstanding principal." },
+  { title: "Documents & project dossier", detail: "Generate branded operational documents, never manufacture vendor GST invoices, and assemble one downloadable ZIP dossier per project UID." },
+  { title: "PANKHUDI status tracking", detail: "Keep manual portal-status updates, CSV/XLSX imports, last sync/source history, difference reports, and a disabled future official-API adapter." },
+  { title: "Mobile field app", detail: "Provide mobile-friendly assigned-centre routes, checklists, photos, geolocation, timestamps, serial numbers, defects, acknowledgments, offline capture, and later sync." },
+];
+
+const PANKHUDI_CAPACITY_ASSUMPTIONS = [
+  ["Purifier/simple asset projects", "10–15 per week"],
+  ["Mixed equipment", "8–12 per week"],
+  ["Solar/electrical", "4–6 per week"],
+  ["Painting/BALA/site-specific work", "2–4 per week"],
+];
+
+const PANKHUDI_FINANCE_SNAPSHOT = [
+  ["Facility requested", "₹25,00,000"],
+  ["Tranche 1", "₹8,00,000 for minor projects"],
+  ["Tranche 2", "₹17,00,000 for medium projects"],
+  ["Selected portfolio", "33 minor + 37 medium projects"],
+  ["Complex projects", "Excluded unless separately approved"],
+  ["Repayment waterfall", "CSR/project receipt → bank interest → outstanding principal → remaining project balance"],
+];
+
+const PANKHUDI_PURIFIER_EVIDENCE = [
+  "Water-source assessment",
+  "TDS/site assessment",
+  "RO/UV/UF selection",
+  "Inlet, outlet, electricity and drainage readiness",
+  "Serial number, filter/storage capacity and pre-filter details",
+  "Installation checklist, commissioning test and user demonstration",
+  "Warranty, service contact and first-service due date",
+];
+
 function extractPankhudiRows(payload) {
   if (Array.isArray(payload)) return payload;
   const candidates = [
@@ -1483,6 +1521,44 @@ function PankhudiProjectsPage() {
         </section>
 
         {message.text && <div className={`pankhudi-message ${message.type}`} role="status">{message.text}</div>}
+
+        <section className="pankhudi-command-center" aria-label="PANKHUDI implementation command centre">
+          <div className="pankhudi-section-head">
+            <p className="eyebrow orange">IMPLEMENTATION OPERATING SYSTEM</p>
+            <h2>What this workspace is being built to manage</h2>
+            <p>These modules translate the source-data workbooks and field process into a repeatable implementation, procurement, finance, evidence, and dossier workflow for Anganwadi projects.</p>
+          </div>
+          <div className="pankhudi-module-grid">
+            {PANKHUDI_IMPLEMENTATION_MODULES.map((module) => (
+              <article key={module.title}>
+                <span><FileText size={18} /></span>
+                <h3>{module.title}</h3>
+                <p>{module.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="pankhudi-planning-grid" aria-label="Planning, finance and evidence guardrails">
+          <article className="pankhudi-info-card">
+            <h2>Editable team capacity assumptions</h2>
+            <p>Defaults for a 10–12 person implementation team; planners can tune these before creating weekly schedules.</p>
+            <dl>{PANKHUDI_CAPACITY_ASSUMPTIONS.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+          </article>
+          <article className="pankhudi-info-card highlight">
+            <h2>Approved purifier planning provision</h2>
+            <strong>₹6,81,000</strong>
+            <p>30 RO/UV/UF packages at an average of ₹22,700 per centre. The estimate engine must preserve this amount and must not fall back to the earlier ₹1,400 gravity-filter assumption.</p>
+          </article>
+          <article className="pankhudi-info-card">
+            <h2>₹25 lakh bank facility controls</h2>
+            <dl>{PANKHUDI_FINANCE_SNAPSHOT.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+          </article>
+          <article className="pankhudi-info-card">
+            <h2>Water-purifier hard evidence</h2>
+            <ul>{PANKHUDI_PURIFIER_EVIDENCE.map((item) => <li key={item}>{item}</li>)}</ul>
+          </article>
+        </section>
 
         <section className="pankhudi-workspace">
           <aside className="pankhudi-list-panel">
