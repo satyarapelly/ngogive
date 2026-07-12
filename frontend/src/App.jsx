@@ -6,10 +6,14 @@ import {
   BookOpen,
   ChevronDown,
   FileText,
+  FolderKanban,
   Heart,
   ShieldCheck,
   Target,
   CheckCircle2,
+  RefreshCw,
+  Save,
+  Search,
 } from "lucide-react";
 import {
   NGO_LOGO,
@@ -111,6 +115,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
 
           <Link to="/support-a-cause" onClick={closeAll}>Support Us</Link>
           <Link to="/vidyanjali-requirements.html" onClick={closeAll}>Vidya Jyothi</Link>
+          <Link to="/pankhudi" onClick={closeAll}>PANKHUDI</Link>
           <Link to="/team" onClick={closeAll}>Our Team</Link>
           <a href="#contact" onClick={closeAll}>Contact Us</a>
         </nav>
@@ -150,6 +155,7 @@ function SiteHeader({ onOpenProgram, onGoHome }) {
             Support Us
           </Link>
           <Link className="mobile-panel-link" to="/vidyanjali-requirements.html" onClick={() => setMobileOpen(false)}>Vidya Jyothi</Link>
+          <Link className="mobile-panel-link" to="/pankhudi" onClick={() => setMobileOpen(false)}>PANKHUDI</Link>
           <Link className="mobile-panel-link" to="/team" onClick={() => setMobileOpen(false)}>Our Team</Link>
           <button onClick={() => { setMobileOpen(false); window.location.hash = "#contact"; }}>Contact Us</button>
           <div className="mobile-panel-actions">
@@ -1311,6 +1317,308 @@ function ProgramDetailRoute() {
   );
 }
 
+
+const PANKHUDI_PROJECTS_URL = "/api/pankhudi/projects";
+const PANKHUDI_SOURCE_URL = "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
+const PANKHUDI_STORAGE_KEY = "giveForSociety:pankhudi:savedProjects";
+
+function extractPankhudiRows(payload) {
+  if (Array.isArray(payload)) return payload;
+  const candidates = [
+    payload?.data?.content,
+    payload?.data?.projects,
+    payload?.data?.records,
+    payload?.data,
+    payload?.content,
+    payload?.projects,
+    payload?.records,
+    payload?.result,
+  ];
+  return candidates.find(Array.isArray) || [];
+}
+
+function getProjectValue(project, keys, fallback = "—") {
+  for (const key of keys) {
+    const value = project?.[key];
+    if (value !== undefined && value !== null && `${value}`.trim() !== "") return value;
+  }
+  return fallback;
+}
+
+function getProjectId(project, index) {
+  return `${getProjectValue(project, ["projectUid", "projectUID", "projectId", "projectID", "id", "uid"], `row-${index + 1}`)}`;
+}
+
+function loadSavedPankhudiProjects() {
+  if (typeof window === "undefined") return {};
+  try {
+    return JSON.parse(window.localStorage.getItem(PANKHUDI_STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function savePankhudiProjects(savedProjects) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(PANKHUDI_STORAGE_KEY, JSON.stringify(savedProjects));
+}
+
+function savedPankhudiSnapshots(savedProjects) {
+  return Object.values(savedProjects)
+    .map((saved) => saved?.snapshot)
+    .filter(Boolean);
+}
+
+function PankhudiProjectsPage() {
+  const navigate = useNavigate();
+  const [savedProjects, setSavedProjects] = useState(loadSavedPankhudiProjects);
+  const [projects, setProjects] = useState(() => savedPankhudiSnapshots(loadSavedPankhudiProjects()));
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "info", text: "Click “Load live PANKHUDI projects” to view current projects from the district feed." });
+  const [lastFetchedAt, setLastFetchedAt] = useState("");
+
+  const selectedProject = useMemo(
+    () => projects.find((project, index) => getProjectId(project, index) === selectedProjectId) || projects[0],
+    [projects, selectedProjectId],
+  );
+
+  const projectRows = useMemo(() => projects.map((project, index) => ({ project, id: getProjectId(project, index) })), [projects]);
+  const savedCount = Object.keys(savedProjects).length;
+
+  const filteredProjects = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    return projectRows.filter(({ project, id }) => {
+      const saved = savedProjects[id];
+      const status = saved?.internalStatus || "not-saved";
+      const matchesStatus = statusFilter === "all" || statusFilter === status;
+      const searchable = [
+        id,
+        getProjectValue(project, ["projectName", "name", "title", "projectTitle"], ""),
+        getProjectValue(project, ["anganwadiName", "centerName", "centreName", "awcName"], ""),
+        getProjectValue(project, ["mandalName", "mandal", "blockName"], ""),
+        getProjectValue(project, ["villageName", "village", "habitationName"], ""),
+      ].join(" ").toLowerCase();
+      return matchesStatus && (!normalizedSearch || searchable.includes(normalizedSearch));
+    });
+  }, [projectRows, savedProjects, searchTerm, statusFilter]);
+
+  const showSavedSnapshotsAfterLiveFailure = (errorText) => {
+    const savedSnapshots = savedPankhudiSnapshots(savedProjects);
+    if (savedSnapshots.length) {
+      setProjects(savedSnapshots);
+      setSelectedProjectId(getProjectId(savedSnapshots[0], 0));
+      setMessage({
+        type: "error",
+        text: `${errorText} Showing ${savedSnapshots.length} saved project snapshot${savedSnapshots.length === 1 ? "" : "s"} so contribution tracking can continue while live updates are unavailable.`,
+      });
+      return;
+    }
+    setMessage({ type: "error", text: errorText });
+  };
+
+  const readProjectResponse = async (response) => {
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const upstreamAttempt = Array.isArray(payload?.attempts) ? payload.attempts[payload.attempts.length - 1] : null;
+      const upstreamDetail = upstreamAttempt?.status ? ` Upstream attempt ended with ${upstreamAttempt.status} ${upstreamAttempt.statusText || ""}.` : "";
+      throw new Error(`${payload?.error || `PANKHUDI API returned ${response.status} ${response.statusText}`}.${upstreamDetail}`);
+    }
+    return Array.isArray(payload?.projects) ? payload.projects : extractPankhudiRows(payload);
+  };
+
+  const fetchLiveProjects = async () => {
+    setIsLoading(true);
+    setMessage({ type: "info", text: "Loading live PANKHUDI projects…" });
+    try {
+      let rows = [];
+      try {
+        const response = await fetch(`${PANKHUDI_PROJECTS_URL}?refresh=${Date.now()}`, { headers: { accept: "application/json" } });
+        rows = await readProjectResponse(response);
+      } catch (proxyError) {
+        const directResponse = await fetch(`${PANKHUDI_SOURCE_URL}&refresh=${Date.now()}`, { headers: { accept: "application/json" } });
+        rows = await readProjectResponse(directResponse).catch((directError) => {
+          throw new Error(`${proxyError.message} Direct source fallback also failed: ${directError.message}`);
+        });
+      }
+      if (!rows.length) throw new Error("The API response did not include project rows.");
+      setProjects(rows);
+      setSelectedProjectId(getProjectId(rows[0], 0));
+      const fetchedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      setLastFetchedAt(fetchedAt);
+      setMessage({ type: "success", text: `Loaded ${rows.length} live PANKHUDI projects. Last update: ${fetchedAt} IST.` });
+    } catch (error) {
+      showSavedSnapshotsAfterLiveFailure(`${error.message} Please retry in a few minutes or confirm the deployment can reach pankhudi.wcd.gov.in and PANKHUDI_PROJECTS_URL is correct.`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveSelectedProject = () => {
+    if (!selectedProject) return;
+    const index = projects.indexOf(selectedProject);
+    const id = getProjectId(selectedProject, index);
+    const nextSaved = {
+      ...savedProjects,
+      [id]: {
+        id,
+        savedAt: new Date().toISOString(),
+        internalStatus: savedProjects[id]?.internalStatus || "watching",
+        contributionPlan: savedProjects[id]?.contributionPlan || "",
+        snapshot: selectedProject,
+      },
+    };
+    setSavedProjects(nextSaved);
+    savePankhudiProjects(nextSaved);
+    setMessage({ type: "success", text: `Saved project ${id} to your internal PANKHUDI tracker.` });
+  };
+
+  const updateSavedProject = (id, patch) => {
+    const nextSaved = {
+      ...savedProjects,
+      [id]: {
+        ...savedProjects[id],
+        id,
+        updatedAt: new Date().toISOString(),
+        ...patch,
+      },
+    };
+    setSavedProjects(nextSaved);
+    savePankhudiProjects(nextSaved);
+  };
+
+  const selectedId = selectedProject ? getProjectId(selectedProject, projects.indexOf(selectedProject)) : "";
+  const selectedSaved = selectedId ? savedProjects[selectedId] : null;
+
+  return (
+    <>
+      <SiteHeader onOpenProgram={(slug) => navigate(`/programs/${slug}`)} onGoHome={() => navigate("/")} />
+      <main className="pankhudi-page">
+        <section className="pankhudi-hero">
+          <p className="eyebrow orange">PANKHUDI ANGANWADI PROJECTS</p>
+          <h1>Live project tracking for contribution planning.</h1>
+          <p>
+            View the Kumuram Bheem Asifabad PANKHUDI project feed, save projects to Give For Society’s internal tracker,
+            and maintain contribution status for future implementation batches.
+          </p>
+          <div className="pankhudi-actions">
+            <button type="button" className="btn btn-primary" onClick={fetchLiveProjects} disabled={isLoading}>
+              <RefreshCw size={16} /> {isLoading ? "Loading…" : "Load / refresh live projects"}
+            </button>
+            <a className="btn btn-outline" href={PANKHUDI_SOURCE_URL} target="_blank" rel="noreferrer">Open source API</a>
+          </div>
+        </section>
+
+        <section className="pankhudi-stats" aria-label="PANKHUDI project summary">
+          <article><strong>{projects.length || "—"}</strong><span>Live projects loaded</span></article>
+          <article><strong>{savedCount}</strong><span>Saved for contribution</span></article>
+          <article><strong>{filteredProjects.length || "—"}</strong><span>Matching current filters</span></article>
+          <article><strong>{lastFetchedAt || "Not loaded"}</strong><span>Last live update</span></article>
+        </section>
+
+        {message.text && <div className={`pankhudi-message ${message.type}`} role="status">{message.text}</div>}
+
+        <section className="pankhudi-workspace">
+          <aside className="pankhudi-list-panel">
+            <div className="pankhudi-filter-row">
+              <label>
+                <Search size={16} />
+                <input value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search project, centre, mandal…" />
+              </label>
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Filter by saved status">
+                <option value="all">All projects</option>
+                <option value="not-saved">Not saved</option>
+                <option value="watching">Watching</option>
+                <option value="shortlisted">Shortlisted</option>
+                <option value="contributing">Contributing</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div className="pankhudi-project-list">
+              {filteredProjects.length ? filteredProjects.map(({ project, id }) => {
+                const saved = savedProjects[id];
+                return (
+                  <button
+                    type="button"
+                    key={id}
+                    className={`pankhudi-project-row ${selectedId === id ? "active" : ""}`}
+                    onClick={() => setSelectedProjectId(id)}
+                  >
+                    <span className="pankhudi-project-icon"><FolderKanban size={18} /></span>
+                    <span>
+                      <strong>{getProjectValue(project, ["projectName", "name", "title", "projectTitle"], `Project ${id}`)}</strong>
+                      <small>{getProjectValue(project, ["anganwadiName", "centerName", "centreName", "awcName"], "Centre not listed")} · {getProjectValue(project, ["mandalName", "mandal", "blockName"], "Mandal not listed")}</small>
+                    </span>
+                    <em>{saved?.internalStatus || "not-saved"}</em>
+                  </button>
+                );
+              }) : <p className="empty-state">No projects loaded yet. Use the live load button above.</p>}
+            </div>
+          </aside>
+
+          <section className="pankhudi-detail-panel">
+            {selectedProject ? (
+              <>
+                <div className="pankhudi-detail-header">
+                  <div>
+                    <p className="eyebrow">PROJECT DETAILS</p>
+                    <h2>{getProjectValue(selectedProject, ["projectName", "name", "title", "projectTitle"], `Project ${selectedId}`)}</h2>
+                    <p>External ID: <strong>{selectedId}</strong></p>
+                  </div>
+                  <button type="button" className="btn btn-primary" onClick={saveSelectedProject}><Save size={16} /> Save project</button>
+                </div>
+
+                <div className="pankhudi-detail-grid">
+                  <article><span>Centre</span><strong>{getProjectValue(selectedProject, ["anganwadiName", "centerName", "centreName", "awcName"])}</strong></article>
+                  <article><span>Mandal / Block</span><strong>{getProjectValue(selectedProject, ["mandalName", "mandal", "blockName"])}</strong></article>
+                  <article><span>Village</span><strong>{getProjectValue(selectedProject, ["villageName", "village", "habitationName"])}</strong></article>
+                  <article><span>Category</span><strong>{getProjectValue(selectedProject, ["categoryName", "category", "projectCategory"])}</strong></article>
+                  <article><span>Status</span><strong>{getProjectValue(selectedProject, ["statusName", "status", "projectStatus"])}</strong></article>
+                  <article><span>Estimated Amount</span><strong>{getProjectValue(selectedProject, ["amount", "estimatedAmount", "projectCost", "totalAmount"])}</strong></article>
+                </div>
+
+                <div className="pankhudi-save-card">
+                  <h3>Internal contribution tracker</h3>
+                  {selectedSaved ? (
+                    <div className="pankhudi-save-form">
+                      <label>
+                        Internal status
+                        <select value={selectedSaved.internalStatus} onChange={(event) => updateSavedProject(selectedId, { internalStatus: event.target.value })}>
+                          <option value="watching">Watching</option>
+                          <option value="shortlisted">Shortlisted</option>
+                          <option value="contributing">Contributing</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </label>
+                      <label>
+                        Contribution plan / notes
+                        <textarea value={selectedSaved.contributionPlan || ""} onChange={(event) => updateSavedProject(selectedId, { contributionPlan: event.target.value })} placeholder="Example: water purifier support, evidence collection pending, batch 1…" />
+                      </label>
+                      <p>Saved at: {new Date(selectedSaved.savedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST</p>
+                    </div>
+                  ) : (
+                    <p>Save this project to start tracking contribution status, notes, and future implementation updates.</p>
+                  )}
+                </div>
+
+                <details className="pankhudi-raw-card">
+                  <summary>View full live project payload</summary>
+                  <pre>{JSON.stringify(selectedProject, null, 2)}</pre>
+                </details>
+              </>
+            ) : (
+              <div className="empty-state large">Load live projects to view details and save projects for contribution tracking.</div>
+            )}
+          </section>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
 function SupportCausePage() {
   const navigate = useNavigate();
   return (
@@ -1328,6 +1636,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePageRoute />} />
         <Route path="/support-a-cause" element={<SupportCausePage />} />
+        <Route path="/pankhudi" element={<PankhudiProjectsPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team.html" element={<TeamPage />} />
         <Route path="/vidyanjali-requirements.html" element={<VidyanjaliRequirementsPage />} />
