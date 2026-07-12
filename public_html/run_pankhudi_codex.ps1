@@ -15,7 +15,12 @@ if (-not (Test-Path $agentsFile)) {
   throw "Missing $agentsFile. Copy the Codex task pack into the repository root."
 }
 
+if (-not (Get-Command codex -ErrorAction SilentlyContinue)) {
+  throw "Missing codex CLI. Install/sign in to Codex CLI, then rerun this launcher."
+}
+
 New-Item -ItemType Directory -Force -Path ".\docs\source-data" | Out-Null
+New-Item -ItemType Directory -Force -Path ".\docs\pankhudi" | Out-Null
 
 Write-Host "Starting Codex in workspace-write mode..." -ForegroundColor Cyan
 Write-Host "Codex will inspect the existing repository, integrate the module, run tests, and write status documentation." -ForegroundColor Cyan
