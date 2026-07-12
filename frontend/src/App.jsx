@@ -1353,14 +1353,27 @@ function normalizePankhudiKey(key) {
 }
 
 function flattenPankhudiObject(value, prefix = "", rows = []) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return rows;
+  if (!value || typeof value !== "object") return rows;
+
+  if (Array.isArray(value)) {
+    value.forEach((child, index) => {
+      const label = prefix ? `${prefix}.${index + 1}` : `${index + 1}`;
+      if (isPlainPankhudiValue(child)) {
+        rows.push([label, child]);
+        return;
+      }
+      if (child && typeof child === "object") flattenPankhudiObject(child, label, rows);
+    });
+    return rows;
+  }
+
   Object.entries(value).forEach(([key, child]) => {
     const label = prefix ? `${prefix}.${key}` : key;
     if (isPlainPankhudiValue(child)) {
       rows.push([label, child]);
       return;
     }
-    if (child && typeof child === "object" && !Array.isArray(child)) flattenPankhudiObject(child, label, rows);
+    if (child && typeof child === "object") flattenPankhudiObject(child, label, rows);
   });
   return rows;
 }
@@ -1494,6 +1507,14 @@ function loadSavedPankhudiProjects() {
   } catch {
     return {};
   }
+}
+
+function getPankhudiNarrativeValue(project, budget, keys, lineItemKey, fallback = "Not listed") {
+  const projectValue = getProjectValue(project, keys, "");
+  if (`${projectValue}`.trim()) return projectValue;
+
+  const lineItem = budget.lineItems.find((item) => `${item[lineItemKey] || ""}`.trim());
+  return lineItem ? lineItem[lineItemKey] : fallback;
 }
 
 function savePankhudiProjects(savedProjects) {
@@ -1707,11 +1728,11 @@ function PankhudiProjectsPage() {
                 <div className="pankhudi-project-narrative-card">
                   <article>
                     <span>Expected outcome</span>
-                    <p>{getProjectValue(selectedProject, ["expectedOutcome", "outcome", "expectedResult"], "Not listed")}</p>
+                    <p>{getPankhudiNarrativeValue(selectedProject, selectedBudget, ["expectedOutcome", "outcome", "expectedResult"], "expectedOutcome")}</p>
                   </article>
                   <article>
                     <span>Any other details</span>
-                    <p>{getProjectValue(selectedProject, ["anyOtherDetails", "otherDetails", "remarks", "notes"], "Not listed")}</p>
+                    <p>{getPankhudiNarrativeValue(selectedProject, selectedBudget, ["anyOtherDetails", "otherDetails", "remarks", "notes"], "otherDetails")}</p>
                   </article>
                 </div>
 
