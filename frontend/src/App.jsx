@@ -1348,12 +1348,39 @@ function extractPankhudiRows(payload) {
   return candidates.find(Array.isArray) || [];
 }
 
+function normalizePankhudiKey(key) {
+  return `${key}`.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function flattenPankhudiObject(value, prefix = "", rows = []) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return rows;
+  Object.entries(value).forEach(([key, child]) => {
+    const label = prefix ? `${prefix}.${key}` : key;
+    if (isPlainPankhudiValue(child)) {
+      rows.push([label, child]);
+      return;
+    }
+    if (child && typeof child === "object" && !Array.isArray(child)) flattenPankhudiObject(child, label, rows);
+  });
+  return rows;
+}
+
 function getProjectValue(project, keys, fallback = "—") {
   for (const key of keys) {
     const value = project?.[key];
     if (value !== undefined && value !== null && `${value}`.trim() !== "") return value;
   }
-  return fallback;
+
+  const wantedKeys = keys.map(normalizePankhudiKey);
+  const flattened = flattenPankhudiObject(project);
+  const matched = flattened.find(([key, value]) => wantedKeys.includes(normalizePankhudiKey(key.split(".").pop())) && value !== undefined && value !== null && `${value}`.trim() !== "");
+  if (matched) return matched[1];
+
+  const containsMatched = flattened.find(([key, value]) => {
+    const normalized = normalizePankhudiKey(key);
+    return wantedKeys.some((wanted) => normalized.endsWith(wanted) || normalized.includes(wanted)) && value !== undefined && value !== null && `${value}`.trim() !== "";
+  });
+  return containsMatched ? containsMatched[1] : fallback;
 }
 
 function getProjectId(project, index) {
