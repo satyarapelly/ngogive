@@ -3088,3 +3088,125 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
     flex-direction: column;
   }
 }
+
+.pankhudi-command-center,
+.pankhudi-planning-grid {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px 24px;
+}
+.pankhudi-section-head {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  margin-bottom: 16px;
+  padding: 24px;
+}
+.pankhudi-section-head h2 {
+  color: #0f172a;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: -0.04em;
+  margin: 6px 0 10px;
+}
+.pankhudi-section-head p:not(.eyebrow) {
+  color: #475569;
+  line-height: 1.7;
+  max-width: 860px;
+}
+.pankhudi-module-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.pankhudi-module-grid article,
+.pankhudi-info-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  padding: 20px;
+}
+.pankhudi-module-grid article span {
+  align-items: center;
+  background: #fff7ed;
+  border-radius: 999px;
+  color: #f97316;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  margin-bottom: 12px;
+  width: 40px;
+}
+.pankhudi-module-grid h3,
+.pankhudi-info-card h2 {
+  color: #0f172a;
+  margin: 0 0 10px;
+}
+.pankhudi-module-grid p,
+.pankhudi-info-card p,
+.pankhudi-info-card li {
+  color: #475569;
+  line-height: 1.65;
+}
+.pankhudi-planning-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.pankhudi-info-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.pankhudi-info-card dl div {
+  border-top: 1px solid #e2e8f0;
+  display: grid;
+  gap: 4px;
+  grid-template-columns: 0.9fr 1.1fr;
+  padding-top: 10px;
+}
+.pankhudi-info-card dt {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.pankhudi-info-card dd {
+  color: #0f172a;
+  font-weight: 800;
+  margin: 0;
+}
+.pankhudi-info-card.highlight {
+  background: linear-gradient(135deg, #1e3560, #0f172a);
+  color: white;
+}
+.pankhudi-info-card.highlight h2,
+.pankhudi-info-card.highlight p {
+  color: white;
+}
+.pankhudi-info-card.highlight strong {
+  display: block;
+  font-size: clamp(34px, 6vw, 58px);
+  letter-spacing: -0.05em;
+  margin: 8px 0;
+}
+.pankhudi-info-card ul {
+  margin: 0;
+  padding-left: 20px;
+}
+@media (max-width: 980px) {
+  .pankhudi-module-grid,
+  .pankhudi-planning-grid {
+    grid-template-columns: 1fr;
+  }
+  .pankhudi-command-center,
+  .pankhudi-planning-grid {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .pankhudi-info-card dl div {
+    grid-template-columns: 1fr;
+  }
+}
