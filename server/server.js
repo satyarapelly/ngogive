@@ -33,6 +33,25 @@ app.use(cors());
 app.use(express.json());
 
 
+
+const DEFAULT_PANKHUDI_PROJECTS_URL =
+  "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
+
+const extractPankhudiRows = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  const candidates = [
+    payload?.data?.content,
+    payload?.data?.projects,
+    payload?.data?.records,
+    payload?.data,
+    payload?.content,
+    payload?.projects,
+    payload?.records,
+    payload?.result,
+  ];
+  return candidates.find(Array.isArray) || [];
+};
+
 const VIDYANJALI_BASE_URL = "https://vidyanjali.education.gov.in";
 const VIDYANJALI_SEARCH_URL = process.env.VIDYANJALI_SEARCH_URL || "";
 
@@ -58,6 +77,57 @@ const asArray = (payload) => {
   if (Array.isArray(payload?.aaData)) return payload.aaData;
   return [];
 };
+
+
+app.get("/api/pankhudi/projects", async (req, res) => {
+  const sourceUrl = process.env.PANKHUDI_PROJECTS_URL || DEFAULT_PANKHUDI_PROJECTS_URL;
+
+  try {
+    const response = await fetch(sourceUrl, {
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "User-Agent": "GiveForSociety-PANKHUDI-ProjectTracker/1.0",
+      },
+    });
+
+    const responseText = await response.text();
+    let payload = {};
+    if (responseText) {
+      try {
+        payload = JSON.parse(responseText);
+      } catch (parseError) {
+        return res.status(502).json({
+          error: "PANKHUDI API returned a non-JSON response.",
+          details: parseError.message,
+          sourceUrl,
+        });
+      }
+    }
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: `PANKHUDI API returned ${response.status} ${response.statusText}`,
+        sourceUrl,
+      });
+    }
+
+    const projects = extractPankhudiRows(payload);
+    return res.json({
+      fetchedAt: new Date().toISOString(),
+      sourceUrl,
+      totalProjects: projects.length,
+      projects,
+      raw: payload,
+    });
+  } catch (error) {
+    console.error("Error fetching PANKHUDI projects", error);
+    return res.status(502).json({
+      error: "Unable to fetch PANKHUDI projects.",
+      details: error.message,
+      sourceUrl,
+    });
+  }
+});
 
 app.get("/api/vidyanjali/schools", async (req, res) => {
   const { state = "TELANGANA", district = "", block = "", pageSize = "5000" } = req.query;
