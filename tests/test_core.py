@@ -66,3 +66,17 @@ def test_unknown_timeout_policy_is_refetch_not_blind_retry():
 
 def test_authentication_secrets_redacted():
     assert "abc" not in redact("Authorization: abc Cookie=secret csrf-token=tok sessionid=sid")
+
+def test_csv_reader_loads_required_columns(tmp_path):
+    from pankhudi_contribute.reader import read_projects
+    path = tmp_path / "projects.csv"
+    path.write_text("Project UID,Project ID,Complexity,Expected End Date,Likely Contribute Button State (Derived),Recommended Action\nPRJ-1,123,Minor,2026-08-01,Likely enabled,Go\n", encoding="utf-8")
+    rows = read_projects(path)
+    assert rows[0].project_uid == "PRJ-1"
+    assert rows[0].project_id == 123
+    assert rows[0].expected_end_date == date(2026, 8, 1)
+
+def test_reporting_writes_csv_without_openpyxl_requirement(tmp_path):
+    from pankhudi_contribute.reporting import write_reports
+    write_reports([{"Project UID": "PRJ-1"}], tmp_path)
+    assert (tmp_path / "contribution_results.csv").exists()
