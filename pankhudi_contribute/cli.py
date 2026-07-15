@@ -25,10 +25,31 @@ DEFAULT_SHEET = "Ready to Contribute"
 DEFAULT_STORAGE = ".secrets/pankhudi-storage-state.json"
 
 @app.command()
+<<<<<<< codex/automate-project-contribution-processing-j7xpx5
+def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd.gov.in") -> None:
+    """Open a visible browser so the operator can sign in and save Playwright storage state."""
+    try:
+        from playwright.sync_api import sync_playwright
+    except ModuleNotFoundError as exc:
+        raise typer.BadParameter("Playwright is required for login. Run: python -m pip install -e . && python -m playwright install chromium") from exc
+    target = Path(storage_state)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=False)
+        context = browser.new_context()
+        page = context.new_page()
+        page.goto(url)
+        typer.echo("A browser window is open. Sign in to PANKHUDI completely, then return here.")
+        typer.prompt("Press Enter after the portal shows your authenticated page")
+        context.storage_state(path=str(target))
+        browser.close()
+    typer.echo(f"Saved storage state to {target}")
+=======
 def login(storage_state: str = DEFAULT_STORAGE) -> None:
     typer.echo("Manual login helper placeholder.")
     typer.echo("For now, sign in with your browser and export Playwright storage state to this path:")
     typer.echo(f"  {storage_state}")
+>>>>>>> main
 
 @app.command()
 def plan(
