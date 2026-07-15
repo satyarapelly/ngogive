@@ -25,6 +25,7 @@ DEFAULT_SHEET = "Ready to Contribute"
 DEFAULT_STORAGE = ".secrets/pankhudi-storage-state.json"
 
 @app.command()
+<<<<<<< codex/automate-project-contribution-processing-j7xpx5
 def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd.gov.in") -> None:
     """Open a visible browser so the operator can sign in and save Playwright storage state."""
     try:
@@ -43,6 +44,12 @@ def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd
         context.storage_state(path=str(target))
         browser.close()
     typer.echo(f"Saved storage state to {target}")
+=======
+def login(storage_state: str = DEFAULT_STORAGE) -> None:
+    typer.echo("Manual login helper placeholder.")
+    typer.echo("For now, sign in with your browser and export Playwright storage state to this path:")
+    typer.echo(f"  {storage_state}")
+>>>>>>> main
 
 @app.command()
 def plan(

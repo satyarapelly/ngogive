@@ -70,6 +70,7 @@ Dry-run output files are written under `output/`:
 
 The `.secrets/` and `output/` directories are ignored by git.
 
+<<<<<<< codex/automate-project-contribution-processing-j7xpx5
 ## Refresh authentication
 
 If submit fails with `PANKHUDI authentication failed`, refresh the Playwright storage state:
@@ -81,6 +82,8 @@ python -m pankhudi_contribute login --storage-state .secrets/pankhudi-storage-st
 
 A visible browser opens. Sign in to PANKHUDI completely, return to the terminal, and press Enter. The storage-state file is saved under `.secrets/`.
 
+=======
+>>>>>>> main
 ## Live submit guardrails
 
 Live submission is guarded and requires explicit flags. Running `python -m pankhudi_contribute submit` by itself is expected to stop with a safety message. Use the submit command only after a one-project dry run has been reviewed and a payload exists under `output_single_test/planned_payloads/`:
