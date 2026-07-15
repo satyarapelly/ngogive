@@ -158,6 +158,7 @@ def submit(
     client = PankhudiClient(headers=headers)
     journal = SubmissionJournal(out / "submission_journal.jsonl")
     consecutive_failures = 0
+    failed_total = 0
     submitted = 0
     verified = 0
     skipped = 0
@@ -186,14 +187,18 @@ def submit(
             consecutive_failures = 0
         except Exception as exc:  # noqa: BLE001 - CLI records per-project failure and applies stop policy
             consecutive_failures += 1
-            write_json(out / "errors" / f"{uid}.submit.json", {"error": str(exc), "timestamp": now_utc_ms()})
+            failed_total += 1
+            error_file = out / "errors" / f"{uid}.submit.json"
+            write_json(error_file, {"error": str(exc), "timestamp": now_utc_ms()})
+            typer.echo(f"Submission failed for {uid}: {exc}", err=True)
+            typer.echo(f"Saved error details to {error_file}", err=True)
             journal.append(projectUid=uid, projectId=project_id, action="post", status="failed", reason=str(exc), payloadHash=payload_hash)
             if consecutive_failures >= 3:
                 typer.echo("Stopping after three consecutive submission failures.", err=True)
                 break
         if delay_seconds > 0:
             time.sleep(delay_seconds)
-    typer.echo(f"Submit complete. Submitted: {submitted}; verified: {verified}; skipped: {skipped}; failed: {consecutive_failures}")
+    typer.echo(f"Submit complete. Submitted: {submitted}; verified: {verified}; skipped: {skipped}; failed: {failed_total}")
 
 def _planned_payload_files(out: Path, project_uid: str | None) -> list[Path]:
     planned = out / "planned_payloads"
