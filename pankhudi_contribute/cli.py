@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import time
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -121,17 +123,103 @@ def plan(
     _print_summary(summary, out)
 
 @app.command()
-def submit(execute: bool = False, confirm_batch: str | None = None, max_projects: int = 5, storage_state: str = DEFAULT_STORAGE) -> None:
+def submit(
+    execute: bool = False,
+    confirm_batch: str | None = None,
+    max_projects: int = 5,
+    storage_state: str = DEFAULT_STORAGE,
+    output_dir: str = "output",
+    project_uid: str | None = None,
+    delay_seconds: float = 2.0,
+    yes: bool = False,
+) -> None:
     if not execute or not confirm_batch:
         typer.echo(_submit_guardrail_message(), err=True)
         raise typer.Exit(code=2)
     headers = headers_from_storage_state(storage_state if Path(storage_state).exists() else None)
     if not headers:
         raise typer.BadParameter("Authentication is missing")
-    _client = PankhudiClient(headers=headers)
-    _journal = SubmissionJournal()
-    typer.echo(f"Ready to submit up to {max_projects} projects for batch {confirm_batch}")
-    typer.echo("Live submit loop is intentionally not enabled until a one-project dry-run payload is reviewed.")
+    out = Path(output_dir)
+    payload_files = _planned_payload_files(out, project_uid)
+    if not payload_files:
+        raise typer.BadParameter(f"No planned payloads found under {out / 'planned_payloads'}")
+    payload_files = payload_files[:max_projects]
+    project_uids = [path.stem for path in payload_files]
+    typer.echo(f"About to submit {len(payload_files)} project(s) for batch {confirm_batch}:")
+    for uid in project_uids:
+        typer.echo(f"  - {uid}")
+    if not yes:
+        expected = f"SUBMIT {len(payload_files)} PROJECTS"
+        typed = typer.prompt(f"Type {expected} to continue")
+        if typed != expected:
+            typer.echo("Confirmation did not match. No submissions were made.", err=True)
+            raise typer.Exit(code=2)
+
+    client = PankhudiClient(headers=headers)
+    journal = SubmissionJournal(out / "submission_journal.jsonl")
+    consecutive_failures = 0
+    submitted = 0
+    verified = 0
+    skipped = 0
+    for payload_file in payload_files:
+        uid = payload_file.stem
+        payload = json.loads(payload_file.read_text(encoding="utf-8"))
+        project_id = int(payload["request"]["projectId"])
+        payload_hash = canonical_hash(payload)
+        if journal.has_successful_payload(payload):
+            skipped += 1
+            journal.append(projectUid=uid, projectId=project_id, action="post", status="skipped", reason="payload_already_successful", payloadHash=payload_hash)
+            continue
+        try:
+            response = client.save(payload)
+            write_json(out / "responses" / f"{uid}.save.json", response)
+            response_id = _extract_response_id(response)
+            journal.append(projectUid=uid, projectId=project_id, action="post", status="submitted", reason=None, payloadHash=payload_hash, httpStatus=200, responseId=response_id)
+            submitted += 1
+            detail_response = client.detail(project_id)
+            write_json(out / "responses" / f"{uid}.verify.json", detail_response)
+            if _verify_submission(response, detail_response):
+                verified += 1
+                journal.append(projectUid=uid, projectId=project_id, action="verify", status="verified", reason=None, payloadHash=payload_hash, httpStatus=200, responseId=response_id)
+            else:
+                journal.append(projectUid=uid, projectId=project_id, action="verify", status="failed", reason="verification_pending", payloadHash=payload_hash, httpStatus=200, responseId=response_id)
+            consecutive_failures = 0
+        except Exception as exc:  # noqa: BLE001 - CLI records per-project failure and applies stop policy
+            consecutive_failures += 1
+            write_json(out / "errors" / f"{uid}.submit.json", {"error": str(exc), "timestamp": now_utc_ms()})
+            journal.append(projectUid=uid, projectId=project_id, action="post", status="failed", reason=str(exc), payloadHash=payload_hash)
+            if consecutive_failures >= 3:
+                typer.echo("Stopping after three consecutive submission failures.", err=True)
+                break
+        if delay_seconds > 0:
+            time.sleep(delay_seconds)
+    typer.echo(f"Submit complete. Submitted: {submitted}; verified: {verified}; skipped: {skipped}; failed: {consecutive_failures}")
+
+def _planned_payload_files(out: Path, project_uid: str | None) -> list[Path]:
+    planned = out / "planned_payloads"
+    if project_uid:
+        candidate = planned / f"{project_uid}.json"
+        return [candidate] if candidate.exists() else []
+    return sorted(planned.glob("*.json"))
+
+def _extract_response_id(response: Any) -> Any:
+    if isinstance(response, dict):
+        for key in ("id", "projectContributionId", "contributorParticipationRequestId"):
+            if response.get(key) is not None:
+                return response.get(key)
+        data = response.get("data")
+        if isinstance(data, dict):
+            return _extract_response_id(data)
+    return None
+
+def _verify_submission(response: Any, detail_response: Any) -> bool:
+    if _extract_response_id(response) is not None:
+        return True
+    detail = unwrap_project(detail_response)
+    if detail.get("contributorParticipationRequestId") is not None:
+        return True
+    activities = detail.get("activities") or detail.get("projectActivities") or []
+    return any(Decimal(str(activity.get("contributionRequestQuantity") or 0)) > 0 for activity in activities)
 
 def _submit_guardrail_message() -> str:
     return (
@@ -139,7 +227,8 @@ def _submit_guardrail_message() -> str:
         "--execute and --confirm-batch.\n\n"
         "Run a one-project dry run first, review output/planned_payloads/<projectUid>.json, then use:\n"
         "  python -m pankhudi_contribute submit --execute --confirm-batch \"SINGLE-PROJECT-VALIDATION\" "
-        "--max-projects 1 --storage-state .secrets/pankhudi-storage-state.json\n\n"
+        "--max-projects 1 --output-dir output_single_test --project-uid <READY_PROJECT_UID> "
+        "--storage-state .secrets/pankhudi-storage-state.json\n\n"
         "For planning only, use:\n"
         "  python -m pankhudi_contribute plan --input <workbook-or-csv>\n"
     )

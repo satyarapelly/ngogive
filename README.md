@@ -72,14 +72,18 @@ The `.secrets/` and `output/` directories are ignored by git.
 
 ## Live submit guardrails
 
-Live submission is guarded and requires explicit flags. Running `python -m pankhudi_contribute submit` by itself is expected to stop with a safety message. Use the submit command only after a one-project dry run has been reviewed:
+Live submission is guarded and requires explicit flags. Running `python -m pankhudi_contribute submit` by itself is expected to stop with a safety message. Use the submit command only after a one-project dry run has been reviewed and a payload exists under `output_single_test/planned_payloads/`:
 
 ```bash
 python -m pankhudi_contribute submit \
   --execute \
   --confirm-batch "SINGLE-PROJECT-VALIDATION" \
   --max-projects 1 \
+  --output-dir output_single_test \
+  --project-uid <READY_PROJECT_UID> \
   --storage-state .secrets/pankhudi-storage-state.json
 ```
+
+The command prints the selected project UIDs and requires typing `SUBMIT 1 PROJECTS` before posting unless `--yes` is supplied. It saves POST and verification responses under the selected output directory and appends records to `submission_journal.jsonl`.
 
 Do not run a larger batch until a single-project dry run and portal verification have succeeded.
