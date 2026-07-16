@@ -9,7 +9,7 @@ from typing import Any
 import typer
 
 from .auth import headers_from_storage_state
-from .client import PankhudiClient, exact_uid_match, unwrap_project
+from .client import PankhudiClient, PlaywrightPankhudiClient, exact_uid_match, unwrap_project
 from .filters import project_eligible, workbook_eligible
 from .journal import SubmissionJournal
 from .models import ProjectDetail, WorkbookProject
@@ -25,7 +25,6 @@ DEFAULT_SHEET = "Ready to Contribute"
 DEFAULT_STORAGE = ".secrets/pankhudi-storage-state.json"
 
 @app.command()
-<<<<<<< codex/automate-project-contribution-processing-j7xpx5
 def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd.gov.in") -> None:
     """Open a visible browser so the operator can sign in and save Playwright storage state."""
     try:
@@ -44,12 +43,6 @@ def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd
         context.storage_state(path=str(target))
         browser.close()
     typer.echo(f"Saved storage state to {target}")
-=======
-def login(storage_state: str = DEFAULT_STORAGE) -> None:
-    typer.echo("Manual login helper placeholder.")
-    typer.echo("For now, sign in with your browser and export Playwright storage state to this path:")
-    typer.echo(f"  {storage_state}")
->>>>>>> main
 
 @app.command()
 def plan(
@@ -74,8 +67,9 @@ def plan(
     if not workbook_rows:
         raise typer.BadParameter("No workbook rows matched the supplied filters")
 
-    headers = headers_from_storage_state(storage_state if Path(storage_state).exists() else None)
-    client = PankhudiClient(headers=headers) if headers else None
+    storage_path = storage_state if Path(storage_state).exists() else None
+    headers = headers_from_storage_state(storage_path)
+    client = _make_client(storage_path, headers) if headers or storage_path else None
     journal = SubmissionJournal(out / "submission_journal.jsonl")
     results: list[dict[str, Any]] = []
     summary = _empty_summary(total_workbook_rows=len(workbook_rows), dry_run=True, authenticated=bool(client))
@@ -157,8 +151,9 @@ def submit(
     if not execute or not confirm_batch:
         typer.echo(_submit_guardrail_message(), err=True)
         raise typer.Exit(code=2)
-    headers = headers_from_storage_state(storage_state if Path(storage_state).exists() else None)
-    if not headers:
+    storage_path = storage_state if Path(storage_state).exists() else None
+    headers = headers_from_storage_state(storage_path)
+    if not headers and not storage_path:
         raise typer.BadParameter("Authentication is missing")
     out = Path(output_dir)
     payload_files = _planned_payload_files(out, project_uid)
@@ -176,7 +171,7 @@ def submit(
             typer.echo("Confirmation did not match. No submissions were made.", err=True)
             raise typer.Exit(code=2)
 
-    client = PankhudiClient(headers=headers)
+    client = _make_client(storage_path, headers)
     journal = SubmissionJournal(out / "submission_journal.jsonl")
     consecutive_failures = 0
     failed_total = 0
@@ -220,6 +215,11 @@ def submit(
         if delay_seconds > 0:
             time.sleep(delay_seconds)
     typer.echo(f"Submit complete. Submitted: {submitted}; verified: {verified}; skipped: {skipped}; failed: {failed_total}")
+
+def _make_client(storage_state: str | None, headers: dict[str, str]) -> Any:
+    if storage_state:
+        return PlaywrightPankhudiClient(storage_state=storage_state, headers=headers)
+    return PankhudiClient(headers=headers)
 
 def _planned_payload_files(out: Path, project_uid: str | None) -> list[Path]:
     planned = out / "planned_payloads"
