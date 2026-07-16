@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const Razorpay = require("razorpay");
@@ -37,6 +39,7 @@ app.use(express.json());
 const DEFAULT_PANKHUDI_PROJECTS_URL =
   "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
 const PANKHUDI_BASE_URL = "https://pankhudi.wcd.gov.in";
+const DEFAULT_PANKHUDI_STORAGE_STATE = ".secrets/pankhudi-storage-state.json";
 
 const extractPankhudiRows = (payload) => {
   if (Array.isArray(payload)) return payload;
@@ -77,7 +80,107 @@ function pankhudiAuthHeaders() {
     headers["X-CSRF-Token"] = process.env.PANKHUDI_CSRF_TOKEN;
     headers["X-XSRF-TOKEN"] = process.env.PANKHUDI_CSRF_TOKEN;
   }
+  applyPankhudiStorageState(headers);
   return headers;
+}
+
+function applyPankhudiStorageState(headers) {
+  const state = readPankhudiStorageState();
+  if (!state) return;
+  const cookies = Array.isArray(state.cookies) ? state.cookies : [];
+  if (!headers.Cookie && cookies.length) {
+    headers.Cookie = cookies
+      .filter((cookie) => cookie?.name && cookie?.value)
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join("; ");
+  }
+  if (!headers.Authorization) {
+    const token = findPankhudiTokenInState(state);
+    if (token) headers.Authorization = pankhudiBearer(token);
+  }
+  const csrf = cookies.find((cookie) => /^(xsrf-token|x-xsrf-token|csrf-token|csrftoken|csrf_token)$/i.test(cookie?.name || ""))?.value;
+  if (csrf && !headers["X-CSRF-Token"]) {
+    headers["X-CSRF-Token"] = decodeURIComponent(csrf);
+    headers["X-XSRF-TOKEN"] = decodeURIComponent(csrf);
+  }
+}
+
+function readPankhudiStorageState() {
+  if (process.env.PANKHUDI_STORAGE_STATE_JSON) {
+    try {
+      return JSON.parse(process.env.PANKHUDI_STORAGE_STATE_JSON);
+    } catch {
+      return null;
+    }
+  }
+  try {
+    const storagePath = process.env.PANKHUDI_STORAGE_STATE || DEFAULT_PANKHUDI_STORAGE_STATE;
+    const resolved = path.isAbsolute(storagePath) ? storagePath : path.join(process.cwd(), storagePath);
+    if (!fs.existsSync(resolved)) return null;
+    return JSON.parse(fs.readFileSync(resolved, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+function findPankhudiTokenInState(state) {
+  const cookieToken = findPankhudiTokenInEntries((state.cookies || []).map((cookie) => ({ key: cookie.name, value: decodeURIComponent(cookie.value || "") })));
+  if (cookieToken) return cookieToken;
+  for (const origin of state.origins || []) {
+    const token = findPankhudiTokenInEntries([...(origin.localStorage || []), ...(origin.sessionStorage || [])].map((item) => ({ key: item.name, value: item.value })));
+    if (token) return token;
+  }
+  return "";
+}
+
+function findPankhudiTokenInEntries(entries) {
+  for (const { key = "", value = "" } of entries) {
+    const normalized = String(key).toLowerCase();
+    const text = String(value || "").trim();
+    if (!text) continue;
+    if (isPankhudiTokenKey(normalized)) return text;
+    const nested = findPankhudiTokenInJson(text);
+    if (nested) return nested;
+    if (looksLikePankhudiJwt(text)) return text;
+  }
+  return "";
+}
+
+function findPankhudiTokenInJson(text) {
+  try {
+    return findPankhudiTokenNested(JSON.parse(text));
+  } catch {
+    return "";
+  }
+}
+
+function findPankhudiTokenNested(value, parentKey = "") {
+  if (Array.isArray(value)) {
+    for (const child of value) {
+      const token = findPankhudiTokenNested(child, parentKey);
+      if (token) return token;
+    }
+  } else if (value && typeof value === "object") {
+    for (const [key, child] of Object.entries(value)) {
+      const token = findPankhudiTokenNested(child, key.toLowerCase());
+      if (token) return token;
+    }
+  } else if (typeof value === "string" && (isPankhudiTokenKey(parentKey) || looksLikePankhudiJwt(value))) {
+    return value.trim();
+  }
+  return "";
+}
+
+function isPankhudiTokenKey(key) {
+  return /(^authorization$|access_?token|access-token|id_?token|jwt|token)/i.test(key) && !/(csrf|xsrf)/i.test(key);
+}
+
+function looksLikePankhudiJwt(value) {
+  return String(value).split(".").filter(Boolean).length === 3;
+}
+
+function pankhudiBearer(value) {
+  return value.toLowerCase().startsWith("bearer ") ? value : `Bearer ${value}`;
 }
 
 function unwrapPankhudiProject(payload) {
@@ -226,7 +329,7 @@ app.post("/api/pankhudi/contribute", async (req, res) => {
   if (!headers.Authorization) {
     return res.status(503).json({
       error: "PANKHUDI submit is not configured.",
-      setup: "Set PANKHUDI_AUTHORIZATION on the server. Do not store this value in frontend code.",
+      setup: "Set PANKHUDI_AUTHORIZATION, PANKHUDI_STORAGE_STATE, or PANKHUDI_STORAGE_STATE_JSON on the server. Do not store these values in frontend code.",
     });
   }
 

@@ -1,7 +1,11 @@
+import fs from "fs";
+import path from "path";
+
 const BASE_URL = "https://pankhudi.wcd.gov.in";
 const PROJECTS_PATH = "/API/MasterApi/v1/projects/fetch";
 const SAVE_PATH = "/API/MasterApi/v1/project-contributions/save";
 const USER_ID = 132975;
+const DEFAULT_STORAGE_STATE = ".secrets/pankhudi-storage-state.json";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -12,7 +16,7 @@ export default async function handler(req, res) {
   if (!headers.Authorization) {
     return res.status(503).json({
       error: "PANKHUDI submit is not configured.",
-      setup: "Set PANKHUDI_AUTHORIZATION on the server. Do not store this value in frontend code.",
+      setup: "Set PANKHUDI_AUTHORIZATION, PANKHUDI_STORAGE_STATE, or PANKHUDI_STORAGE_STATE_JSON on the server. Do not store these values in frontend code.",
     });
   }
 
@@ -68,7 +72,107 @@ function authHeaders() {
     headers["X-CSRF-Token"] = process.env.PANKHUDI_CSRF_TOKEN;
     headers["X-XSRF-TOKEN"] = process.env.PANKHUDI_CSRF_TOKEN;
   }
+  applyStorageState(headers);
   return headers;
+}
+
+function applyStorageState(headers) {
+  const state = readStorageState();
+  if (!state) return;
+  const cookies = Array.isArray(state.cookies) ? state.cookies : [];
+  if (!headers.Cookie && cookies.length) {
+    headers.Cookie = cookies
+      .filter((cookie) => cookie?.name && cookie?.value)
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join("; ");
+  }
+  if (!headers.Authorization) {
+    const token = findTokenInState(state);
+    if (token) headers.Authorization = bearer(token);
+  }
+  const csrf = cookies.find((cookie) => /^(xsrf-token|x-xsrf-token|csrf-token|csrftoken|csrf_token)$/i.test(cookie?.name || ""))?.value;
+  if (csrf && !headers["X-CSRF-Token"]) {
+    headers["X-CSRF-Token"] = decodeURIComponent(csrf);
+    headers["X-XSRF-TOKEN"] = decodeURIComponent(csrf);
+  }
+}
+
+function readStorageState() {
+  if (process.env.PANKHUDI_STORAGE_STATE_JSON) {
+    try {
+      return JSON.parse(process.env.PANKHUDI_STORAGE_STATE_JSON);
+    } catch {
+      return null;
+    }
+  }
+  try {
+    const storagePath = process.env.PANKHUDI_STORAGE_STATE || DEFAULT_STORAGE_STATE;
+    const resolved = path.isAbsolute(storagePath) ? storagePath : path.join(process.cwd(), storagePath);
+    if (!fs.existsSync(resolved)) return null;
+    return JSON.parse(fs.readFileSync(resolved, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+function findTokenInState(state) {
+  const cookieToken = findTokenInEntries((state.cookies || []).map((cookie) => ({ key: cookie.name, value: decodeURIComponent(cookie.value || "") })));
+  if (cookieToken) return cookieToken;
+  for (const origin of state.origins || []) {
+    const token = findTokenInEntries([...(origin.localStorage || []), ...(origin.sessionStorage || [])].map((item) => ({ key: item.name, value: item.value })));
+    if (token) return token;
+  }
+  return "";
+}
+
+function findTokenInEntries(entries) {
+  for (const { key = "", value = "" } of entries) {
+    const normalized = String(key).toLowerCase();
+    const text = String(value || "").trim();
+    if (!text) continue;
+    if (isTokenKey(normalized)) return text;
+    const nested = findTokenInJson(text);
+    if (nested) return nested;
+    if (looksLikeJwt(text)) return text;
+  }
+  return "";
+}
+
+function findTokenInJson(text) {
+  try {
+    return findTokenNested(JSON.parse(text));
+  } catch {
+    return "";
+  }
+}
+
+function findTokenNested(value, parentKey = "") {
+  if (Array.isArray(value)) {
+    for (const child of value) {
+      const token = findTokenNested(child, parentKey);
+      if (token) return token;
+    }
+  } else if (value && typeof value === "object") {
+    for (const [key, child] of Object.entries(value)) {
+      const token = findTokenNested(child, key.toLowerCase());
+      if (token) return token;
+    }
+  } else if (typeof value === "string" && (isTokenKey(parentKey) || looksLikeJwt(value))) {
+    return value.trim();
+  }
+  return "";
+}
+
+function isTokenKey(key) {
+  return /(^authorization$|access_?token|access-token|id_?token|jwt|token)/i.test(key) && !/(csrf|xsrf)/i.test(key);
+}
+
+function looksLikeJwt(value) {
+  return String(value).split(".").filter(Boolean).length === 3;
+}
+
+function bearer(value) {
+  return value.toLowerCase().startsWith("bearer ") ? value : `Bearer ${value}`;
 }
 
 function unwrapProject(payload) {
