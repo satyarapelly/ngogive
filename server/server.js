@@ -396,6 +396,14 @@ app.get("/api/pankhudi/contributions", async (req, res) => {
         details: payload,
         sourceUrl: sourceUrl.toString(),
       });
+      const savePayload = await saveResponse.json().catch(() => ({}));
+      if (!saveResponse.ok) {
+        results.push({ ok: false, preview, error: `PANKHUDI submit API returned ${saveResponse.status} ${saveResponse.statusText}`, details: savePayload });
+      } else {
+        results.push({ ok: true, preview, response: savePayload });
+      }
+    } catch (error) {
+      results.push({ ok: false, error: error.message || "Unable to prepare contribution.", details: error.details || null });
     }
 
     const refs = serializePankhudiContributionRefs(collectPankhudiContributionRefs(payload));
@@ -413,7 +421,22 @@ app.get("/api/pankhudi/contributions", async (req, res) => {
       sourceUrl: sourceUrl.toString(),
     });
   }
-});
+
+  const failed = results.filter((result) => !result.ok).length;
+  return res.status(execute && failed ? 207 : 200).json({
+    mode: execute ? "submitted" : "preview",
+    authConfigured: Boolean(headers.Authorization),
+    submittedAt: execute ? new Date().toISOString() : null,
+    previewedAt: execute ? null : new Date().toISOString(),
+    total: results.length,
+    failed,
+    results,
+    setup: headers.Authorization ? undefined : contributionAuthSetup(),
+  });
+}
+
+app.post("/api/pankhudi/contribute/preview", (req, res) => prepareContributionBatch(req, res, { execute: false }));
+app.post("/api/pankhudi/contribute", (req, res) => prepareContributionBatch(req, res, { execute: true }));
 
 async function loadPankhudiProjectForContribution(projectInput, headers) {
   if (projectInput && typeof projectInput === "object" && (projectInput.projectId || projectInput.projectID || projectInput.id)) {
