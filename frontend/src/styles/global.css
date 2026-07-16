@@ -2852,7 +2852,23 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: flex-end;
   margin-top: 24px;
+}
+.pankhudi-district-select {
+  display: grid;
+  gap: 6px;
+  color: white;
+  font-weight: 800;
+  min-width: 260px;
+}
+.pankhudi-district-select select {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  padding: 13px 16px;
+  font: inherit;
+  color: #0f172a;
+  background: white;
 }
 .pankhudi-stats,
 .pankhudi-workspace,
@@ -2871,8 +2887,7 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
 .pankhudi-stats article,
 .pankhudi-list-panel,
 .pankhudi-detail-panel,
-.pankhudi-save-card,
-.pankhudi-raw-card {
+.pankhudi-save-card {
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -3005,6 +3020,12 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
   gap: 18px;
   margin-bottom: 18px;
 }
+.pankhudi-detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 .pankhudi-detail-header h2 {
   margin: 6px 0 8px;
   font-size: clamp(26px, 4vw, 42px);
@@ -3032,8 +3053,7 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
 .pankhudi-detail-grid strong {
   color: #0f172a;
 }
-.pankhudi-save-card,
-.pankhudi-raw-card {
+.pankhudi-save-card {
   padding: 18px;
   margin-top: 18px;
   box-shadow: none;
@@ -3054,14 +3074,6 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
 .pankhudi-save-form textarea {
   min-height: 120px;
   resize: vertical;
-}
-.pankhudi-raw-card pre {
-  overflow: auto;
-  background: #0f172a;
-  color: #e2e8f0;
-  padding: 16px;
-  border-radius: 14px;
-  max-height: 380px;
 }
 .empty-state {
   color: #64748b;
