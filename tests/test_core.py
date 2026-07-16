@@ -105,3 +105,24 @@ def test_add_session_storage_to_state_persists_tokens_for_headers(tmp_path):
     path.write_text(json.dumps(state), encoding="utf-8")
     headers = headers_from_storage_state(str(path))
     assert headers["Authorization"] == "Bearer captured.jwt.token"
+
+def test_storage_state_headers_include_cookie_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    path.write_text('{"cookies":[{"name":"access_token","value":"cookie.jwt.token"}],"origins":[]}', encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer cookie.jwt.token"
+
+def test_storage_state_headers_include_nested_json_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    state = {
+        "cookies": [],
+        "origins": [{
+            "origin": "https://pankhudi.wcd.gov.in",
+            "localStorage": [{"name": "auth_state", "value": json.dumps({"auth": {"accessToken": "nested.jwt.token"}})}],
+        }],
+    }
+    path.write_text(json.dumps(state), encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer nested.jwt.token"
