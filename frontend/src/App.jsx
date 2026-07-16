@@ -1533,7 +1533,7 @@ function getPankhudiBudgetSummary(project) {
   const lineItems = findPankhudiLineItems(project).map((item, index) => getPankhudiLineItemSummary(item, index, centreCount));
   const lineItemTotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
   const projectAmount = toPankhudiNumber(getProjectValue(project, ["amount", "estimatedAmount", "projectCost", "totalAmount", "budget", "estimatedBudget"], 0));
-  return { lineItems, total: lineItemTotal || projectAmount, projectAmount, lineItemTotal };
+  return { lineItems, total: lineItemTotal, projectAmount, lineItemTotal, hasWorkItemEstimate: lineItemTotal > 0 };
 }
 
 function loadSavedPankhudiProjects() {
@@ -1570,6 +1570,7 @@ function PankhudiProjectsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false);
   const [contributionPreview, setContributionPreview] = useState(null);
+  const [contributionSubmissionComplete, setContributionSubmissionComplete] = useState(false);
   const [message, setMessage] = useState({ type: "info", text: "Click “Load live PANKHUDI projects” to view current projects from the district feed." });
   const [lastFetchedAt, setLastFetchedAt] = useState("");
 
@@ -1646,7 +1647,8 @@ function PankhudiProjectsPage() {
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload?.error || `PANKHUDI preview returned ${response.status}`);
-      setContributionPreview({ ...payload, mode, projects: contributionProjects });
+      setContributionSubmissionComplete(false);
+      setContributionPreview({ ...payload, mode, projects: contributionProjects, results: (payload.results || []).map((result) => ({ ...result, submitStatus: result.ok ? "ready" : "blocked" })) });
       setMessage({ type: payload.authConfigured ? "success" : "info", text: payload.authConfigured ? "Review the PANKHUDI contribution preview before portal submission." : `Preview ready. ${payload.setup}` });
     } catch (error) {
       setMessage({ type: "error", text: error.message || "Unable to prepare contribution preview." });
@@ -1655,20 +1657,44 @@ function PankhudiProjectsPage() {
     }
   };
 
+  const updateContributionResult = (index, patch) => {
+    setContributionPreview((current) => {
+      if (!current) return current;
+      return {
+        ...current,
+        results: current.results.map((result, resultIndex) => resultIndex === index ? { ...result, ...patch } : result),
+      };
+    });
+  };
+
   const submitContributionPreview = async () => {
     if (!contributionPreview?.projects?.length) return;
+    setContributionSubmissionComplete(false);
     setIsSubmittingContribution(true);
-    setMessage({ type: "info", text: "Submitting reviewed contribution request to PANKHUDI…" });
-    try {
-      const response = await fetch(PANKHUDI_CONTRIBUTE_URL, {
-        method: "POST",
-        headers: { "content-type": "application/json", accept: "application/json" },
-        body: JSON.stringify({ projects: contributionPreview.projects }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok && response.status !== 207) throw new Error(payload?.error || `PANKHUDI submit returned ${response.status}`);
-      const nextSaved = { ...savedProjects };
-      contributionPreview.projects.forEach((project, index) => {
+
+    const nextSaved = { ...savedProjects };
+    let submitted = 0;
+    let failed = 0;
+    const total = contributionPreview.projects.length;
+
+    for (let index = 0; index < total; index += 1) {
+      const project = contributionPreview.projects[index];
+      const preview = contributionPreview.results[index]?.preview;
+      const projectName = preview?.projectName || getProjectValue(project, ["projectName", "name", "title", "projectTitle"], `Project ${index + 1}`);
+      updateContributionResult(index, { submitStatus: "submitting", submitMessage: "Submitting this project to PANKHUDI…" });
+      setMessage({ type: "info", text: `Submitting ${index + 1} of ${total}: ${projectName}` });
+
+      try {
+        const response = await fetch(PANKHUDI_CONTRIBUTE_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json", accept: "application/json" },
+          body: JSON.stringify({ projects: [project] }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        const projectFailed = !response.ok || payload.failed;
+        if (projectFailed) throw new Error(payload?.results?.[0]?.error || payload?.error || `PANKHUDI submit returned ${response.status}`);
+
+        submitted += 1;
         const id = getProjectId(project, index);
         nextSaved[id] = {
           ...nextSaved[id],
@@ -1679,16 +1705,18 @@ function PankhudiProjectsPage() {
           contributionResponse: payload,
           snapshot: project,
         };
-      });
-      setSavedProjects(nextSaved);
-      savePankhudiProjects(nextSaved);
-      setContributionPreview(null);
-      setMessage({ type: payload.failed ? "error" : "success", text: payload.failed ? `${payload.failed} contribution request(s) failed. Review server response before retrying.` : `Submitted ${payload.total} contribution request(s). Verify them in the PANKHUDI portal.` });
-    } catch (error) {
-      setMessage({ type: "error", text: error.message || "Unable to submit contribution request." });
-    } finally {
-      setIsSubmittingContribution(false);
+        setSavedProjects({ ...nextSaved });
+        savePankhudiProjects(nextSaved);
+        updateContributionResult(index, { submitStatus: "submitted", submitMessage: "Submitted successfully.", submitResponse: payload });
+      } catch (error) {
+        failed += 1;
+        updateContributionResult(index, { submitStatus: "failed", submitMessage: error.message || "Unable to submit this project." });
+      }
     }
+
+    setContributionSubmissionComplete(true);
+    setIsSubmittingContribution(false);
+    setMessage({ type: failed ? "error" : "success", text: failed ? `Submitted ${submitted} of ${total}; ${failed} project(s) failed. Check the preview status table before retrying.` : `Submitted all ${submitted} project(s). Verify them in the PANKHUDI portal.` });
   };
 
   const toggleProjectSelection = (id) => {
@@ -1731,7 +1759,16 @@ function PankhudiProjectsPage() {
   const selectedId = selectedProject ? getProjectId(selectedProject, projects.indexOf(selectedProject)) : "";
   const selectedSaved = selectedId ? savedProjects[selectedId] : null;
   const selectedCentres = selectedProject ? findPankhudiCentres(selectedProject) : [];
-  const selectedBudget = selectedProject ? getPankhudiBudgetSummary(selectedProject) : { lineItems: [], total: 0, projectAmount: 0, lineItemTotal: 0 };
+  const selectedBudget = selectedProject ? getPankhudiBudgetSummary(selectedProject) : { lineItems: [], total: 0, projectAmount: 0, lineItemTotal: 0, hasWorkItemEstimate: false };
+  const selectedBatchBudget = selectedProjectIds
+    .map((id) => projectRows.find((row) => row.id === id)?.project)
+    .filter(Boolean)
+    .map(getPankhudiBudgetSummary)
+    .reduce((summary, budget) => ({
+      total: summary.total + budget.total,
+      lineItems: summary.lineItems + budget.lineItems.length,
+      projectsWithWorkItems: summary.projectsWithWorkItems + (budget.hasWorkItemEstimate ? 1 : 0),
+    }), { total: 0, lineItems: 0, projectsWithWorkItems: 0 });
 
   return (
     <>
@@ -1858,7 +1895,7 @@ function PankhudiProjectsPage() {
                   <article><span>Sub-theme</span><strong>{getProjectValue(selectedProject, ["subThemeName", "subTheme", "subCategoryName", "subCategory"])}</strong></article>
                   <article><span>Status</span><strong>{getProjectValue(selectedProject, ["statusName", "status", "projectStatus"])}</strong></article>
                   <article><span>Approval Status</span><strong>{getProjectValue(selectedProject, ["approvalStatusName", "approvalStatus"])}</strong></article>
-                  <article><span>Estimated Budget Required</span><strong>{formatPankhudiMoney(selectedBudget.total)}</strong></article>
+                  <article><span>Work-item estimate</span><strong>{selectedBudget.hasWorkItemEstimate ? formatPankhudiMoney(selectedBudget.total) : "Not available from work items"}</strong></article>
                 </div>
 
                 <div className="pankhudi-project-narrative-card">
@@ -1894,14 +1931,16 @@ function PankhudiProjectsPage() {
 
                 <div className="pankhudi-budget-card">
                   <div>
-                    <p className="eyebrow">BUDGET CALCULATION</p>
-                    <h3>{formatPankhudiMoney(selectedBudget.total)}</h3>
-                    <p>Calculated from live line items when available; otherwise the project-level estimated amount is shown.</p>
+                    <p className="eyebrow">WORK-ITEM ESTIMATE</p>
+                    <h3>{selectedBudget.hasWorkItemEstimate ? formatPankhudiMoney(selectedBudget.total) : "Not available"}</h3>
+                    <p>This estimate is calculated only from detected work/activity line items. Project-level JSON amounts are shown below for reference and are not treated as portal-approved budgets.</p>
                   </div>
                   <dl>
-                    <div><dt>Project amount in feed</dt><dd>{formatPankhudiMoney(selectedBudget.projectAmount)}</dd></div>
-                    <div><dt>Line items detected</dt><dd>{selectedBudget.lineItems.length}</dd></div>
-                    <div><dt>Line-item total</dt><dd>{formatPankhudiMoney(selectedBudget.lineItemTotal)}</dd></div>
+                    <div><dt>Selected batch work-item estimate</dt><dd>{selectedBatchBudget.total ? formatPankhudiMoney(selectedBatchBudget.total) : "Not available"}</dd></div>
+                    <div><dt>Selected projects with work items</dt><dd>{selectedBatchBudget.projectsWithWorkItems} / {selectedProjectIds.length || 1}</dd></div>
+                    <div><dt>Current project line items</dt><dd>{selectedBudget.lineItems.length}</dd></div>
+                    <div><dt>Current project line-item total</dt><dd>{selectedBudget.hasWorkItemEstimate ? formatPankhudiMoney(selectedBudget.lineItemTotal) : "Not available"}</dd></div>
+                    <div><dt>Raw project amount in JSON</dt><dd>{selectedBudget.projectAmount ? `${formatPankhudiMoney(selectedBudget.projectAmount)} (not used as work estimate)` : "Not provided"}</dd></div>
                   </dl>
                 </div>
 
@@ -1924,7 +1963,7 @@ function PankhudiProjectsPage() {
                         ))}</tbody>
                       </table>
                     </div>
-                  ) : <p>No separate line-item array was found in this project payload. The estimated budget above uses the project-level amount from the live feed.</p>}
+                  ) : <p>No separate line-item array was found in this project payload, so no work-item estimate is shown. The raw project amount is not used as the portal-approved budget.</p>}
                 </div>
 
                 <div className="pankhudi-save-card">
@@ -1979,7 +2018,7 @@ function PankhudiProjectsPage() {
                     <td>{result.preview?.projectId || "—"}</td>
                     <td>{result.preview?.detailCount || "—"}</td>
                     <td>{result.preview?.totalContributionQty || "—"}</td>
-                    <td>{result.ok ? "Ready" : result.error}</td>
+                    <td><strong>{result.submitStatus || (result.ok ? "ready" : "blocked")}</strong>{result.submitMessage ? <small>{result.submitMessage}</small> : result.ok ? <small>Ready for one-by-one submit.</small> : <small>{result.error}</small>}</td>
                   </tr>
                 ))}</tbody>
               </table>
@@ -1987,8 +2026,8 @@ function PankhudiProjectsPage() {
             <pre className="pankhudi-preview-json">{JSON.stringify(contributionPreview.results.map((result) => result.preview?.payload || result.error), null, 2)}</pre>
             <div className="pankhudi-detail-actions">
               <button type="button" className="btn btn-outline" onClick={() => setContributionPreview(null)}>Cancel</button>
-              <button type="button" className="btn btn-primary" onClick={submitContributionPreview} disabled={isSubmittingContribution || !contributionPreview.authConfigured || contributionPreview.failed}>
-                {isSubmittingContribution ? "Submitting…" : "Confirm and submit to portal"}
+              <button type="button" className="btn btn-primary" onClick={submitContributionPreview} disabled={isSubmittingContribution || contributionSubmissionComplete || !contributionPreview.authConfigured || contributionPreview.failed}>
+                {isSubmittingContribution ? "Submitting one by one…" : contributionSubmissionComplete ? "Submission run complete" : "Confirm and submit one by one"}
               </button>
             </div>
           </div>
