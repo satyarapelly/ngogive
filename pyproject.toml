@@ -1,0 +1,13 @@
+[project]
+name = "pankhudi-contribute"
+version = "0.1.0"
+description = "Safe dry-run-first PANKHUDI contribution request automation"
+requires-python = ">=3.11"
+dependencies = ["httpx", "openpyxl", "pydantic", "typer", "tenacity", "playwright"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
