@@ -25,7 +25,7 @@ DEFAULT_SHEET = "Ready to Contribute"
 DEFAULT_STORAGE = ".secrets/pankhudi-storage-state.json"
 
 @app.command()
-def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd.gov.in") -> None:
+def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd.gov.in", wait_seconds: int = 0) -> None:
     """Open a visible browser so the operator can sign in and save Playwright storage state."""
     try:
         from playwright.sync_api import sync_playwright
@@ -37,11 +37,17 @@ def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd
         browser = playwright.chromium.launch(headless=False)
         context = browser.new_context()
         page = context.new_page()
-        page.goto(url)
-        typer.echo("A browser window is open. Sign in to PANKHUDI completely, then return here.")
-        typer.prompt("Press Enter after the portal shows your authenticated page")
-        context.storage_state(path=str(target))
-        browser.close()
+        try:
+            page.goto(url, wait_until="domcontentloaded")
+            typer.echo("A browser window is open. Sign in to PANKHUDI completely.")
+            if wait_seconds > 0:
+                typer.echo(f"Waiting {wait_seconds} seconds before saving storage state...")
+                time.sleep(wait_seconds)
+            else:
+                input("Press Enter here after the portal shows your authenticated page: ")
+            context.storage_state(path=str(target))
+        finally:
+            browser.close()
     typer.echo(f"Saved storage state to {target}")
 
 @app.command()
