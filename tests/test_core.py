@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+import json
 import pytest
 
 from pankhudi_contribute.client import AmbiguousSearchError, exact_uid_match
@@ -88,3 +89,53 @@ def test_storage_state_headers_include_csrf_and_local_storage_token(tmp_path):
     headers = headers_from_storage_state(str(path))
     assert headers["X-XSRF-TOKEN"] == "csrf 123"
     assert headers["Authorization"] == "Bearer abc.jwt.token"
+
+def test_storage_state_headers_include_session_storage_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    path.write_text('{"cookies":[],"origins":[{"origin":"https://pankhudi.wcd.gov.in","sessionStorage":[{"name":"access_token","value":"session.jwt.token"}]}]}', encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer session.jwt.token"
+
+def test_add_session_storage_to_state_persists_tokens_for_headers(tmp_path):
+    from pankhudi_contribute.auth import add_session_storage_to_state, headers_from_storage_state
+    state = {"cookies": [], "origins": [{"origin": "https://pankhudi.wcd.gov.in", "localStorage": []}]}
+    add_session_storage_to_state(state, "https://pankhudi.wcd.gov.in/dashboard", {"access_token": "captured.jwt.token"})
+    path = tmp_path / "state.json"
+    path.write_text(json.dumps(state), encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer captured.jwt.token"
+
+def test_storage_state_headers_include_cookie_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    path.write_text('{"cookies":[{"name":"access_token","value":"cookie.jwt.token"}],"origins":[]}', encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer cookie.jwt.token"
+
+def test_storage_state_headers_include_nested_json_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    state = {
+        "cookies": [],
+        "origins": [{
+            "origin": "https://pankhudi.wcd.gov.in",
+            "localStorage": [{"name": "auth_state", "value": json.dumps({"auth": {"accessToken": "nested.jwt.token"}})}],
+        }],
+    }
+    path.write_text(json.dumps(state), encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer nested.jwt.token"
+
+def test_extract_contributed_refs_handles_nested_contribution_payloads():
+    from pankhudi_contribute.cli import _extract_contributed_refs
+    project_ids, project_uids = _extract_contributed_refs({
+        "data": {
+            "content": [
+                {"projectId": "144", "projectUid": "PRJ-2026-0000144"},
+                {"project": {"project_id": 145, "project_uid": "PRJ-2026-0000145"}},
+            ]
+        }
+    })
+    assert project_ids == {144, 145}
+    assert project_uids == {"PRJ-2026-0000144", "PRJ-2026-0000145"}
