@@ -561,7 +561,6 @@ function ProgramDetail({ program, onBack, onOpenProgram }) {
         <p>Support the {program.title} programme and help us create lasting change in rural communities.</p>
         <Link to="/support-a-cause" className="btn btn-primary">Donate Now</Link>
       </section>
-
       <Footer />
     </div>
   );
@@ -1320,6 +1319,7 @@ function ProgramDetailRoute() {
 
 const PANKHUDI_PROJECTS_URL = "/api/pankhudi/projects";
 const PANKHUDI_CONTRIBUTE_URL = "/api/pankhudi/contribute";
+const PANKHUDI_CONTRIBUTE_PREVIEW_URL = "/api/pankhudi/contribute/preview";
 const PANKHUDI_SOURCE_URL = "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
 const PANKHUDI_STORAGE_KEY = "giveForSociety:pankhudi:savedProjects";
 const TELANGANA_PANKHUDI_DISTRICTS = [
@@ -1562,12 +1562,14 @@ function PankhudiProjectsPage() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [selectedProjectIds, setSelectedProjectIds] = useState([]);
   const [savedProjects, setSavedProjects] = useState(loadSavedPankhudiProjects);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [districtId, setDistrictId] = useState("699");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false);
+  const [contributionPreview, setContributionPreview] = useState(null);
   const [message, setMessage] = useState({ type: "info", text: "Click “Load live PANKHUDI projects” to view current projects from the district feed." });
   const [lastFetchedAt, setLastFetchedAt] = useState("");
 
@@ -1607,7 +1609,9 @@ function PankhudiProjectsPage() {
       const rows = Array.isArray(payload?.projects) ? payload.projects : extractPankhudiRows(payload);
       if (!rows.length) throw new Error("The API response did not include project rows.");
       setProjects(rows);
-      setSelectedProjectId(getProjectId(rows[0], 0));
+      const firstId = getProjectId(rows[0], 0);
+      setSelectedProjectId(firstId);
+      setSelectedProjectIds([firstId]);
       const fetchedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
       setLastFetchedAt(fetchedAt);
       setMessage({ type: "success", text: `Loaded ${rows.length} live PANKHUDI projects for ${districtName}. Last update: ${fetchedAt} IST.` });
@@ -1618,47 +1622,77 @@ function PankhudiProjectsPage() {
     }
   };
 
-  const contributeSelectedProject = async () => {
-    if (!selectedProject) return;
-    const projectId = Number(getProjectValue(selectedProject, ["projectId", "projectID", "id"], 0));
-    if (!projectId) {
-      setMessage({ type: "error", text: "This project is missing a projectId and cannot be submitted." });
+  const selectedProjectsForContribution = (mode = "selected") => {
+    const ids = mode === "batch" ? selectedProjectIds : [selectedId];
+    return ids
+      .map((id) => projectRows.find((row) => row.id === id))
+      .filter(Boolean)
+      .map(({ project, id }) => ({ ...project, projectUid: getProjectValue(project, ["projectUid", "projectUID", "uid"], id) }));
+  };
+
+  const openContributionPreview = async (mode = "selected") => {
+    const contributionProjects = selectedProjectsForContribution(mode);
+    if (!contributionProjects.length) {
+      setMessage({ type: "error", text: "Select one or more projects before creating a PANKHUDI contribution preview." });
       return;
     }
-    const projectName = getProjectValue(selectedProject, ["projectName", "name", "title", "projectTitle"], `Project ${selectedId}`);
-    if (!window.confirm(`Submit contribution request for ${projectName} to the PANKHUDI portal?`)) return;
     setIsSubmittingContribution(true);
-    setMessage({ type: "info", text: `Submitting contribution request for ${projectName}…` });
+    setMessage({ type: "info", text: `Preparing ${mode === "batch" ? "batch" : "individual"} contribution preview…` });
+    try {
+      const response = await fetch(PANKHUDI_CONTRIBUTE_PREVIEW_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify({ projects: contributionProjects }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload?.error || `PANKHUDI preview returned ${response.status}`);
+      setContributionPreview({ ...payload, mode, projects: contributionProjects });
+      setMessage({ type: payload.authConfigured ? "success" : "info", text: payload.authConfigured ? "Review the PANKHUDI contribution preview before portal submission." : `Preview ready. ${payload.setup}` });
+    } catch (error) {
+      setMessage({ type: "error", text: error.message || "Unable to prepare contribution preview." });
+    } finally {
+      setIsSubmittingContribution(false);
+    }
+  };
+
+  const submitContributionPreview = async () => {
+    if (!contributionPreview?.projects?.length) return;
+    setIsSubmittingContribution(true);
+    setMessage({ type: "info", text: "Submitting reviewed contribution request to PANKHUDI…" });
     try {
       const response = await fetch(PANKHUDI_CONTRIBUTE_URL, {
         method: "POST",
         headers: { "content-type": "application/json", accept: "application/json" },
-        body: JSON.stringify({ projectId, projectUid: selectedId }),
+        body: JSON.stringify({ projects: contributionPreview.projects }),
       });
       const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload?.error || `PANKHUDI submit returned ${response.status}`);
-      setMessage({ type: "success", text: `Contribution request submitted for ${projectName}. Verify it in the PANKHUDI contribution list.` });
-      if (selectedId) {
-        const nextSaved = {
-          ...savedProjects,
-          [selectedId]: {
-            ...savedProjects[selectedId],
-            id: selectedId,
-            savedAt: savedProjects[selectedId]?.savedAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            internalStatus: "contributing",
-            contributionResponse: payload,
-            snapshot: selectedProject,
-          },
+      if (!response.ok && response.status !== 207) throw new Error(payload?.error || `PANKHUDI submit returned ${response.status}`);
+      const nextSaved = { ...savedProjects };
+      contributionPreview.projects.forEach((project, index) => {
+        const id = getProjectId(project, index);
+        nextSaved[id] = {
+          ...nextSaved[id],
+          id,
+          savedAt: nextSaved[id]?.savedAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          internalStatus: "contributing",
+          contributionResponse: payload,
+          snapshot: project,
         };
-        setSavedProjects(nextSaved);
-        savePankhudiProjects(nextSaved);
-      }
+      });
+      setSavedProjects(nextSaved);
+      savePankhudiProjects(nextSaved);
+      setContributionPreview(null);
+      setMessage({ type: payload.failed ? "error" : "success", text: payload.failed ? `${payload.failed} contribution request(s) failed. Review server response before retrying.` : `Submitted ${payload.total} contribution request(s). Verify them in the PANKHUDI portal.` });
     } catch (error) {
       setMessage({ type: "error", text: error.message || "Unable to submit contribution request." });
     } finally {
       setIsSubmittingContribution(false);
     }
+  };
+
+  const toggleProjectSelection = (id) => {
+    setSelectedProjectIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
   };
 
   const saveSelectedProject = () => {
@@ -1777,6 +1811,13 @@ function PankhudiProjectsPage() {
                     className={`pankhudi-project-row ${selectedId === id ? "active" : ""}`}
                     onClick={() => setSelectedProjectId(id)}
                   >
+                    <input
+                      type="checkbox"
+                      checked={selectedProjectIds.includes(id)}
+                      onChange={(event) => { event.stopPropagation(); toggleProjectSelection(id); }}
+                      onClick={(event) => event.stopPropagation()}
+                      aria-label={`Select ${getProjectValue(project, ["projectName", "name", "title", "projectTitle"], `Project ${id}`)} for batch contribution`}
+                    />
                     <span className="pankhudi-project-icon"><FolderKanban size={18} /></span>
                     <span>
                       <strong>{getProjectValue(project, ["projectName", "name", "title", "projectTitle"], `Project ${id}`)}</strong>
@@ -1800,8 +1841,11 @@ function PankhudiProjectsPage() {
                   </div>
                   <div className="pankhudi-detail-actions">
                     <button type="button" className="btn btn-outline" onClick={saveSelectedProject}><Save size={16} /> Save project</button>
-                    <button type="button" className="btn btn-primary" onClick={contributeSelectedProject} disabled={isSubmittingContribution}>
-                      <Heart size={16} /> {isSubmittingContribution ? "Submitting…" : "Contribute in PANKHUDI"}
+                    <button type="button" className="btn btn-outline" onClick={() => openContributionPreview("batch")} disabled={isSubmittingContribution || !selectedProjectIds.length}>
+                      <Heart size={16} /> Preview batch ({selectedProjectIds.length})
+                    </button>
+                    <button type="button" className="btn btn-primary" onClick={() => openContributionPreview("selected")} disabled={isSubmittingContribution}>
+                      <Heart size={16} /> {isSubmittingContribution ? "Preparing…" : "Preview individual contribution"}
                     </button>
                   </div>
                 </div>
@@ -1914,6 +1958,42 @@ function PankhudiProjectsPage() {
           </section>
         </section>
       </main>
+      {contributionPreview && (
+        <div className="pankhudi-preview-backdrop" role="dialog" aria-modal="true" aria-label="PANKHUDI contribution preview">
+          <div className="pankhudi-preview-modal">
+            <div className="pankhudi-detail-header">
+              <div>
+                <p className="eyebrow orange">PORTAL SUBMISSION PREVIEW</p>
+                <h2>Review before contributing in PANKHUDI</h2>
+                <p>{contributionPreview.total} project(s), {contributionPreview.failed} issue(s). {contributionPreview.authConfigured ? "Server authentication is configured." : contributionPreview.setup}</p>
+              </div>
+              <button type="button" className="btn btn-outline" onClick={() => setContributionPreview(null)}>Close</button>
+            </div>
+            <div className="pankhudi-table-wrap">
+              <table>
+                <thead><tr><th>Project</th><th>UID</th><th>Project ID</th><th>Activity rows</th><th>Total qty</th><th>Status</th></tr></thead>
+                <tbody>{contributionPreview.results.map((result, index) => (
+                  <tr key={`${result.preview?.projectId || index}-${index}`}>
+                    <td>{result.preview?.projectName || "—"}</td>
+                    <td>{result.preview?.projectUid || "—"}</td>
+                    <td>{result.preview?.projectId || "—"}</td>
+                    <td>{result.preview?.detailCount || "—"}</td>
+                    <td>{result.preview?.totalContributionQty || "—"}</td>
+                    <td>{result.ok ? "Ready" : result.error}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+            <pre className="pankhudi-preview-json">{JSON.stringify(contributionPreview.results.map((result) => result.preview?.payload || result.error), null, 2)}</pre>
+            <div className="pankhudi-detail-actions">
+              <button type="button" className="btn btn-outline" onClick={() => setContributionPreview(null)}>Cancel</button>
+              <button type="button" className="btn btn-primary" onClick={submitContributionPreview} disabled={isSubmittingContribution || !contributionPreview.authConfigured || contributionPreview.failed}>
+                {isSubmittingContribution ? "Submitting…" : "Confirm and submit to portal"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
