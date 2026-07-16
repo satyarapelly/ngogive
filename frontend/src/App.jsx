@@ -1601,7 +1601,18 @@ function PankhudiProjectsPage() {
   );
 
   const projectRows = useMemo(() => projects.map((project, index) => ({ project, id: getProjectId(project, index) })), [projects]);
-  const savedCount = Object.keys(savedProjects).length;
+  const apiContributionCount = contributedRefs.fetchedAt ? Math.max(contributedRefs.projectIds.length, contributedRefs.projectUids.length) : null;
+
+  const projectContributionRows = useMemo(() => projectRows.map(({ project, id }) => ({
+    project,
+    id,
+    contributionStatus: getPankhudiContributionStatus(project, id, contributedRefs),
+  })), [projectRows, contributedRefs]);
+
+  const contributionCounts = useMemo(() => projectContributionRows.reduce((counts, row) => ({
+    ...counts,
+    [row.contributionStatus.key]: (counts[row.contributionStatus.key] || 0) + 1,
+  }), {}), [projectContributionRows]);
 
   const projectContributionRows = useMemo(() => projectRows.map(({ project, id }) => ({
     project,
@@ -1772,6 +1783,7 @@ function PankhudiProjectsPage() {
       }
     }
 
+    if (submitted) await fetchContributionRefs();
     setContributionSubmissionComplete(true);
     setIsSubmittingContribution(false);
     setMessage({ type: failed ? "error" : "success", text: failed ? `Submitted ${submitted} of ${total}; ${failed} project(s) failed. Check the preview status table before retrying.` : `Submitted all ${submitted} project(s). Verify them in the PANKHUDI portal.` });
@@ -1858,7 +1870,7 @@ function PankhudiProjectsPage() {
 
         <section className="pankhudi-stats" aria-label="PANKHUDI project summary">
           <article><strong>{projects.length || "—"}</strong><span>Live projects loaded</span></article>
-          <article><strong>{savedCount}</strong><span>Saved for contribution</span></article>
+          <article><strong>{apiContributionCount ?? "—"}</strong><span>Saved contributions from API</span></article>
           <article><strong>{filteredProjects.length || "—"}</strong><span>Matching current filters</span></article>
           <article><strong>{contributionCounts["ready-to-contribute"] || 0}</strong><span>Ready to contribute</span></article>
           <article><strong>{contributionCounts["already-contributed"] || 0}</strong><span>Already contributed</span></article>
