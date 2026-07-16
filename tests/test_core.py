@@ -80,3 +80,11 @@ def test_reporting_writes_csv_without_openpyxl_requirement(tmp_path):
     from pankhudi_contribute.reporting import write_reports
     write_reports([{"Project UID": "PRJ-1"}], tmp_path)
     assert (tmp_path / "contribution_results.csv").exists()
+
+def test_storage_state_headers_include_csrf_and_local_storage_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    path.write_text('{"cookies":[{"name":"XSRF-TOKEN","value":"csrf%20123"}],"origins":[{"origin":"https://pankhudi.wcd.gov.in","localStorage":[{"name":"access_token","value":"abc.jwt.token"}]}]}', encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["X-XSRF-TOKEN"] == "csrf 123"
+    assert headers["Authorization"] == "Bearer abc.jwt.token"

@@ -75,7 +75,7 @@ def plan(
 
     storage_path = storage_state if Path(storage_state).exists() else None
     headers = headers_from_storage_state(storage_path)
-    client = _make_client(storage_path, headers) if headers or storage_path else None
+    client = _make_client(storage_path, headers) if storage_path or _has_auth(headers) else None
     journal = SubmissionJournal(out / "submission_journal.jsonl")
     results: list[dict[str, Any]] = []
     summary = _empty_summary(total_workbook_rows=len(workbook_rows), dry_run=True, authenticated=bool(client))
@@ -159,7 +159,7 @@ def submit(
         raise typer.Exit(code=2)
     storage_path = storage_state if Path(storage_state).exists() else None
     headers = headers_from_storage_state(storage_path)
-    if not headers and not storage_path:
+    if not storage_path and not _has_auth(headers):
         raise typer.BadParameter("Authentication is missing")
     out = Path(output_dir)
     payload_files = _planned_payload_files(out, project_uid)
@@ -221,6 +221,9 @@ def submit(
         if delay_seconds > 0:
             time.sleep(delay_seconds)
     typer.echo(f"Submit complete. Submitted: {submitted}; verified: {verified}; skipped: {skipped}; failed: {failed_total}")
+
+def _has_auth(headers: dict[str, str]) -> bool:
+    return any(key in headers for key in ("Cookie", "Authorization", "X-CSRF-Token", "X-XSRF-TOKEN"))
 
 def _make_client(storage_state: str | None, headers: dict[str, str]) -> Any:
     if storage_state:
