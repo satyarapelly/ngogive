@@ -3367,3 +3367,10 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
   padding: 1rem;
   white-space: pre-wrap;
 }
+
+.pankhudi-preview-modal td small {
+  display: block;
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.78rem;
+}
