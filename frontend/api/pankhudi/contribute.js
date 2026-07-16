@@ -107,12 +107,21 @@ function readStorageState() {
   }
   try {
     const storagePath = process.env.PANKHUDI_STORAGE_STATE || DEFAULT_STORAGE_STATE;
-    const resolved = path.isAbsolute(storagePath) ? storagePath : path.join(process.cwd(), storagePath);
+    const resolved = resolveStorageStatePath(storagePath);
     if (!fs.existsSync(resolved)) return null;
     return JSON.parse(fs.readFileSync(resolved, "utf-8"));
   } catch {
     return null;
   }
+}
+
+function resolveStorageStatePath(storagePath) {
+  if (path.isAbsolute(storagePath)) return storagePath;
+  const candidates = [
+    path.join(process.cwd(), storagePath),
+    path.join(process.cwd(), "..", storagePath),
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) || candidates[0];
 }
 
 function findTokenInState(state) {
