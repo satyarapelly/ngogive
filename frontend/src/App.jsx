@@ -1632,6 +1632,26 @@ function PankhudiProjectsPage() {
     });
   }, [projectContributionRows, savedProjects, searchTerm, statusFilter]);
 
+  const selectableFilteredProjectIds = useMemo(
+    () => filteredProjects
+      .filter(({ contributionStatus }) => contributionStatus.key === "ready-to-contribute")
+      .map(({ id }) => id),
+    [filteredProjects],
+  );
+
+  const allFilteredReadyProjectsSelected = selectableFilteredProjectIds.length > 0
+    && selectableFilteredProjectIds.every((id) => selectedProjectIds.includes(id));
+
+  const toggleAllFilteredReadyProjects = () => {
+    setSelectedProjectIds((current) => {
+      if (allFilteredReadyProjectsSelected) {
+        return current.filter((id) => !selectableFilteredProjectIds.includes(id));
+      }
+
+      return Array.from(new Set([...current, ...selectableFilteredProjectIds]));
+    });
+  };
+
   const fetchContributionRefs = async () => {
     setIsLoadingContributions(true);
     try {
@@ -1905,6 +1925,19 @@ function PankhudiProjectsPage() {
                 <option value="contributing">Contributing</option>
                 <option value="completed">Completed</option>
               </select>
+            </div>
+            <div className="pankhudi-batch-toolbar" aria-label="Batch project selection controls">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={allFilteredReadyProjectsSelected}
+                  disabled={!selectableFilteredProjectIds.length}
+                  onChange={toggleAllFilteredReadyProjects}
+                />
+                Select all ready projects in current filters
+              </label>
+              <button type="button" className="btn btn-outline" onClick={() => setSelectedProjectIds([])} disabled={!selectedProjectIds.length}>Clear selection</button>
+              <span>{selectedProjectIds.length} selected · {selectableFilteredProjectIds.length} ready in view</span>
             </div>
             <div className="pankhudi-project-list">
               {filteredProjects.length ? filteredProjects.map(({ project, id, contributionStatus }) => {
