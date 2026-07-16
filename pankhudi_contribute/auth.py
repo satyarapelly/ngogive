@@ -48,7 +48,7 @@ def _csrf_from_cookies(cookies: list[dict[str, Any]]) -> str | None:
 
 def _authorization_from_local_storage(state: dict[str, Any]) -> str | None:
     for origin in state.get("origins", []):
-        for item in origin.get("localStorage", []):
+        for item in [*origin.get("localStorage", []), *origin.get("sessionStorage", [])]:
             key = str(item.get("name", "")).lower()
             value = str(item.get("value", "")).strip()
             if not value:
