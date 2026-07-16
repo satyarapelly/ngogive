@@ -73,6 +73,9 @@ The `.secrets/` and `output/` directories are ignored by git.
 ## Refresh authentication
 
 If submit fails with `PANKHUDI authentication failed`, refresh the Playwright storage state. The CLI uses Playwright's API request context for `--storage-state` so cookies/session data are replayed the same way the browser captured them:
+## Refresh authentication
+
+If submit fails with `PANKHUDI authentication failed`, refresh the Playwright storage state:
 
 ```bash
 python -m playwright install chromium
