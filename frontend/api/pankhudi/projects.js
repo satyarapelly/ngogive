@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed." });
   }
 
-  const sourceUrl = process.env.PANKHUDI_PROJECTS_URL || DEFAULT_PANKHUDI_PROJECTS_URL;
+  const sourceUrl = buildProjectsUrl(req.query?.districtId);
 
   try {
     const response = await fetch(sourceUrl, {
@@ -54,4 +54,15 @@ export default async function handler(req, res) {
       sourceUrl,
     });
   }
+}
+
+function buildProjectsUrl(districtId = "699") {
+  if (process.env.PANKHUDI_PROJECTS_URL && !districtId) return process.env.PANKHUDI_PROJECTS_URL;
+  const url = new URL(process.env.PANKHUDI_PROJECTS_URL || DEFAULT_PANKHUDI_PROJECTS_URL);
+  if (districtId) url.searchParams.set("districtId", String(districtId));
+  url.searchParams.set("stateId", "28");
+  url.searchParams.set("userId", "132975");
+  url.searchParams.set("page", "0");
+  url.searchParams.set("size", "250");
+  return url.toString();
 }

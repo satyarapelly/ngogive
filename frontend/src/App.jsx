@@ -1319,8 +1319,44 @@ function ProgramDetailRoute() {
 
 
 const PANKHUDI_PROJECTS_URL = "/api/pankhudi/projects";
+const PANKHUDI_CONTRIBUTE_URL = "/api/pankhudi/contribute";
 const PANKHUDI_SOURCE_URL = "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
 const PANKHUDI_STORAGE_KEY = "giveForSociety:pankhudi:savedProjects";
+const TELANGANA_PANKHUDI_DISTRICTS = [
+  { id: "501", name: "Adilabad" },
+  { id: "690", name: "Bhadradri Kothagudem" },
+  { id: "507", name: "Hyderabad" },
+  { id: "681", name: "Jagtial" },
+  { id: "686", name: "Jangaon" },
+  { id: "687", name: "Jayashankar Bhupalpally" },
+  { id: "695", name: "Jogulamba Gadwal" },
+  { id: "685", name: "Kamareddy" },
+  { id: "508", name: "Karimnagar" },
+  { id: "509", name: "Khammam" },
+  { id: "699", name: "Kumuram Bheem Asifabad" },
+  { id: "688", name: "Mahabubabad" },
+  { id: "512", name: "Mahabubnagar" },
+  { id: "684", name: "Mancherial" },
+  { id: "513", name: "Medak" },
+  { id: "700", name: "Medchal-Malkajgiri" },
+  { id: "720", name: "Mulugu" },
+  { id: "694", name: "Nagarkurnool" },
+  { id: "514", name: "Nalgonda" },
+  { id: "721", name: "Narayanpet" },
+  { id: "680", name: "Nirmal" },
+  { id: "516", name: "Nizamabad" },
+  { id: "682", name: "Peddapalli" },
+  { id: "683", name: "Rajanna Sircilla" },
+  { id: "518", name: "Rangareddy" },
+  { id: "691", name: "Sangareddy" },
+  { id: "692", name: "Siddipet" },
+  { id: "696", name: "Suryapet" },
+  { id: "698", name: "Vikarabad" },
+  { id: "693", name: "Wanaparthy" },
+  { id: "686", name: "Warangal" },
+  { id: "522", name: "Warangal Urban / Hanamkonda" },
+  { id: "697", name: "Yadadri Bhuvanagiri" },
+];
 
 const PANKHUDI_IMPLEMENTATION_MODULES = [
   { title: "Planning, batching & assignments", detail: "Select execution projects, group by district/mandal/route, create batches, assign field officers and installation teams, set dates, compare planned versus completed work, and flag blocked or overdue projects." },
@@ -1529,7 +1565,9 @@ function PankhudiProjectsPage() {
   const [savedProjects, setSavedProjects] = useState(loadSavedPankhudiProjects);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [districtId, setDistrictId] = useState("699");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmittingContribution, setIsSubmittingContribution] = useState(false);
   const [message, setMessage] = useState({ type: "info", text: "Click “Load live PANKHUDI projects” to view current projects from the district feed." });
   const [lastFetchedAt, setLastFetchedAt] = useState("");
 
@@ -1560,9 +1598,10 @@ function PankhudiProjectsPage() {
 
   const fetchLiveProjects = async () => {
     setIsLoading(true);
-    setMessage({ type: "info", text: "Loading live PANKHUDI projects…" });
+    const districtName = TELANGANA_PANKHUDI_DISTRICTS.find((district) => district.id === districtId)?.name || "selected district";
+    setMessage({ type: "info", text: `Loading live PANKHUDI projects for ${districtName}…` });
     try {
-      const response = await fetch(PANKHUDI_PROJECTS_URL, { headers: { accept: "application/json" } });
+      const response = await fetch(`${PANKHUDI_PROJECTS_URL}?districtId=${encodeURIComponent(districtId)}`, { headers: { accept: "application/json" } });
       if (!response.ok) throw new Error(`PANKHUDI API returned ${response.status} ${response.statusText}`);
       const payload = await response.json();
       const rows = Array.isArray(payload?.projects) ? payload.projects : extractPankhudiRows(payload);
@@ -1571,11 +1610,54 @@ function PankhudiProjectsPage() {
       setSelectedProjectId(getProjectId(rows[0], 0));
       const fetchedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
       setLastFetchedAt(fetchedAt);
-      setMessage({ type: "success", text: `Loaded ${rows.length} live PANKHUDI projects. Last update: ${fetchedAt} IST.` });
+      setMessage({ type: "success", text: `Loaded ${rows.length} live PANKHUDI projects for ${districtName}. Last update: ${fetchedAt} IST.` });
     } catch (error) {
       setMessage({ type: "error", text: `${error.message}. The page uses the same-origin PANKHUDI API proxy; confirm the deployment can reach pankhudi.wcd.gov.in and that PANKHUDI_PROJECTS_URL is configured if the source changes.` });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const contributeSelectedProject = async () => {
+    if (!selectedProject) return;
+    const projectId = Number(getProjectValue(selectedProject, ["projectId", "projectID", "id"], 0));
+    if (!projectId) {
+      setMessage({ type: "error", text: "This project is missing a projectId and cannot be submitted." });
+      return;
+    }
+    const projectName = getProjectValue(selectedProject, ["projectName", "name", "title", "projectTitle"], `Project ${selectedId}`);
+    if (!window.confirm(`Submit contribution request for ${projectName} to the PANKHUDI portal?`)) return;
+    setIsSubmittingContribution(true);
+    setMessage({ type: "info", text: `Submitting contribution request for ${projectName}…` });
+    try {
+      const response = await fetch(PANKHUDI_CONTRIBUTE_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify({ projectId, projectUid: selectedId }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload?.error || `PANKHUDI submit returned ${response.status}`);
+      setMessage({ type: "success", text: `Contribution request submitted for ${projectName}. Verify it in the PANKHUDI contribution list.` });
+      if (selectedId) {
+        const nextSaved = {
+          ...savedProjects,
+          [selectedId]: {
+            ...savedProjects[selectedId],
+            id: selectedId,
+            savedAt: savedProjects[selectedId]?.savedAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            internalStatus: "contributing",
+            contributionResponse: payload,
+            snapshot: selectedProject,
+          },
+        };
+        setSavedProjects(nextSaved);
+        savePankhudiProjects(nextSaved);
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: error.message || "Unable to submit contribution request." });
+    } finally {
+      setIsSubmittingContribution(false);
     }
   };
 
@@ -1614,7 +1696,6 @@ function PankhudiProjectsPage() {
 
   const selectedId = selectedProject ? getProjectId(selectedProject, projects.indexOf(selectedProject)) : "";
   const selectedSaved = selectedId ? savedProjects[selectedId] : null;
-  const selectedDetailRows = selectedProject ? getPankhudiDetailRows(selectedProject) : [];
   const selectedCentres = selectedProject ? findPankhudiCentres(selectedProject) : [];
   const selectedBudget = selectedProject ? getPankhudiBudgetSummary(selectedProject) : { lineItems: [], total: 0, projectAmount: 0, lineItemTotal: 0 };
 
@@ -1630,6 +1711,12 @@ function PankhudiProjectsPage() {
             and maintain contribution status for future implementation batches.
           </p>
           <div className="pankhudi-actions">
+            <label className="pankhudi-district-select">
+              Telangana district
+              <select value={districtId} onChange={(event) => setDistrictId(event.target.value)}>
+                {TELANGANA_PANKHUDI_DISTRICTS.map((district) => <option key={`${district.id}-${district.name}`} value={district.id}>{district.name}</option>)}
+              </select>
+            </label>
             <button type="button" className="btn btn-primary" onClick={fetchLiveProjects} disabled={isLoading}>
               <RefreshCw size={16} /> {isLoading ? "Loading…" : "Load live PANKHUDI projects"}
             </button>
@@ -1711,7 +1798,12 @@ function PankhudiProjectsPage() {
                     <h2>{getProjectValue(selectedProject, ["projectName", "name", "title", "projectTitle"], `Project ${selectedId}`)}</h2>
                     <p>External ID: <strong>{selectedId}</strong></p>
                   </div>
-                  <button type="button" className="btn btn-primary" onClick={saveSelectedProject}><Save size={16} /> Save project</button>
+                  <div className="pankhudi-detail-actions">
+                    <button type="button" className="btn btn-outline" onClick={saveSelectedProject}><Save size={16} /> Save project</button>
+                    <button type="button" className="btn btn-primary" onClick={contributeSelectedProject} disabled={isSubmittingContribution}>
+                      <Heart size={16} /> {isSubmittingContribution ? "Submitting…" : "Contribute in PANKHUDI"}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="pankhudi-detail-grid">
@@ -1791,11 +1883,6 @@ function PankhudiProjectsPage() {
                   ) : <p>No separate line-item array was found in this project payload. The estimated budget above uses the project-level amount from the live feed.</p>}
                 </div>
 
-                <div className="pankhudi-all-details-card">
-                  <h3>All project details from live payload</h3>
-                  <dl>{selectedDetailRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-                </div>
-
                 <div className="pankhudi-save-card">
                   <h3>Internal contribution tracker</h3>
                   {selectedSaved ? (
@@ -1820,10 +1907,6 @@ function PankhudiProjectsPage() {
                   )}
                 </div>
 
-                <details className="pankhudi-raw-card">
-                  <summary>View full live project payload</summary>
-                  <pre>{JSON.stringify(selectedProject, null, 2)}</pre>
-                </details>
               </>
             ) : (
               <div className="empty-state large">Load live projects to view details and save projects for contribution tracking.</div>
