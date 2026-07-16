@@ -99,6 +99,8 @@ The command prints the selected project UIDs and requires typing `SUBMIT <N> PRO
 
 Before planning or submitting, the CLI calls PANKHUDI's `get/yourContributions?userId=132975` endpoint and skips projects already present in the authenticated user's contribution list. The response is saved as `responses/yourContributions.json` for operator review.
 
+For the web page's **Contribute in PANKHUDI** button, configure authentication only on the server. Local development can reuse the same Playwright storage state by setting `PANKHUDI_STORAGE_STATE=.secrets/pankhudi-storage-state.json`, or you can set `PANKHUDI_AUTHORIZATION` directly in the server environment. Never place these secrets in browser-side frontend code.
+
 After the single-project validation succeeds, use 10-project batches and manually verify the contribution list after each batch before continuing:
 
 ```bash
