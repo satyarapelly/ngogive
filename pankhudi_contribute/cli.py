@@ -8,7 +8,7 @@ from typing import Any
 
 import typer
 
-from .auth import headers_from_storage_state
+from .auth import add_session_storage_to_state, headers_from_storage_state
 from .client import PankhudiClient, PlaywrightPankhudiClient, exact_uid_match, unwrap_project
 from .filters import project_eligible, workbook_eligible
 from .journal import SubmissionJournal
@@ -45,7 +45,10 @@ def login(storage_state: str = DEFAULT_STORAGE, url: str = "https://pankhudi.wcd
                 time.sleep(wait_seconds)
             else:
                 input("Press Enter here after the portal shows your authenticated page: ")
-            context.storage_state(path=str(target))
+            state = context.storage_state()
+            session_storage = page.evaluate("() => Object.fromEntries(Object.entries(window.sessionStorage))")
+            add_session_storage_to_state(state, page.url, session_storage)
+            target.write_text(json.dumps(state, indent=2), encoding="utf-8")
         finally:
             browser.close()
     typer.echo(f"Saved storage state to {target}")
@@ -161,6 +164,12 @@ def submit(
     headers = headers_from_storage_state(storage_path)
     if not storage_path and not _has_auth(headers):
         raise typer.BadParameter("Authentication is missing")
+    if "Authorization" not in headers:
+        raise typer.BadParameter(
+            "PANKHUDI submit requires an Authorization header. Refresh storage-state with "
+            "`python -m pankhudi_contribute login --storage-state .secrets/pankhudi-storage-state.json` "
+            "so sessionStorage tokens are captured, or set PANKHUDI_AUTHORIZATION."
+        )
     out = Path(output_dir)
     payload_files = _planned_payload_files(out, project_uid)
     if not payload_files:
