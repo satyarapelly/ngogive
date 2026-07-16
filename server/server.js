@@ -40,6 +40,7 @@ const DEFAULT_PANKHUDI_PROJECTS_URL =
   "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
 const PANKHUDI_BASE_URL = "https://pankhudi.wcd.gov.in";
 const DEFAULT_PANKHUDI_STORAGE_STATE = ".secrets/pankhudi-storage-state.json";
+const PANKHUDI_USER_ID = Number(process.env.PANKHUDI_USER_ID || 132975);
 
 const extractPankhudiRows = (payload) => {
   if (Array.isArray(payload)) return payload;
@@ -201,7 +202,7 @@ function unwrapPankhudiProject(payload) {
 }
 
 function buildPankhudiContributionPayload(project) {
-  const projectId = Number(project.projectId || project.id);
+  const projectId = Number(project.projectId || project.projectID || project.id);
   const createdOn = new Date().toISOString();
   const details = (project.activities || project.projectActivities || [])
     .map((activity) => {
@@ -222,7 +223,7 @@ function buildPankhudiContributionPayload(project) {
         deliverOn: null,
         statusId: 1,
         isActive: true,
-        createdBy: 132975,
+        createdBy: PANKHUDI_USER_ID,
         createdOn,
         updatedBy: null,
         updatedOn: null,
@@ -236,13 +237,13 @@ function buildPankhudiContributionPayload(project) {
   return {
     request: {
       id: 0,
-      userId: 132975,
+      userId: PANKHUDI_USER_ID,
       projectId,
       approvedBy: null,
       approvedOn: null,
       statusId: 1,
       isActive: true,
-      createdBy: 132975,
+      createdBy: PANKHUDI_USER_ID,
       createdOn,
       updatedBy: null,
       updatedOn: null,
@@ -333,50 +334,90 @@ app.get("/api/pankhudi/projects", async (req, res) => {
   }
 });
 
-app.post("/api/pankhudi/contribute", async (req, res) => {
+
+async function loadPankhudiProjectForContribution(projectInput, headers) {
+  if (projectInput && typeof projectInput === "object" && (projectInput.projectId || projectInput.projectID || projectInput.id)) {
+    return projectInput;
+  }
+  const projectId = Number(projectInput?.projectId || projectInput?.projectID || projectInput?.id || projectInput);
+  if (!projectId) throw new Error("projectId is required.");
+  const detailUrl = new URL("/API/MasterApi/v1/projects/fetch", PANKHUDI_BASE_URL);
+  detailUrl.searchParams.set("projectId", String(projectId));
+  const detailResponse = await fetch(detailUrl, { headers });
+  const detailPayload = await detailResponse.json().catch(() => ({}));
+  if (!detailResponse.ok) {
+    const error = new Error(`PANKHUDI detail API returned ${detailResponse.status} ${detailResponse.statusText}`);
+    error.status = detailResponse.status;
+    error.details = detailPayload;
+    throw error;
+  }
+  return unwrapPankhudiProject(detailPayload);
+}
+
+function contributionAuthSetup() {
+  return "Set PANKHUDI_AUTHORIZATION or PANKHUDI_STORAGE_STATE on the API server, then restart it. Browser localStorage is not visible to the Node server or Vite proxy.";
+}
+
+async function prepareContributionBatch(req, res, { execute }) {
   const headers = pankhudiAuthHeaders();
-  if (!headers.Authorization) {
+  if (execute && !headers.Authorization) {
     return res.status(503).json({
-      error: "PANKHUDI submit is not configured.",
-      setup: "Set PANKHUDI_AUTHORIZATION, PANKHUDI_STORAGE_STATE, or PANKHUDI_STORAGE_STATE_JSON on the server. Do not store these values in frontend code.",
+      error: "PANKHUDI submit is not configured on the API server.",
+      setup: contributionAuthSetup(),
     });
   }
 
-  const projectId = Number(req.body?.projectId);
-  if (!projectId) return res.status(400).json({ error: "projectId is required." });
+  const rawProjects = Array.isArray(req.body?.projects) ? req.body.projects : [req.body?.project || req.body];
+  const results = [];
+  for (const rawProject of rawProjects.filter(Boolean)) {
+    try {
+      const project = await loadPankhudiProjectForContribution(rawProject, headers);
+      const payload = buildPankhudiContributionPayload(project);
+      const preview = {
+        projectId: payload.request.projectId,
+        projectUid: project.projectUid || project.projectUID || rawProject.projectUid || rawProject.projectUID || "",
+        projectName: project.projectName || project.name || project.title || "PANKHUDI project",
+        detailCount: payload.request.details.length,
+        totalContributionQty: payload.request.details.reduce((sum, detail) => sum + toPankhudiNumber(detail.contributionQty), 0),
+        payload,
+      };
 
-  try {
-    const detailUrl = new URL("/API/MasterApi/v1/projects/fetch", PANKHUDI_BASE_URL);
-    detailUrl.searchParams.set("projectId", String(projectId));
-    const detailResponse = await fetch(detailUrl, { headers });
-    const detailPayload = await detailResponse.json().catch(() => ({}));
-    if (!detailResponse.ok) {
-      return res.status(detailResponse.status).json({
-        error: `PANKHUDI detail API returned ${detailResponse.status} ${detailResponse.statusText}`,
-        details: detailPayload,
+      if (!execute) {
+        results.push({ ok: true, preview });
+        continue;
+      }
+
+      const saveResponse = await fetch(new URL("/API/MasterApi/v1/project-contributions/save", PANKHUDI_BASE_URL), {
+        method: "POST",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+      const savePayload = await saveResponse.json().catch(() => ({}));
+      if (!saveResponse.ok) {
+        results.push({ ok: false, preview, error: `PANKHUDI submit API returned ${saveResponse.status} ${saveResponse.statusText}`, details: savePayload });
+      } else {
+        results.push({ ok: true, preview, response: savePayload });
+      }
+    } catch (error) {
+      results.push({ ok: false, error: error.message || "Unable to prepare contribution.", details: error.details || null });
     }
-
-    const payload = buildPankhudiContributionPayload(unwrapPankhudiProject(detailPayload));
-    const saveResponse = await fetch(new URL("/API/MasterApi/v1/project-contributions/save", PANKHUDI_BASE_URL), {
-      method: "POST",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const savePayload = await saveResponse.json().catch(() => ({}));
-    if (!saveResponse.ok) {
-      return res.status(saveResponse.status).json({
-        error: `PANKHUDI submit API returned ${saveResponse.status} ${saveResponse.statusText}`,
-        details: savePayload,
-      });
-    }
-
-    return res.json({ submittedAt: new Date().toISOString(), response: savePayload });
-  } catch (error) {
-    console.error("Error submitting PANKHUDI contribution", error);
-    return res.status(500).json({ error: error.message || "Unable to submit PANKHUDI contribution." });
   }
-});
+
+  const failed = results.filter((result) => !result.ok).length;
+  return res.status(execute && failed ? 207 : 200).json({
+    mode: execute ? "submitted" : "preview",
+    authConfigured: Boolean(headers.Authorization),
+    submittedAt: execute ? new Date().toISOString() : null,
+    previewedAt: execute ? null : new Date().toISOString(),
+    total: results.length,
+    failed,
+    results,
+    setup: headers.Authorization ? undefined : contributionAuthSetup(),
+  });
+}
+
+app.post("/api/pankhudi/contribute/preview", (req, res) => prepareContributionBatch(req, res, { execute: false }));
+app.post("/api/pankhudi/contribute", (req, res) => prepareContributionBatch(req, res, { execute: true }));
 
 app.get("/api/vidyanjali/schools", async (req, res) => {
   const { state = "TELANGANA", district = "", block = "", pageSize = "5000" } = req.query;
