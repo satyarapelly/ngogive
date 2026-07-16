@@ -79,6 +79,10 @@ def plan(
     storage_path = storage_state if Path(storage_state).exists() else None
     headers = headers_from_storage_state(storage_path)
     client = _make_client(storage_path, headers) if storage_path or _has_auth(headers) else None
+    contributed_ids: set[int] = set()
+    contributed_uids: set[str] = set()
+    if client is not None:
+        contributed_ids, contributed_uids = _load_contributed_refs(client, out)
     journal = SubmissionJournal(out / "submission_journal.jsonl")
     results: list[dict[str, Any]] = []
     summary = _empty_summary(total_workbook_rows=len(workbook_rows), dry_run=True, authenticated=bool(client))
@@ -98,11 +102,19 @@ def plan(
             journal.append(projectUid=row.project_uid, projectId=row.project_id, action="dry_run", status="skipped", reason="authentication_missing", payloadHash=None)
             continue
         try:
+            if row.project_uid in contributed_uids or (row.project_id is not None and row.project_id in contributed_ids):
+                _skip(report, results, summary, "already_contributed_api")
+                journal.append(projectUid=row.project_uid, projectId=row.project_id, action="dry_run", status="skipped", reason="already_contributed_api", payloadHash=None)
+                continue
             search_response = client.search(row.project_uid)
             write_json(out / "responses" / f"{row.project_uid}.search.json", search_response)
             search_project = exact_uid_match(search_response, row.project_uid)
             report["Search status"] = "matched"
             current_project_id = int(search_project.get("projectId") or search_project.get("id"))
+            if current_project_id in contributed_ids:
+                _skip(report, results, summary, "already_contributed_api")
+                journal.append(projectUid=row.project_uid, projectId=current_project_id, action="dry_run", status="skipped", reason="already_contributed_api", payloadHash=None)
+                continue
             if row.project_id is not None and row.project_id != current_project_id and not accept_id_refresh:
                 _skip(report, results, summary, f"project_id_mismatch workbook={row.project_id} api={current_project_id}")
                 continue
@@ -150,7 +162,7 @@ def plan(
 def submit(
     execute: bool = False,
     confirm_batch: str | None = None,
-    max_projects: int = 5,
+    max_projects: int = 10,
     storage_state: str = DEFAULT_STORAGE,
     output_dir: str = "output",
     project_uid: str | None = None,
@@ -174,6 +186,23 @@ def submit(
     payload_files = _planned_payload_files(out, project_uid)
     if not payload_files:
         raise typer.BadParameter(f"No planned payloads found under {out / 'planned_payloads'}")
+    client = _make_client(storage_path, headers)
+    contributed_ids, contributed_uids = _load_contributed_refs(client, out)
+    journal = SubmissionJournal(out / "submission_journal.jsonl")
+    filtered_payload_files = []
+    for payload_file in payload_files:
+        payload = json.loads(payload_file.read_text(encoding="utf-8"))
+        payload_project_id = int(payload["request"]["projectId"])
+        uid = payload_file.stem
+        payload_hash = canonical_hash(payload)
+        if uid in contributed_uids or payload_project_id in contributed_ids:
+            journal.append(projectUid=uid, projectId=payload_project_id, action="post", status="skipped", reason="already_contributed_api", payloadHash=payload_hash)
+            continue
+        filtered_payload_files.append(payload_file)
+    payload_files = filtered_payload_files
+    if not payload_files:
+        typer.echo("No projects to submit: all planned payloads are already present in your PANKHUDI contributions list.")
+        return
     payload_files = payload_files[:max_projects]
     project_uids = [path.stem for path in payload_files]
     typer.echo(f"About to submit {len(payload_files)} project(s) for batch {confirm_batch}:")
@@ -185,9 +214,6 @@ def submit(
         if typed != expected:
             typer.echo("Confirmation did not match. No submissions were made.", err=True)
             raise typer.Exit(code=2)
-
-    client = _make_client(storage_path, headers)
-    journal = SubmissionJournal(out / "submission_journal.jsonl")
     consecutive_failures = 0
     failed_total = 0
     submitted = 0
@@ -230,6 +256,8 @@ def submit(
         if delay_seconds > 0:
             time.sleep(delay_seconds)
     typer.echo(f"Submit complete. Submitted: {submitted}; verified: {verified}; skipped: {skipped}; failed: {failed_total}")
+    if submitted or skipped:
+        typer.echo("Batch complete. Manually verify the PANKHUDI contribution list before running the next 10-project batch.")
 
 def _has_auth(headers: dict[str, str]) -> bool:
     return any(key in headers for key in ("Cookie", "Authorization", "X-CSRF-Token", "X-XSRF-TOKEN"))
@@ -245,6 +273,35 @@ def _planned_payload_files(out: Path, project_uid: str | None) -> list[Path]:
         candidate = planned / f"{project_uid}.json"
         return [candidate] if candidate.exists() else []
     return sorted(planned.glob("*.json"))
+
+def _load_contributed_refs(client: Any, out: Path) -> tuple[set[int], set[str]]:
+    response = client.your_contributions()
+    write_json(out / "responses" / "yourContributions.json", response)
+    project_ids, project_uids = _extract_contributed_refs(response)
+    return project_ids, project_uids
+
+def _extract_contributed_refs(value: Any) -> tuple[set[int], set[str]]:
+    project_ids: set[int] = set()
+    project_uids: set[str] = set()
+
+    def visit(item: Any) -> None:
+        if isinstance(item, dict):
+            for key, raw in item.items():
+                normalized = key.lower()
+                if normalized in {"projectid", "project_id"}:
+                    try:
+                        project_ids.add(int(raw))
+                    except (TypeError, ValueError):
+                        pass
+                elif normalized in {"projectuid", "project_uid", "projectuniqueid"} and raw:
+                    project_uids.add(str(raw))
+                visit(raw)
+        elif isinstance(item, list):
+            for child in item:
+                visit(child)
+
+    visit(value)
+    return project_ids, project_uids
 
 def _extract_response_id(response: Any) -> Any:
     if isinstance(response, dict):
