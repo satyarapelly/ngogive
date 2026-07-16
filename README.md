@@ -73,16 +73,13 @@ The `.secrets/` and `output/` directories are ignored by git.
 ## Refresh authentication
 
 If submit fails with `PANKHUDI authentication failed`, refresh the Playwright storage state. The CLI uses Playwright's API request context for `--storage-state` so cookies/session data are replayed the same way the browser captured them:
-## Refresh authentication
-
-If submit fails with `PANKHUDI authentication failed`, refresh the Playwright storage state:
 
 ```bash
 python -m playwright install chromium
 python -m pankhudi_contribute login --storage-state .secrets/pankhudi-storage-state.json
 ```
 
-A visible browser opens. Sign in to PANKHUDI completely, return to the terminal, and press Enter. The storage-state file is saved under `.secrets/`.
+A visible browser opens. Sign in to PANKHUDI completely, return to the terminal, and press Enter. If your terminal does not accept Enter reliably, use `--wait-seconds 120` and complete login before the timer expires. The storage-state file is saved under `.secrets/`.
 
 ## Live submit guardrails
 
