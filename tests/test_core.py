@@ -126,3 +126,16 @@ def test_storage_state_headers_include_nested_json_token(tmp_path):
     path.write_text(json.dumps(state), encoding="utf-8")
     headers = headers_from_storage_state(str(path))
     assert headers["Authorization"] == "Bearer nested.jwt.token"
+
+def test_extract_contributed_refs_handles_nested_contribution_payloads():
+    from pankhudi_contribute.cli import _extract_contributed_refs
+    project_ids, project_uids = _extract_contributed_refs({
+        "data": {
+            "content": [
+                {"projectId": "144", "projectUid": "PRJ-2026-0000144"},
+                {"project": {"project_id": 145, "project_uid": "PRJ-2026-0000145"}},
+            ]
+        }
+    })
+    assert project_ids == {144, 145}
+    assert project_uids == {"PRJ-2026-0000144", "PRJ-2026-0000145"}

@@ -24,6 +24,7 @@ except ModuleNotFoundError:  # lightweight fallback for unit tests
 BASE_URL = "https://pankhudi.wcd.gov.in"
 SEARCH_PATH = "/API/MasterApi/v1/projects/fetch"
 SAVE_PATH = "/API/MasterApi/v1/project-contributions/save"
+YOUR_CONTRIBUTIONS_PATH = "/API/MasterApi/v1/get/yourContributions"
 
 class AuthenticationError(RuntimeError): pass
 class AmbiguousSearchError(RuntimeError): pass
@@ -71,6 +72,9 @@ class PankhudiClient:
     def detail(self, project_id: int) -> dict[str, Any]:
         r = self.client.get(SEARCH_PATH, params={"projectId": project_id})
         self._check(r); return r.json()
+    def your_contributions(self, user_id: int = 132975) -> dict[str, Any]:
+        r = self.client.get(YOUR_CONTRIBUTIONS_PATH, params={"userId": user_id})
+        self._check(r); return r.json()
     @retry(retry=retry_if_exception_type(_HTTP_STATUS_ERROR), wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3))
     def save(self, payload: dict[str, Any]) -> dict[str, Any]:
         r = self.client.post(SAVE_PATH, json=payload)
@@ -102,6 +106,9 @@ class PlaywrightPankhudiClient:
         self._check(r); return r.json()
     def detail(self, project_id: int) -> dict[str, Any]:
         r = self.context.get(SEARCH_PATH, params={"projectId": project_id})
+        self._check(r); return r.json()
+    def your_contributions(self, user_id: int = 132975) -> dict[str, Any]:
+        r = self.context.get(YOUR_CONTRIBUTIONS_PATH, params={"userId": user_id})
         self._check(r); return r.json()
     def save(self, payload: dict[str, Any]) -> dict[str, Any]:
         r = self.context.post(SAVE_PATH, data=payload)
