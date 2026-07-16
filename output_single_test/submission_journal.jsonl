@@ -1,0 +1,3 @@
+{"action": "dry_run", "payloadHash": null, "projectId": 6301, "projectUid": "PRJ-2026-0006301", "reason": "complex_excluded", "status": "skipped", "timestamp": "2026-07-15T12:10:09.648Z"}
+{"action": "dry_run", "httpStatus": null, "payloadHash": "sha256:c440a651f742bd9ca1f5ecc637ed3ff23128b1074b895e96d34dd5239f4c3f21", "projectId": 144, "projectUid": "PRJ-2026-0000144", "reason": null, "responseId": null, "status": "planned", "timestamp": "2026-07-16T05:41:36.828Z"}
+{"action": "post", "payloadHash": "sha256:c440a651f742bd9ca1f5ecc637ed3ff23128b1074b895e96d34dd5239f4c3f21", "projectId": 144, "projectUid": "PRJ-2026-0000144", "reason": "PANKHUDI authentication failed", "status": "failed", "timestamp": "2026-07-16T05:42:32.326Z"}

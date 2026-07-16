@@ -1,0 +1,9 @@
+httpx
+openpyxl
+pydantic
+typer
+tenacity
+playwright
+
+[test]
+pytest

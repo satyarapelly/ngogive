@@ -1,0 +1,5 @@
+assets
+data
+docs
+node_modules
+team

@@ -1,0 +1,7 @@
+pyproject.toml
+src/pankhudi_contribute.egg-info/PKG-INFO
+src/pankhudi_contribute.egg-info/SOURCES.txt
+src/pankhudi_contribute.egg-info/dependency_links.txt
+src/pankhudi_contribute.egg-info/requires.txt
+src/pankhudi_contribute.egg-info/top_level.txt
+tests/test_core.py
