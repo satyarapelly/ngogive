@@ -88,3 +88,10 @@ def test_storage_state_headers_include_csrf_and_local_storage_token(tmp_path):
     headers = headers_from_storage_state(str(path))
     assert headers["X-XSRF-TOKEN"] == "csrf 123"
     assert headers["Authorization"] == "Bearer abc.jwt.token"
+
+def test_storage_state_headers_include_session_storage_token(tmp_path):
+    from pankhudi_contribute.auth import headers_from_storage_state
+    path = tmp_path / "state.json"
+    path.write_text('{"cookies":[],"origins":[{"origin":"https://pankhudi.wcd.gov.in","sessionStorage":[{"name":"access_token","value":"session.jwt.token"}]}]}', encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer session.jwt.token"
