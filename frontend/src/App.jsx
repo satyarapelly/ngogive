@@ -1614,6 +1614,17 @@ function PankhudiProjectsPage() {
     [row.contributionStatus.key]: (counts[row.contributionStatus.key] || 0) + 1,
   }), {}), [projectContributionRows]);
 
+  const projectContributionRows = useMemo(() => projectRows.map(({ project, id }) => ({
+    project,
+    id,
+    contributionStatus: getPankhudiContributionStatus(project, id, contributedRefs),
+  })), [projectRows, contributedRefs]);
+
+  const contributionCounts = useMemo(() => projectContributionRows.reduce((counts, row) => ({
+    ...counts,
+    [row.contributionStatus.key]: (counts[row.contributionStatus.key] || 0) + 1,
+  }), {}), [projectContributionRows]);
+
   const filteredProjects = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
     return projectContributionRows.filter(({ project, id, contributionStatus }) => {
