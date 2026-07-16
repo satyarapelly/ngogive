@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+import json
 import pytest
 
 from pankhudi_contribute.client import AmbiguousSearchError, exact_uid_match
@@ -95,3 +96,12 @@ def test_storage_state_headers_include_session_storage_token(tmp_path):
     path.write_text('{"cookies":[],"origins":[{"origin":"https://pankhudi.wcd.gov.in","sessionStorage":[{"name":"access_token","value":"session.jwt.token"}]}]}', encoding="utf-8")
     headers = headers_from_storage_state(str(path))
     assert headers["Authorization"] == "Bearer session.jwt.token"
+
+def test_add_session_storage_to_state_persists_tokens_for_headers(tmp_path):
+    from pankhudi_contribute.auth import add_session_storage_to_state, headers_from_storage_state
+    state = {"cookies": [], "origins": [{"origin": "https://pankhudi.wcd.gov.in", "localStorage": []}]}
+    add_session_storage_to_state(state, "https://pankhudi.wcd.gov.in/dashboard", {"access_token": "captured.jwt.token"})
+    path = tmp_path / "state.json"
+    path.write_text(json.dumps(state), encoding="utf-8")
+    headers = headers_from_storage_state(str(path))
+    assert headers["Authorization"] == "Bearer captured.jwt.token"

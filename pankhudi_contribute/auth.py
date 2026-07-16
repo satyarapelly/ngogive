@@ -39,6 +39,19 @@ def headers_from_storage_state(path: str | None) -> dict[str, str]:
         headers.setdefault("Authorization", token)
     return headers
 
+def add_session_storage_to_state(state: dict[str, Any], origin_url: str, items: dict[str, str]) -> dict[str, Any]:
+    """Return a Playwright storage-state object augmented with captured sessionStorage items."""
+    if not items:
+        return state
+    origins = state.setdefault("origins", [])
+    origin = _origin_for_url(origin_url)
+    entry = next((candidate for candidate in origins if candidate.get("origin") == origin), None)
+    if entry is None:
+        entry = {"origin": origin, "localStorage": []}
+        origins.append(entry)
+    entry["sessionStorage"] = [{"name": key, "value": value} for key, value in items.items()]
+    return state
+
 def _csrf_from_cookies(cookies: list[dict[str, Any]]) -> str | None:
     for cookie in cookies:
         name = str(cookie.get("name", "")).lower()
@@ -58,3 +71,11 @@ def _authorization_from_local_storage(state: dict[str, Any]) -> str | None:
             if key in TOKEN_KEYS or ("token" in key and "csrf" not in key and "xsrf" not in key):
                 return value if value.lower().startswith("bearer ") else f"Bearer {value}"
     return None
+
+def _origin_for_url(url: str) -> str:
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+    if not parsed.scheme or not parsed.netloc:
+        return url.rstrip("/")
+    return f"{parsed.scheme}://{parsed.netloc}"
