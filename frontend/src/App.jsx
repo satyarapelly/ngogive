@@ -1320,6 +1320,7 @@ function ProgramDetailRoute() {
 const PANKHUDI_PROJECTS_URL = "/api/pankhudi/projects";
 const PANKHUDI_CONTRIBUTE_URL = "/api/pankhudi/contribute";
 const PANKHUDI_CONTRIBUTE_PREVIEW_URL = "/api/pankhudi/contribute/preview";
+const PANKHUDI_CONTRIBUTIONS_URL = "/api/pankhudi/contributions";
 const PANKHUDI_SOURCE_URL = "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
 const PANKHUDI_STORAGE_KEY = "giveForSociety:pankhudi:savedProjects";
 const TELANGANA_PANKHUDI_DISTRICTS = [
@@ -1558,6 +1559,24 @@ function savePankhudiProjects(savedProjects) {
   window.localStorage.setItem(PANKHUDI_STORAGE_KEY, JSON.stringify(savedProjects));
 }
 
+function isTruthyPankhudiValue(value) {
+  if (typeof value === "boolean") return value;
+  return /^(true|1|yes|y)$/i.test(String(value || "").trim());
+}
+
+function getPankhudiContributionStatus(project, id, contributedRefs) {
+  const projectId = Number(getProjectValue(project, ["projectId", "projectID", "id"], 0));
+  const projectUid = String(getProjectValue(project, ["projectUid", "projectUID", "uid"], id)).trim();
+  const projectIdStrings = new Set((contributedRefs.projectIds || []).map((value) => String(value)));
+  const projectUidStrings = new Set((contributedRefs.projectUids || []).map((value) => String(value).trim()).filter(Boolean));
+  const portalFlag = isTruthyPankhudiValue(getProjectValue(project, ["isContributorAdded", "contributorAdded", "isContributed", "alreadyContributed"], false));
+  const alreadyContributed = portalFlag || (projectId && projectIdStrings.has(String(projectId))) || (projectUid && projectUidStrings.has(projectUid));
+
+  if (alreadyContributed) return { key: "already-contributed", label: "Already contributed", projectId, projectUid };
+  if (projectId) return { key: "ready-to-contribute", label: "Ready to contribute", projectId, projectUid };
+  return { key: "not-ready", label: "Missing project ID", projectId, projectUid };
+}
+
 function PankhudiProjectsPage() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
@@ -1571,6 +1590,8 @@ function PankhudiProjectsPage() {
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false);
   const [contributionPreview, setContributionPreview] = useState(null);
   const [contributionSubmissionComplete, setContributionSubmissionComplete] = useState(false);
+  const [contributedRefs, setContributedRefs] = useState({ projectIds: [], projectUids: [], fetchedAt: "", unavailableReason: "" });
+  const [isLoadingContributions, setIsLoadingContributions] = useState(false);
   const [message, setMessage] = useState({ type: "info", text: "Click “Load live PANKHUDI projects” to view current projects from the district feed." });
   const [lastFetchedAt, setLastFetchedAt] = useState("");
 
@@ -1582,14 +1603,26 @@ function PankhudiProjectsPage() {
   const projectRows = useMemo(() => projects.map((project, index) => ({ project, id: getProjectId(project, index) })), [projects]);
   const savedCount = Object.keys(savedProjects).length;
 
+  const projectContributionRows = useMemo(() => projectRows.map(({ project, id }) => ({
+    project,
+    id,
+    contributionStatus: getPankhudiContributionStatus(project, id, contributedRefs),
+  })), [projectRows, contributedRefs]);
+
+  const contributionCounts = useMemo(() => projectContributionRows.reduce((counts, row) => ({
+    ...counts,
+    [row.contributionStatus.key]: (counts[row.contributionStatus.key] || 0) + 1,
+  }), {}), [projectContributionRows]);
+
   const filteredProjects = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
-    return projectRows.filter(({ project, id }) => {
+    return projectContributionRows.filter(({ project, id, contributionStatus }) => {
       const saved = savedProjects[id];
-      const status = saved?.internalStatus || "not-saved";
-      const matchesStatus = statusFilter === "all" || statusFilter === status;
+      const internalStatus = saved?.internalStatus || "not-saved";
+      const matchesStatus = statusFilter === "all" || statusFilter === internalStatus || statusFilter === contributionStatus.key;
       const searchable = [
         id,
+        contributionStatus.label,
         getProjectValue(project, ["projectName", "name", "title", "projectTitle"], ""),
         getProjectValue(project, ["anganwadiName", "centerName", "centreName", "awcName"], ""),
         getProjectValue(project, ["mandalName", "mandal", "blockName"], ""),
@@ -1597,7 +1630,28 @@ function PankhudiProjectsPage() {
       ].join(" ").toLowerCase();
       return matchesStatus && (!normalizedSearch || searchable.includes(normalizedSearch));
     });
-  }, [projectRows, savedProjects, searchTerm, statusFilter]);
+  }, [projectContributionRows, savedProjects, searchTerm, statusFilter]);
+
+  const fetchContributionRefs = async () => {
+    setIsLoadingContributions(true);
+    try {
+      const response = await fetch(PANKHUDI_CONTRIBUTIONS_URL, { headers: { accept: "application/json" } });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload?.setup || payload?.error || `PANKHUDI contributions API returned ${response.status}`);
+      setContributedRefs({
+        projectIds: Array.isArray(payload.projectIds) ? payload.projectIds : [],
+        projectUids: Array.isArray(payload.projectUids) ? payload.projectUids : [],
+        fetchedAt: payload.fetchedAt || new Date().toISOString(),
+        unavailableReason: "",
+      });
+      return payload;
+    } catch (error) {
+      setContributedRefs({ projectIds: [], projectUids: [], fetchedAt: "", unavailableReason: error.message || "Unable to fetch PANKHUDI contribution history." });
+      return null;
+    } finally {
+      setIsLoadingContributions(false);
+    }
+  };
 
   const fetchLiveProjects = async () => {
     setIsLoading(true);
@@ -1609,13 +1663,14 @@ function PankhudiProjectsPage() {
       const payload = await response.json();
       const rows = Array.isArray(payload?.projects) ? payload.projects : extractPankhudiRows(payload);
       if (!rows.length) throw new Error("The API response did not include project rows.");
+      const contributionPayload = await fetchContributionRefs();
       setProjects(rows);
       const firstId = getProjectId(rows[0], 0);
       setSelectedProjectId(firstId);
       setSelectedProjectIds([firstId]);
       const fetchedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
       setLastFetchedAt(fetchedAt);
-      setMessage({ type: "success", text: `Loaded ${rows.length} live PANKHUDI projects for ${districtName}. Last update: ${fetchedAt} IST.` });
+      setMessage({ type: "success", text: `Loaded ${rows.length} live PANKHUDI projects for ${districtName}. ${contributionPayload ? `Contribution history found ${contributionPayload.projectIds?.length || 0} project ID(s).` : "Contribution history could not be loaded; use Refresh contribution status after server auth is configured."} Last update: ${fetchedAt} IST.` });
     } catch (error) {
       setMessage({ type: "error", text: `${error.message}. The page uses the same-origin PANKHUDI API proxy; confirm the deployment can reach pankhudi.wcd.gov.in and that PANKHUDI_PROJECTS_URL is configured if the source changes.` });
     } finally {
@@ -1632,9 +1687,12 @@ function PankhudiProjectsPage() {
   };
 
   const openContributionPreview = async (mode = "selected") => {
-    const contributionProjects = selectedProjectsForContribution(mode);
+    const contributionProjects = selectedProjectsForContribution(mode).filter((project, index) => {
+      const id = mode === "batch" ? selectedProjectIds[index] : selectedId;
+      return getPankhudiContributionStatus(project, id, contributedRefs).key === "ready-to-contribute";
+    });
     if (!contributionProjects.length) {
-      setMessage({ type: "error", text: "Select one or more projects before creating a PANKHUDI contribution preview." });
+      setMessage({ type: "error", text: "Select one or more ready-to-contribute projects before creating a PANKHUDI contribution preview. Already-contributed projects are skipped." });
       return;
     }
     setIsSubmittingContribution(true);
@@ -1791,6 +1849,9 @@ function PankhudiProjectsPage() {
             <button type="button" className="btn btn-primary" onClick={fetchLiveProjects} disabled={isLoading}>
               <RefreshCw size={16} /> {isLoading ? "Loading…" : "Load live PANKHUDI projects"}
             </button>
+            <button type="button" className="btn btn-outline" onClick={fetchContributionRefs} disabled={isLoadingContributions}>
+              <RefreshCw size={16} /> {isLoadingContributions ? "Checking…" : "Refresh contribution status"}
+            </button>
             <a className="btn btn-outline" href={PANKHUDI_SOURCE_URL} target="_blank" rel="noreferrer">Open source API</a>
           </div>
         </section>
@@ -1799,10 +1860,13 @@ function PankhudiProjectsPage() {
           <article><strong>{projects.length || "—"}</strong><span>Live projects loaded</span></article>
           <article><strong>{savedCount}</strong><span>Saved for contribution</span></article>
           <article><strong>{filteredProjects.length || "—"}</strong><span>Matching current filters</span></article>
+          <article><strong>{contributionCounts["ready-to-contribute"] || 0}</strong><span>Ready to contribute</span></article>
+          <article><strong>{contributionCounts["already-contributed"] || 0}</strong><span>Already contributed</span></article>
           <article><strong>{lastFetchedAt || "Not loaded"}</strong><span>Last live update</span></article>
         </section>
 
         {message.text && <div className={`pankhudi-message ${message.type}`} role="status">{message.text}</div>}
+        {contributedRefs.unavailableReason && <div className="pankhudi-message info" role="status">Contribution history unavailable: {contributedRefs.unavailableReason}</div>}
 
         <section className="pankhudi-command-center" aria-label="PANKHUDI implementation command centre">
           <div className="pankhudi-section-head">
@@ -1831,6 +1895,9 @@ function PankhudiProjectsPage() {
               </label>
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Filter by saved status">
                 <option value="all">All projects</option>
+                <option value="ready-to-contribute">Ready to contribute</option>
+                <option value="already-contributed">Already contributed</option>
+                <option value="not-ready">Missing project ID</option>
                 <option value="not-saved">Not saved</option>
                 <option value="watching">Watching</option>
                 <option value="shortlisted">Shortlisted</option>
@@ -1839,7 +1906,7 @@ function PankhudiProjectsPage() {
               </select>
             </div>
             <div className="pankhudi-project-list">
-              {filteredProjects.length ? filteredProjects.map(({ project, id }) => {
+              {filteredProjects.length ? filteredProjects.map(({ project, id, contributionStatus }) => {
                 const saved = savedProjects[id];
                 return (
                   <button
@@ -1860,7 +1927,8 @@ function PankhudiProjectsPage() {
                       <strong>{getProjectValue(project, ["projectName", "name", "title", "projectTitle"], `Project ${id}`)}</strong>
                       <small>{getProjectValue(project, ["anganwadiName", "centerName", "centreName", "awcName"], "Centre not listed")} · {getProjectValue(project, ["mandalName", "mandal", "blockName"], "Mandal not listed")}</small>
                     </span>
-                    <em>{saved?.internalStatus || "not-saved"}</em>
+                    <em>{contributionStatus.label}</em>
+                    {saved?.internalStatus && <em>{saved.internalStatus}</em>}
                   </button>
                 );
               }) : <p className="empty-state">No projects loaded yet. Use the live load button above.</p>}
