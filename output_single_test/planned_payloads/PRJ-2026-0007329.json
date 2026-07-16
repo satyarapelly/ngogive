@@ -1,0 +1,33 @@
+{
+  "request": {
+    "approvedBy": null,
+    "approvedOn": null,
+    "createdBy": 132975,
+    "createdOn": "2026-07-16T09:17:08.993Z",
+    "details": [
+      {
+        "activityId": 26627,
+        "contributionQty": "1",
+        "createdBy": 132975,
+        "createdOn": "2026-07-16T09:17:08.993Z",
+        "currentQty": 1,
+        "deliverOn": null,
+        "deliveredQty": 0,
+        "deliveryRemark": null,
+        "id": 0,
+        "isActive": true,
+        "projectContributionId": null,
+        "statusId": 1,
+        "updatedBy": null,
+        "updatedOn": null
+      }
+    ],
+    "id": 0,
+    "isActive": true,
+    "projectId": 7329,
+    "statusId": 1,
+    "updatedBy": null,
+    "updatedOn": null,
+    "userId": 132975
+  }
+}
