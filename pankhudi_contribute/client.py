@@ -6,6 +6,10 @@ try:
 except ModuleNotFoundError:  # optional until live API use
     httpx = None  # type: ignore[assignment]
 try:
+    from playwright.sync_api import sync_playwright
+except ModuleNotFoundError:  # optional until storage-state API use
+    sync_playwright = None  # type: ignore[assignment]
+try:
     from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 except ModuleNotFoundError:  # lightweight fallback for unit tests
     def retry(*args, **kwargs):
@@ -73,3 +77,35 @@ class PankhudiClient:
         if r.status_code in (429, 502, 503, 504):
             r.raise_for_status()
         self._check(r); return r.json()
+    def close(self) -> None:
+        self.client.close()
+
+class PlaywrightPankhudiClient:
+    """PANKHUDI API client that reuses a browser storage-state file exactly as Playwright captured it."""
+    def __init__(self, storage_state: str, headers: dict[str, str] | None = None, timeout: float = 30) -> None:
+        if sync_playwright is None:
+            raise RuntimeError("playwright is required for --storage-state API calls. Run: python -m pip install -e . && python -m playwright install chromium")
+        self._playwright = sync_playwright().start()
+        self.context = self._playwright.request.new_context(
+            base_url=BASE_URL,
+            storage_state=storage_state,
+            extra_http_headers={k: v for k, v in (headers or {}).items() if k.lower() != "cookie"},
+            timeout=timeout * 1000,
+        )
+    def _check(self, r: Any) -> None:
+        if r.status in (401, 403):
+            raise AuthenticationError("PANKHUDI authentication failed")
+        if not r.ok:
+            raise RuntimeError(f"PANKHUDI API request failed with HTTP {r.status}: {r.text()[:500]}")
+    def search(self, project_uid: str) -> dict[str, Any]:
+        r = self.context.get(SEARCH_PATH, params={"status":1,"stateId":28,"districtId":699,"projectUid":project_uid,"userId":132975,"page":0,"size":12})
+        self._check(r); return r.json()
+    def detail(self, project_id: int) -> dict[str, Any]:
+        r = self.context.get(SEARCH_PATH, params={"projectId": project_id})
+        self._check(r); return r.json()
+    def save(self, payload: dict[str, Any]) -> dict[str, Any]:
+        r = self.context.post(SAVE_PATH, data=payload)
+        self._check(r); return r.json()
+    def close(self) -> None:
+        self.context.dispose()
+        self._playwright.stop()
