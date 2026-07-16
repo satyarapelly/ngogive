@@ -24,6 +24,7 @@ except ModuleNotFoundError:  # lightweight fallback for unit tests
 BASE_URL = "https://pankhudi.wcd.gov.in"
 SEARCH_PATH = "/API/MasterApi/v1/projects/fetch"
 SAVE_PATH = "/API/MasterApi/v1/project-contributions/save"
+YOUR_CONTRIBUTIONS_PATH = "/API/MasterApi/v1/get/yourContributions"
 
 class AuthenticationError(RuntimeError): pass
 class AmbiguousSearchError(RuntimeError): pass
@@ -63,13 +64,16 @@ class PankhudiClient:
         self.client = httpx.Client(base_url=BASE_URL, headers=headers or {}, timeout=timeout)
     def _check(self, r: httpx.Response) -> None:
         if r.status_code in (401, 403):
-            raise AuthenticationError("PANKHUDI authentication failed")
+            raise AuthenticationError(_auth_error_message(r.status_code, r.text))
         r.raise_for_status()
     def search(self, project_uid: str) -> dict[str, Any]:
         r = self.client.get(SEARCH_PATH, params={"status":1,"stateId":28,"districtId":699,"projectUid":project_uid,"userId":132975,"page":0,"size":12})
         self._check(r); return r.json()
     def detail(self, project_id: int) -> dict[str, Any]:
         r = self.client.get(SEARCH_PATH, params={"projectId": project_id})
+        self._check(r); return r.json()
+    def your_contributions(self, user_id: int = 132975) -> dict[str, Any]:
+        r = self.client.get(YOUR_CONTRIBUTIONS_PATH, params={"userId": user_id})
         self._check(r); return r.json()
     @retry(retry=retry_if_exception_type(_HTTP_STATUS_ERROR), wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3))
     def save(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -94,7 +98,7 @@ class PlaywrightPankhudiClient:
         )
     def _check(self, r: Any) -> None:
         if r.status in (401, 403):
-            raise AuthenticationError("PANKHUDI authentication failed")
+            raise AuthenticationError(_auth_error_message(r.status, r.text()))
         if not r.ok:
             raise RuntimeError(f"PANKHUDI API request failed with HTTP {r.status}: {r.text()[:500]}")
     def search(self, project_uid: str) -> dict[str, Any]:
@@ -103,9 +107,24 @@ class PlaywrightPankhudiClient:
     def detail(self, project_id: int) -> dict[str, Any]:
         r = self.context.get(SEARCH_PATH, params={"projectId": project_id})
         self._check(r); return r.json()
+    def your_contributions(self, user_id: int = 132975) -> dict[str, Any]:
+        r = self.context.get(YOUR_CONTRIBUTIONS_PATH, params={"userId": user_id})
+        self._check(r); return r.json()
     def save(self, payload: dict[str, Any]) -> dict[str, Any]:
         r = self.context.post(SAVE_PATH, data=payload)
         self._check(r); return r.json()
     def close(self) -> None:
         self.context.dispose()
         self._playwright.stop()
+
+def _auth_error_message(status: int, body: str) -> str:
+    details = body.strip()[:300]
+    suffix = f" (HTTP {status})"
+    if details:
+        suffix = f"{suffix}: {details}"
+    return (
+        "PANKHUDI authentication failed"
+        f"{suffix}. Refresh the storage-state with `python -m pankhudi_contribute login "
+        "--storage-state .secrets/pankhudi-storage-state.json`, or provide fresh "
+        "PANKHUDI_COOKIE/PANKHUDI_AUTHORIZATION values."
+    )

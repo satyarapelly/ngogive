@@ -95,6 +95,19 @@ python -m pankhudi_contribute submit \
   --storage-state .secrets/pankhudi-storage-state.json
 ```
 
-The command prints the selected project UIDs and requires typing `SUBMIT 1 PROJECTS` before posting unless `--yes` is supplied. It saves POST and verification responses under the selected output directory and appends records to `submission_journal.jsonl`.
+The command prints the selected project UIDs and requires typing `SUBMIT <N> PROJECTS` before posting unless `--yes` is supplied. It saves POST and verification responses under the selected output directory and appends records to `submission_journal.jsonl`.
 
-Do not run a larger batch until a single-project dry run and portal verification have succeeded.
+Before planning or submitting, the CLI calls PANKHUDI's `get/yourContributions?userId=132975` endpoint and skips projects already present in the authenticated user's contribution list. The response is saved as `responses/yourContributions.json` for operator review.
+
+After the single-project validation succeeds, use 10-project batches and manually verify the contribution list after each batch before continuing:
+
+```bash
+python -m pankhudi_contribute submit \
+  --execute \
+  --confirm-batch "TEN-PROJECT-BATCH" \
+  --max-projects 10 \
+  --output-dir output \
+  --storage-state .secrets/pankhudi-storage-state.json
+```
+
+Do not run the next batch until the previous 10 submitted projects have been manually verified in the PANKHUDI portal.

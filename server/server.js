@@ -36,6 +36,7 @@ app.use(express.json());
 
 const DEFAULT_PANKHUDI_PROJECTS_URL =
   "https://pankhudi.wcd.gov.in/API/MasterApi/v1/projects/fetch?status=1&stateId=28&districtId=699&mission=1&categoryId=1&userId=132975&page=0&size=250";
+const PANKHUDI_BASE_URL = "https://pankhudi.wcd.gov.in";
 
 const extractPankhudiRows = (payload) => {
   if (Array.isArray(payload)) return payload;
@@ -51,6 +52,97 @@ const extractPankhudiRows = (payload) => {
   ];
   return candidates.find(Array.isArray) || [];
 };
+
+function buildPankhudiProjectsUrl(districtId = "699") {
+  if (process.env.PANKHUDI_PROJECTS_URL && !districtId) return process.env.PANKHUDI_PROJECTS_URL;
+  const url = new URL(process.env.PANKHUDI_PROJECTS_URL || DEFAULT_PANKHUDI_PROJECTS_URL);
+  if (districtId) url.searchParams.set("districtId", String(districtId));
+  url.searchParams.set("stateId", "28");
+  url.searchParams.set("userId", "132975");
+  url.searchParams.set("page", "0");
+  url.searchParams.set("size", "250");
+  return url.toString();
+}
+
+function pankhudiAuthHeaders() {
+  const headers = {
+    Accept: "application/json, text/plain, */*",
+    Origin: PANKHUDI_BASE_URL,
+    Referer: `${PANKHUDI_BASE_URL}/`,
+    "User-Agent": "GiveForSociety-PANKHUDI-ProjectTracker/1.0",
+  };
+  if (process.env.PANKHUDI_AUTHORIZATION) headers.Authorization = process.env.PANKHUDI_AUTHORIZATION;
+  if (process.env.PANKHUDI_COOKIE) headers.Cookie = process.env.PANKHUDI_COOKIE;
+  if (process.env.PANKHUDI_CSRF_TOKEN) {
+    headers["X-CSRF-Token"] = process.env.PANKHUDI_CSRF_TOKEN;
+    headers["X-XSRF-TOKEN"] = process.env.PANKHUDI_CSRF_TOKEN;
+  }
+  return headers;
+}
+
+function unwrapPankhudiProject(payload) {
+  const data = payload?.data ?? payload;
+  if (Array.isArray(data?.content) && data.content.length === 1) return data.content[0];
+  if (Array.isArray(data) && data.length === 1) return data[0];
+  if (data && typeof data === "object") return data;
+  throw new Error("Could not parse PANKHUDI project detail.");
+}
+
+function buildPankhudiContributionPayload(project) {
+  const projectId = Number(project.projectId || project.id);
+  const createdOn = new Date().toISOString();
+  const details = (project.activities || project.projectActivities || [])
+    .map((activity) => {
+      const activityId = Number(activity.activityId || activity.id);
+      const quantity = toPankhudiNumber(activity.quantity);
+      const alreadyContributed = toPankhudiNumber(activity.currentQuantityContributed);
+      const requested = toPankhudiNumber(activity.contributionRequestQuantity);
+      const remaining = quantity - alreadyContributed - requested;
+      if (!activityId || remaining <= 0) return null;
+      return {
+        id: 0,
+        projectContributionId: null,
+        activityId,
+        contributionQty: String(remaining),
+        currentQty: remaining,
+        deliveredQty: 0,
+        deliveryRemark: null,
+        deliverOn: null,
+        statusId: 1,
+        isActive: true,
+        createdBy: 132975,
+        createdOn,
+        updatedBy: null,
+        updatedOn: null,
+      };
+    })
+    .filter(Boolean);
+
+  if (!projectId) throw new Error("Project detail is missing projectId.");
+  if (!details.length) throw new Error("Project has no remaining activity quantity to contribute.");
+
+  return {
+    request: {
+      id: 0,
+      userId: 132975,
+      projectId,
+      approvedBy: null,
+      approvedOn: null,
+      statusId: 1,
+      isActive: true,
+      createdBy: 132975,
+      createdOn,
+      updatedBy: null,
+      updatedOn: null,
+      details,
+    },
+  };
+}
+
+function toPankhudiNumber(value) {
+  const parsed = Number(String(value ?? "0").replace(/,/g, ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
 
 const VIDYANJALI_BASE_URL = "https://vidyanjali.education.gov.in";
 const VIDYANJALI_SEARCH_URL = process.env.VIDYANJALI_SEARCH_URL || "";
@@ -80,7 +172,7 @@ const asArray = (payload) => {
 
 
 app.get("/api/pankhudi/projects", async (req, res) => {
-  const sourceUrl = process.env.PANKHUDI_PROJECTS_URL || DEFAULT_PANKHUDI_PROJECTS_URL;
+  const sourceUrl = buildPankhudiProjectsUrl(req.query.districtId);
 
   try {
     const response = await fetch(sourceUrl, {
@@ -126,6 +218,51 @@ app.get("/api/pankhudi/projects", async (req, res) => {
       details: error.message,
       sourceUrl,
     });
+  }
+});
+
+app.post("/api/pankhudi/contribute", async (req, res) => {
+  const headers = pankhudiAuthHeaders();
+  if (!headers.Authorization) {
+    return res.status(503).json({
+      error: "PANKHUDI submit is not configured.",
+      setup: "Set PANKHUDI_AUTHORIZATION on the server. Do not store this value in frontend code.",
+    });
+  }
+
+  const projectId = Number(req.body?.projectId);
+  if (!projectId) return res.status(400).json({ error: "projectId is required." });
+
+  try {
+    const detailUrl = new URL("/API/MasterApi/v1/projects/fetch", PANKHUDI_BASE_URL);
+    detailUrl.searchParams.set("projectId", String(projectId));
+    const detailResponse = await fetch(detailUrl, { headers });
+    const detailPayload = await detailResponse.json().catch(() => ({}));
+    if (!detailResponse.ok) {
+      return res.status(detailResponse.status).json({
+        error: `PANKHUDI detail API returned ${detailResponse.status} ${detailResponse.statusText}`,
+        details: detailPayload,
+      });
+    }
+
+    const payload = buildPankhudiContributionPayload(unwrapPankhudiProject(detailPayload));
+    const saveResponse = await fetch(new URL("/API/MasterApi/v1/project-contributions/save", PANKHUDI_BASE_URL), {
+      method: "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const savePayload = await saveResponse.json().catch(() => ({}));
+    if (!saveResponse.ok) {
+      return res.status(saveResponse.status).json({
+        error: `PANKHUDI submit API returned ${saveResponse.status} ${saveResponse.statusText}`,
+        details: savePayload,
+      });
+    }
+
+    return res.json({ submittedAt: new Date().toISOString(), response: savePayload });
+  } catch (error) {
+    console.error("Error submitting PANKHUDI contribution", error);
+    return res.status(500).json({ error: error.message || "Unable to submit PANKHUDI contribution." });
   }
 });
 
