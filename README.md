@@ -13,6 +13,28 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[test]"
 ```
 
+## Open the PANKHUDI web page
+
+The browser page needs both the API on port 5000 and the Vite frontend on port 5173. From the
+repository's `server` directory, one command now starts both processes:
+
+```powershell
+cd server
+npm install
+cd ..\frontend
+npm install
+cd ..\server
+npm start
+```
+
+Wait until Vite prints `Local: http://localhost:5173/`, then open
+`http://localhost:5173/pankhudi` (with no space between the port and `/pankhudi`). Stopping the
+command with Ctrl+C stops both processes. If port 5173 is already occupied, startup now fails
+clearly instead of silently selecting another port.
+
+To run only the API, use `npm run start:api`; an API-only process cannot make a page available on
+port 5173.
+
 On Windows PowerShell:
 
 ```powershell
