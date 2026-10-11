@@ -1,0 +1,16 @@
+{
+  "already_contributed": 0,
+  "api_errors": 0,
+  "authenticated": true,
+  "dry_run": true,
+  "eligible": 1,
+  "excluded_by_complexity": 0,
+  "excluded_by_end_date": 0,
+  "existing_request": 0,
+  "no_remaining_quantity": 0,
+  "ready_to_submit": 1,
+  "skipped": 0,
+  "total_activity_lines": 3,
+  "total_selected_quantity": "9.0",
+  "total_workbook_rows": 1
+}

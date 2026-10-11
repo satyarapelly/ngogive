@@ -2964,6 +2964,38 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
   background: transparent;
   outline: 0;
 }
+.pankhudi-batch-toolbar {
+  align-items: center;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  color: #7c2d12;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+}
+.pankhudi-batch-toolbar label {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  font-weight: 900;
+}
+.pankhudi-batch-toolbar input[type="checkbox"] {
+  accent-color: #f97316;
+  height: 18px;
+  width: 18px;
+}
+.pankhudi-batch-toolbar span {
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 900;
+}
+.pankhudi-batch-toolbar .btn {
+  padding: 8px 12px;
+}
 .pankhudi-project-list {
   display: grid;
   gap: 10px;
@@ -2974,7 +3006,7 @@ p, li, a, button { font-size: clamp(0.95rem, 1.4vw, 1rem); }
 .pankhudi-project-row {
   width: 100%;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
   text-align: left;

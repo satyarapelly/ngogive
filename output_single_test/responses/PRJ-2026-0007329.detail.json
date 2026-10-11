@@ -1,0 +1,121 @@
+{
+  "data": {
+    "content": [
+      {
+        "activities": [
+          {
+            "activitiesDescription": null,
+            "activityId": 26627,
+            "categoryId": 1,
+            "categoryName": "Material/Assets/Equipment",
+            "contributionRequestQuantity": 0.0,
+            "createdBy": 107234,
+            "createdByName": " Thirupathamma  D",
+            "createdOn": "2026-05-22T05:23:28",
+            "currentQuantityContributed": 0.0,
+            "documents": [],
+            "lineItemId": 49,
+            "lineItemName": "Water Purifier",
+            "projectId": 7329,
+            "quantity": 1,
+            "sorting": 1,
+            "subCategoryName": "Health and Safety aids",
+            "subcategoryId": 16,
+            "unitId": 1,
+            "unitName": "Number",
+            "updatedBy": null,
+            "updatedByName": null,
+            "updatedOn": null
+          }
+        ],
+        "anyOtherDetails": "NA",
+        "approvalStatus": 4,
+        "budgetAmount": 50000.0,
+        "contributorParticipationId": null,
+        "contributorParticipationRequestId": null,
+        "createdBy": 107234,
+        "createdOn": "2026-05-22T05:23:28",
+        "description": "Water filter ",
+        "districtId": 699,
+        "districtName": "Kumuram Bheem Asifabad",
+        "expectedEndDate": "2026-08-31",
+        "expectedOutcome": "3000",
+        "expectedStartDate": "2026-05-22",
+        "extendedTillDate": null,
+        "impacts": [
+          {
+            "createdBy": 107234,
+            "createdOn": "2026-05-22T05:23:28",
+            "id": 7339,
+            "impact": "52",
+            "impactQty": 52,
+            "isActive": true,
+            "projectId": 7329,
+            "sorting": 1,
+            "updatedBy": 107234,
+            "updatedOn": null
+          }
+        ],
+        "isContributorAdded": false,
+        "l2User": null,
+        "l3User": null,
+        "partialContribution": true,
+        "projectCentre": [
+          {
+            "anganwadiId": 817149,
+            "centreType": 1,
+            "centreTypeName": "Anganwadi",
+            "code": null,
+            "createdBy": 107234,
+            "createdOn": "2026-05-22T05:23:28",
+            "id": 9500,
+            "name": "Dubbaguda (36699010803)",
+            "projectId": 7329,
+            "updatedBy": 107234,
+            "updatedOn": null
+          }
+        ],
+        "projectDocuments": [],
+        "projectId": 7329,
+        "projectStatus": 1,
+        "projectUid": "PRJ-2026-0007329",
+        "stateId": 28,
+        "stateName": "Telangana",
+        "subThemeId": 1,
+        "subThemeName": "Mission Saksham Anganwadi & POSHAN 2.0",
+        "themeId": 1,
+        "themeName": "Mission Saksham Anganwadi & POSHAN 2.0",
+        "title": "Water filter",
+        "updatedBy": null,
+        "updatedOn": null
+      }
+    ],
+    "empty": false,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 1,
+    "pageable": {
+      "offset": 0,
+      "pageNumber": 0,
+      "pageSize": 10,
+      "paged": true,
+      "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+      },
+      "unpaged": false
+    },
+    "size": 10,
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "totalElements": 1,
+    "totalPages": 1
+  },
+  "message": "Project fetched successfully",
+  "txnId": "6fbeb791-b1a4-4a2c-b2a5-72e4e5e4080d"
+}

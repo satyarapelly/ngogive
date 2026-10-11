@@ -1,0 +1,65 @@
+{
+  "request": {
+    "approvedBy": null,
+    "approvedOn": null,
+    "createdBy": 132975,
+    "createdOn": "2026-07-16T05:41:36.810Z",
+    "details": [
+      {
+        "activityId": 423,
+        "contributionQty": "1",
+        "createdBy": 132975,
+        "createdOn": "2026-07-16T05:41:36.810Z",
+        "currentQty": 1,
+        "deliverOn": null,
+        "deliveredQty": 0,
+        "deliveryRemark": null,
+        "id": 0,
+        "isActive": true,
+        "projectContributionId": null,
+        "statusId": 1,
+        "updatedBy": null,
+        "updatedOn": null
+      },
+      {
+        "activityId": 424,
+        "contributionQty": "4",
+        "createdBy": 132975,
+        "createdOn": "2026-07-16T05:41:36.810Z",
+        "currentQty": 4,
+        "deliverOn": null,
+        "deliveredQty": 0,
+        "deliveryRemark": null,
+        "id": 0,
+        "isActive": true,
+        "projectContributionId": null,
+        "statusId": 1,
+        "updatedBy": null,
+        "updatedOn": null
+      },
+      {
+        "activityId": 425,
+        "contributionQty": "4",
+        "createdBy": 132975,
+        "createdOn": "2026-07-16T05:41:36.810Z",
+        "currentQty": 4,
+        "deliverOn": null,
+        "deliveredQty": 0,
+        "deliveryRemark": null,
+        "id": 0,
+        "isActive": true,
+        "projectContributionId": null,
+        "statusId": 1,
+        "updatedBy": null,
+        "updatedOn": null
+      }
+    ],
+    "id": 0,
+    "isActive": true,
+    "projectId": 144,
+    "statusId": 1,
+    "updatedBy": null,
+    "updatedOn": null,
+    "userId": 132975
+  }
+}
